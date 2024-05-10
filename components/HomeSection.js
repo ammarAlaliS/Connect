@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Image, Text, TouchableOpacity, StyleSheet  } from 'react-native';
 
+
 const HomeSection = () => {
     return (
         <View className=" flex-1 items-center justify-center mb-10 px-6">
@@ -14,7 +15,7 @@ const HomeSection = () => {
                 />
             </View>
             <View className="  w-full  flex justify-center ">
-                <Text className=" text-3xl text-white mb-5 font-bold">
+                <Text className="  text-3xl text-white mb-5 font-bold">
                     ¡Comparte tu vehículo!
                 </Text>
                 <Text className=" text-base text-white mb-5 font-medium">

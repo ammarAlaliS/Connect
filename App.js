@@ -7,6 +7,14 @@ import * as Font from 'expo-font';
 
 const Stack = createNativeStackNavigator();
 
+// Función para cargar las fuentes
+const fetchFonts = () => {
+  return Font.loadAsync({
+    'plus-jakarta-sans': {
+      uri: 'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400&display=swap',
+    },
+  });
+};
 
 export default function App() {
   return (

@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
+
 const AppHeader = () => {
     return (
         <View>
@@ -14,6 +15,7 @@ const AppHeader = () => {
                 <TouchableOpacity>
                 <Icon name="menu-outline" size={30} color="white" />
                 </TouchableOpacity>
+              
                
             </View>
         </View>
