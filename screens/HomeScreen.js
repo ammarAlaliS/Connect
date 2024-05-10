@@ -1,5 +1,4 @@
 import { useNavigation } from '@react-navigation/native';
-import { StatusBar } from 'expo-status-bar';
 import React, { useLayoutEffect } from 'react';
 import { View, Text, SafeAreaView, Image, ScrollView, TouchableOpacity } from 'react-native';
 import GlobalStyles from '../components/GlobalStyles';
@@ -22,14 +21,17 @@ const HomeScreen = () => {
     useLayoutEffect(() => {
         navigation.setOptions({
             headerShown: false,
+
         })
     }, [])
 
     return (
         <SafeAreaView style={GlobalStyles.androidSafeArea}>
             <AppHeader />
-            <ScrollView >
-                <View className=" relative max-h-[720px] bg-fuchsia-950">
+            <ScrollView 
+            flashScrollIndicators={false}
+            >
+                <View className=" relative max-h-[720px]">
                     <LinearGradient
                         colors={['rgb(6, 0, 151)', 'rgb(130, 4, 255)', 'rgb(193, 15, 255)']}
                         start={{ x: 1, y: 4}}
@@ -40,7 +42,7 @@ const HomeScreen = () => {
                         <HomeSection />
                     </LinearGradient>
                 </View>
-                <View className="flex items-center h-auto py-20 mx-6 flex-1">
+                <View className="flex bg-white items-center h-auto py-20 w-full px-6 flex-1">
                     <Text className=" text-2xl font-bold w-full text-center ">¿Qué puedes encontrar aquí?</Text>
                     <TouchableOpacity>
                         <ServiceOffered_C

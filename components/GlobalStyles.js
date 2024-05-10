@@ -3,7 +3,7 @@ import { StyleSheet, Platform } from "react-native";
 export default StyleSheet.create({
     androidSafeArea:{
         flex:1,
-        backgroundColor: "white", 
+        backgroundColor: "#09009A", 
         paddingTop: Platform.OS === "android" ? 0 : 0,
 
     }

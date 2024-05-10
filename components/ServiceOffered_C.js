@@ -8,9 +8,11 @@ const ServiceOffered_C = ({img, title, description }) => {
                 <Image
                     source={{
                         uri: img,
+                        
 
                     }}
                     className=" h-full w-full "
+                    resizeMode="cover"
                 />
             </View>
             <View className="mt-4">

@@ -4,7 +4,7 @@ import { View, Image, Text, TouchableOpacity, StyleSheet  } from 'react-native';
 
 const HomeSection = () => {
     return (
-        <View className=" flex-1 items-center justify-center mb-10  mx-6">
+        <View className=" flex-1 items-center justify-center mb-10 mx-6">
             <View className=" w-full flex items-center mb-10 ">
                 <Image
 

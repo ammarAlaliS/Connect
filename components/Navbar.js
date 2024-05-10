@@ -28,18 +28,19 @@ const Navbar = () => {
 
 const styles = StyleSheet.create({
     navbarContainer: {
-        display: 'none',
+        display: 'true',
         backgroundColor: 'white',
         position: 'absolute',
         top:100,
         bottom:200, 
         left:0, 
-        right:0
+        right:0,
+        zIndex: 10,
     
     },
     navItem: {
         flex:1,
-        display:'flex',
+        display:'none',
         justifyContent:'center',
         paddingLeft:24,
         paddingRight:24,
