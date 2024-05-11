@@ -28,6 +28,7 @@ const HomeScreen = () => {
     return (
         <SafeAreaView style={GlobalStyles.androidSafeArea}>
             <AppHeader />
+        
             <ScrollView 
             flashScrollIndicators={false}
             >

@@ -1,59 +1,54 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { BlurView } from 'expo-blur';
 
 const Navbar = () => {
     return (
-        <View style={styles.navbarContainer}>
-            <TouchableOpacity style={styles.navItem}>
-                <Text style={styles.link} >Inicio</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.navItem}>
-                <Text style={styles.link}>Servicios</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.navItem}>
-                <Text style={styles.link}>Acerca de</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.navItem}>
-                <Text style={styles.link}>Valoraciones</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.navItem}>
-                <Text style={styles.link}>Por qué nosotros</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.navItem}>
-                <Text style={styles.link}>Contacto</Text>
-            </TouchableOpacity>
-        </View>
+        <BlurView style={styles.blurContainer} blurType="dark" blurAmount={10}>
+            <View style={styles.navbarContainer}>
+                <TouchableOpacity style={styles.navItem}>
+                    <Text style={styles.link}>Inicio</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.navItem}>
+                    <Text style={styles.link}>Registro</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.navItem}>
+                    <Text style={styles.link}>Con</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.navItem}>
+                    <Text style={styles.link}>Valoraciones</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.navItem}>
+                    <Text style={styles.link}>Por qué nosotros</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.navItem}>
+                    <Text style={styles.link}>Contacto</Text>
+                </TouchableOpacity>
+            </View>
+        </BlurView>
     );
 }
 
 const styles = StyleSheet.create({
+    blurContainer: {
+      
+    },
     navbarContainer: {
-        display: 'true',
-        backgroundColor: 'white',
-        position: 'absolute',
-        top:100,
-        bottom:200, 
-        left:0, 
-        right:0,
-        zIndex: 10,
-    
+        backgroundColor: 'rgba(255, 255, 255, .9)',
+        justifyContent: 'center', 
+        alignItems: 'start', 
+       
     },
     navItem: {
-        flex:1,
-        display:'none',
-        justifyContent:'center',
-        paddingLeft:24,
-        paddingRight:24,
-        borderBottomWidth: 2, 
-        borderBottomColor: ' rgba(207, 173, 248, 0.2)',
+        borderBottomWidth: 2,
+        borderBottomColor: 'rgba(207, 173, 248, 0.2)',
         borderBottomStyle: 'solid',
-
     },
     link: {
-        color: 'black',
+        color: '#000',
         fontSize: 20,
-        justifyContent: 'center',
-        fontWeight:'500' 
+        fontWeight: '500',
+        padding: 24
     },
 });
 
