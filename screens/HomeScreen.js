@@ -44,34 +44,40 @@ const HomeScreen = () => {
                 </View>
                 <View className="flex bg-white items-center h-auto py-20 w-full px-6 flex-1">
                     <Text className=" text-2xl font-bold w-full text-center ">¿Qué puedes encontrar aquí?</Text>
-                    <TouchableOpacity>
+                   
                         <ServiceOffered_C
                             img="https://quickcaronline.obbaramarket.com/wp-content/uploads/2024/05/comprar-coches-usados-1.jpg"
                             title="Tienda Vehiculos"
                             description="Tu tienda para comprar o vender vehiculos de segunda mano"
+                            button_title="Explorar Servicio"
+                            button_color="#09009A"
+                            icon_color="#FFCD57"
 
                         />
-                    </TouchableOpacity>
 
-                    <TouchableOpacity>
+        
                         <ServiceOffered_C
                             img="https://quickcaronline.obbaramarket.com/wp-content/uploads/2024/05/comparte_coche.jpg"
-                            title="Vehículos cerca de ti
-                    "
+                            title="Vehículos cerca de ti"
                             description="Busca conductores cerca de ti, alquila una plaza y comparte ruta."
-
+                            button_title="Conocer más"
+                            button_color="#FFCD57"
+                            icon_color="#FFFFFF"
+                          
+                           
                         />
-                    </TouchableOpacity>
+        
 
-                    <TouchableOpacity>
                         <ServiceOffered_C
                             img="https://quickcaronline.obbaramarket.com/wp-content/uploads/2024/05/blog.jpg"
-                            title="Artículos sobre motor
-                    "
+                            title="Artículos sobre motor"
                             description="Para estar al día en el mundo del motor, podrás leer nuestros consejos y trucos."
-
+                            button_title="Ver Más"
+                            button_color="#09009A"
+                            icon_color="#FFCD57"
+                            
                         />
-                    </TouchableOpacity>
+       
 
 
                 </View>
