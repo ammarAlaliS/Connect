@@ -1,11 +1,12 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { BlurView } from 'expo-blur';
 
 const Navbar = () => {
     return (
-        <BlurView style={styles.blurContainer} blurType="dark" blurAmount={10}>
-            <View style={styles.navbarContainer}>
+
+        <View style={styles.navbarContainer}>
+            <ScrollView className="h-auto w-full">
                 <TouchableOpacity style={styles.navItem}>
                     <Text style={styles.link}>Inicio</Text>
                 </TouchableOpacity>
@@ -13,39 +14,40 @@ const Navbar = () => {
                     <Text style={styles.link}>Registro</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.navItem}>
-                    <Text style={styles.link}>Con</Text>
+                    <Text style={styles.link}>Conductor</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.navItem}>
-                    <Text style={styles.link}>Valoraciones</Text>
+                    <Text style={styles.link}>Tienda Vehiculos</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.navItem}>
-                    <Text style={styles.link}>Por qué nosotros</Text>
+                    <Text style={styles.link}>Mi cuenta</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.navItem}>
+                    <Text style={styles.link}>Blog</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.navItem}>
                     <Text style={styles.link}>Contacto</Text>
                 </TouchableOpacity>
-            </View>
-        </BlurView>
+            </ScrollView>
+        </View>
+
     );
 }
 
 const styles = StyleSheet.create({
-    blurContainer: {
-      
-    },
     navbarContainer: {
-        backgroundColor: 'rgba(255, 255, 255, .9)',
-        justifyContent: 'center', 
-        alignItems: 'start', 
-       
+        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+        justifyContent: 'center',
+        alignItems: 'start',
     },
+
     navItem: {
         borderBottomWidth: 2,
         borderBottomColor: 'rgba(207, 173, 248, 0.2)',
         borderBottomStyle: 'solid',
     },
     link: {
-        color: '#000',
+        color: '#5B595D',
         fontSize: 20,
         fontWeight: '500',
         padding: 24
