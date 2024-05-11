@@ -1,12 +1,11 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
-import { BlurView } from 'expo-blur';
 
 const Navbar = () => {
     return (
 
         <View style={styles.navbarContainer}>
-            <ScrollView className="h-auto w-full">
+            <ScrollView className="h-auto w-full ">
                 <TouchableOpacity style={styles.navItem}>
                     <Text style={styles.link}>Inicio</Text>
                 </TouchableOpacity>
@@ -28,6 +27,7 @@ const Navbar = () => {
                 <TouchableOpacity style={styles.navItem}>
                     <Text style={styles.link}>Contacto</Text>
                 </TouchableOpacity>
+            
             </ScrollView>
         </View>
 
@@ -39,6 +39,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(255, 255, 255, 0.9)',
         justifyContent: 'center',
         alignItems: 'start',
+        marginBottom: 40
     },
 
     navItem: {

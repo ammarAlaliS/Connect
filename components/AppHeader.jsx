@@ -30,9 +30,14 @@ const AppHeader = () => {
 
                     <TouchableOpacity onPress={toggleNavbar}>
                         {!navbarVisible ? (
-                            <Icon name="menu-outline" size={40} color="white" />
+                            <View className=" border-2 border-white/0 border-dotted  p-1">
+                                <Icon name="menu-outline" size={30} color="white" />
+                            </View>
                         ) : (
-                            <MyIcon width={40} height={40} color="white" />
+                            <View className=" border-2 border-white/50 border-dotted p-1">
+                                <MyIcon width={30} height={30} color="white" />
+                            </View>
+
                         )}
 
                     </TouchableOpacity>
