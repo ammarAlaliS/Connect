@@ -24,7 +24,8 @@ const ServiceOffered_C = ({ img, title, description, button_title, button_color,
             <View>
                 <TouchableOpacity>
                
-                      <View style={{ backgroundColor: button_color, paddingVertical: 10, paddingHorizontal: 20, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: 10, width: '80%', marginLeft: 'auto', marginRight: 'auto' }}>
+                      <View style={{ backgroundColor: button_color, paddingVertical: 5, paddingHorizontal: 10, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: 10, 
+                       }}>
                         <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold', marginRight: 10 }}>{button_title}</Text>
                         <ArrowRightIcon width={40} height={40} color={icon_color} />
                       </View>

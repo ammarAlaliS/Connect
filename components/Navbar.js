@@ -16,7 +16,7 @@ const Navbar = () => {
         <View style={styles.navbarContainer}>
             <ScrollView className=" flex-row h-screen w-[100%] px-[24px]">
 
-                <View className="  flex-1">
+                <View className="  flex-1 w-full">
                     <TouchableOpacity style={styles.navItem}>
 
                         <View className=" flex-row items-center space-x-2 ">
