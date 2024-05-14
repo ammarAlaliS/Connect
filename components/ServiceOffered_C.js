@@ -18,8 +18,8 @@ const ServiceOffered_C = ({ img, title, description, button_title, button_color,
                 />
             </View>
             <View className="mt-4">
-                <Text className=" text-xl font-semibold">{title}</Text>
-                <Text className="text-base font-medium">{description}</Text>
+                <Text className=" text-2xl font-semibold">{title}</Text>
+                <Text className="text-xl font-normal">{description}</Text>
             </View>
             <View>
                 <TouchableOpacity>

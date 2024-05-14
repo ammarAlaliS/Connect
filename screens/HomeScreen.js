@@ -6,10 +6,9 @@ import GlobalStyles from '../components/GlobalStyles';
 import { LinearGradient } from 'expo-linear-gradient';
 import AppHeader from '../components/AppHeader';
 import HomeSection from '../components/HomeSection';
-import Navbar from '../components/Navbar';
-import ServiceSection from '../sections/ServiceSection';
 import ServiceOffered_C from '../components/ServiceOffered_C';
-import Comment_C from '../components/Comment_C.js';
+import Comment_C from '../components/Comment_C';
+import How_to_be_Quickcar from '../components/How_to_be_Quickcar';
 
 
 
@@ -45,13 +44,13 @@ const HomeScreen = () => {
                     </LinearGradient>
                 </View>
                 <View className="flex bg-white items-center h-auto py-20 w-full px-6 flex-1">
-                    <Text className=" text-2xl font-bold w-full text-center ">¿Qué puedes encontrar aquí?</Text>
+                    <Text className=" text-3xl font-bold w-full text-center ">¿Qué puedes encontrar aquí?</Text>
 
                     <ServiceOffered_C
                         img="https://quickcaronline.obbaramarket.com/wp-content/uploads/2024/05/comprar-coches-usados-1.jpg"
                         title="Tienda Vehiculos"
                         description="Tu tienda para comprar o vender vehiculos de segunda mano"
-                        button_title="Explorar Servicio"
+                        button_title="Explorar Tienda"
                         button_color="#09009A"
                         icon_color="#FFCD57"
 
@@ -62,7 +61,7 @@ const HomeScreen = () => {
                         img="https://quickcaronline.obbaramarket.com/wp-content/uploads/2024/05/comparte_coche.jpg"
                         title="Vehículos cerca de ti"
                         description="Busca conductores cerca de ti, alquila una plaza y comparte ruta."
-                        button_title="Conocer más"
+                        button_title="Conocer Servicio"
                         button_color="#FFCD57"
                         icon_color="#FFFFFF"
 
@@ -83,13 +82,42 @@ const HomeScreen = () => {
 
 
                 </View>
+
                 <View className="flex-col bg-[#F9F6FE] items-center h-auto  w-full px-6 py-10 ">
+
                     <Comment_C
                         img="https://quickcaronline.obbaramarket.com/wp-content/themes/astra/inc/assets/images/starter-content/avatar.png"
                         description="“The best part is that Astra comes with hundreds of professionally designed templates for just about every industry, makes it super easy for non-techy users to build a website.”"
                         title="Wade Warren"
                     />
+
                 </View>
+
+                <View className="flex-col bg-white items-center justify-center h-auto  w-full px-6 pb-20   ">
+
+                    <Text className="text-3xl text-center font-bold pt-20 ">Cómo ser Conductor Quickcar</Text>
+                    <How_to_be_Quickcar
+                        icon_name="user-circle"
+                        title="Regístrate"
+                        description="Crea tu cuenta de conductor. Introduce los datos y sube una imagen personal y tu carnet de conducir. Ya estarás listo para compartir viaje."
+                    />
+
+                    <How_to_be_Quickcar
+                        icon_name="car"
+                        title="Comparte Ruta"
+                        description="Espera a que alguien contacte contigo para compartir tu ruta en tu vehículo y en tu horario. Alquila tus asientos libres y gana dinero por ello."
+                    />
+                    <How_to_be_Quickcar
+                        icon_name="money"
+                        title="Gana dinero"
+                        description="Consigue puntos por cada asiento alquilado en tu viaje. A final de mes podrás canjear tus puntos por dinero real en nuestro monedero."
+                    />
+
+
+
+
+                </View>
+
             </ScrollView>
 
         </SafeAreaView>
