@@ -34,9 +34,9 @@ const HomeScreen = () => {
             >
                 <View className=" relative max-h-[720px]">
                     <LinearGradient
-                        colors={['rgb(6, 0, 151)', 'rgb(130, 4, 255)', 'rgb(193, 15, 255)']}
-                        start={{ x: 1, y: 4 }}
-                        end={{ x: 8, y: 5 }}
+                        colors={['#060097', '#8204ff', '#c10fff']}
+                        start={{ x: 0.2, y: 0.6 }}
+                        end={{ x: 1.5, y: 0 }}
                         className=" max-h-[720px] h-full "
                     >
 
@@ -115,11 +115,18 @@ const HomeScreen = () => {
 
                 </View>
 
-                <View className="flex-col  items-center justify-center h-auto  w-full px-6 py-20 space-y-2">
-                    <Text className="text-3xl text-center font-bold text-white ">Busca a tu Conductor Quickcar</Text>
-                    <TouchableOpacity >
-                        <Text className=" font-bold w-28 text-[#1E293B] bg-[#FFCD57] mt-3 text-center text-xl p-3 rounded-[9999px] ">Buscar</Text>
-                    </TouchableOpacity>
+                <View className="">
+                    <LinearGradient
+                        colors={['#060097', '#8204ff', '#c10fff']}
+                        start={{ x: 0.2, y: 0.6 }}
+                        end={{ x: 1.5, y: 0 }}
+                        className="flex-col  items-center justify-center h-auto  w-full px-6 py-20 space-y-2"
+                    >
+                        <Text className="text-3xl text-center font-bold text-white ">Busca a tu Conductor Quickcar</Text>
+                        <TouchableOpacity >
+                            <Text className=" font-bold w-28 text-[#1E293B] bg-[#FFCD57] mt-3 text-center text-xl p-3 rounded-[9999px] ">Buscar</Text>
+                        </TouchableOpacity>
+                    </LinearGradient>
                 </View>
                 <View className="flex-col bg-white  items-center justify-center h-auto  w-full px-6 py-10 space-y-2">
                     <Text className="text-2xl text-center font-bold text-[#67768E] ">Copyright © 2024 Quickcar</Text>
