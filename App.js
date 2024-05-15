@@ -1,17 +1,15 @@
-
+// App.js
+import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import HomeScreen from './screens/HomeScreen';
-import * as Font from 'expo-font';
+import MainNavigator from './MainNavigator';
+import AuthNavigator from './protectView/AuthNavigator';
 
-const Stack = createNativeStackNavigator();
 
 export default function App() {
+  const userIsLoggedIn = true;
   return (
     <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="Home" component={HomeScreen} />
-      </Stack.Navigator>
-  </NavigationContainer>
+      {userIsLoggedIn ? <MainNavigator /> : <AuthNavigator />}
+    </NavigationContainer>
   );
 }
