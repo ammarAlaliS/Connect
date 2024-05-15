@@ -7,8 +7,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import AppHeader from '../components/AppHeader';
 import HomeSection from '../components/HomeSection';
 import ServiceOffered_C from '../components/ServiceOffered_C';
-import Comment_C from '../components/Comment_C';
 import How_to_be_Quickcar from '../components/How_to_be_Quickcar';
+import Carousel from '../components/Carousel';
 
 
 
@@ -83,15 +83,13 @@ const HomeScreen = () => {
 
                 </View>
 
-                <View className="flex-col bg-[#F9F6FE] items-center h-auto  w-full px-6 py-10 ">
+                <Carousel
+                  
+                />
+                
+             
 
-                    <Comment_C
-                        img="https://quickcaronline.obbaramarket.com/wp-content/themes/astra/inc/assets/images/starter-content/avatar.png"
-                        description="“The best part is that Astra comes with hundreds of professionally designed templates for just about every industry, makes it super easy for non-techy users to build a website.”"
-                        title="Wade Warren"
-                    />
 
-                </View>
 
                 <View className="flex-col bg-white items-center justify-center h-auto  w-full px-6 pb-20   ">
 

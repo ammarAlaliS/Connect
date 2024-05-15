@@ -15,7 +15,7 @@ const AppHeader = () => {
     return (
         <>
 
-            <View className=" flex-row items-center h-28 border-b-1 border-white/5 shadow-2xl shadow-black pt-6">
+            <View className=" flex-row items-center h-24 border-b-1 border-white/5 shadow-2xl shadow-black">
                 <LinearGradient
                     colors={['#060097', '#8204ff', '#c10fff']}
                     start={{ x: 0.2, y: 0.6 }}
