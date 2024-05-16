@@ -1,8 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
-import React, { useLayoutEffect } from 'react';
+import { useLayoutEffect, useState, React, useRef } from 'react';
 import { View, Text, SafeAreaView, Image, ScrollView, TouchableOpacity } from 'react-native';
 import GlobalStyles from '../components/GlobalStyles';
-
 import { LinearGradient } from 'expo-linear-gradient';
 import AppHeader from '../components/AppHeader';
 import HomeSection from '../components/HomeSection';
@@ -10,13 +9,10 @@ import ServiceOffered_C from '../components/ServiceOffered_C';
 import How_to_be_Quickcar from '../components/How_to_be_Quickcar';
 import Carousel from '../components/Carousel';
 
-
-
-
-
-
 const HomeScreen = () => {
+
     const navigation = useNavigation()
+    const scrollViewRef = useRef(null);
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -25,12 +21,14 @@ const HomeScreen = () => {
         })
     }, [])
 
+
     return (
         <SafeAreaView style={GlobalStyles.androidSafeArea}>
-            <AppHeader />
+            <AppHeader scrollViewRef={scrollViewRef} />
 
             <ScrollView
                 flashScrollIndicators={false}
+                ref={scrollViewRef}
             >
                 <View className=" relative max-h-[720px]">
                     <LinearGradient
@@ -84,10 +82,10 @@ const HomeScreen = () => {
                 </View>
 
                 <Carousel
-                  
+
                 />
-                
-             
+
+
 
 
 

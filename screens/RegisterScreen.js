@@ -1,4 +1,4 @@
-import React, { useLayoutEffect } from 'react';
+import React, { useLayoutEffect, useRef } from 'react';
 import { StyleSheet, View, Text, SafeAreaView, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import GlobalStyles from '../components/GlobalStyles';
@@ -7,6 +7,7 @@ import SelectRegister from '../components/SelectRegister';
 
 const RegisterScreen = () => {
     const navigation = useNavigation()
+    const scrollViewRef = useRef(null);
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -17,11 +18,12 @@ const RegisterScreen = () => {
 
     return (
         <SafeAreaView style={GlobalStyles.androidSafeArea}>
-            <AppHeader />
+        <AppHeader scrollViewRef={scrollViewRef} />
 
             <ScrollView
                 flashScrollIndicators={false}
                 className=""
+                ref={scrollViewRef}
             >
                 <View className="  h-full flex-col  items-center justify-center py-10">
                     <SelectRegister

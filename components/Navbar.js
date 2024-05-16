@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import HomeIcon from '../icons/HomeIcon';
-import ArrowRightIcon from '../icons/ArrowRightIcon '
 import KeyIcon from '../icons/KeyIcon';
 import MapIcon from '../icons/MapIcon';
 import StoreIcon from '../icons/StoreIcon';
@@ -10,9 +9,21 @@ import BlogIcon from '../icons/BlogIcon';
 import ContactIcon from '../icons/ContactIcon';
 import LogginIcon from '../icons/LogginIcon';
 import { useNavigation } from '@react-navigation/native';
+import { useSelector, useDispatch } from 'react-redux';
+import { toggleNavbar } from '../globalState/navbarSlice';
 
 const Navbar = () => {
     const navigation = useNavigation();
+    const dispatch = useDispatch();
+
+    const handleToggleNavbar = () => {
+        dispatch(toggleNavbar());
+    };
+    const handleNavigation = (screen) => {
+        handleToggleNavbar(); 
+        navigation.navigate(screen); 
+    };
+
     return (
 
         <View style={styles.navbarContainer}>
@@ -21,7 +32,7 @@ const Navbar = () => {
                 <View className="  flex-1 w-full">
                     <TouchableOpacity
                         style={styles.navItem}
-                        onPress={() => navigation.navigate('Home')}
+                        onPress={() => handleNavigation('Home')}
                     >
 
                         <View className=" flex-row items-center space-x-2 ">
@@ -35,7 +46,7 @@ const Navbar = () => {
 
                     <TouchableOpacity
                         style={styles.navItem}
-                        onPress={() => navigation.navigate('Register')}
+                        onPress={() => handleNavigation('Register')}
                     >
 
                         <View className=" flex-row items-center space-x-2 ">
