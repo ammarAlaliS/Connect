@@ -6,6 +6,7 @@ const Stack = createNativeStackNavigator();
 export default function AuthNavigator() {
   return (
     <Stack.Navigator>
+        
     </Stack.Navigator>
   );
 }
