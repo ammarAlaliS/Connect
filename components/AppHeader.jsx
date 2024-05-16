@@ -4,8 +4,10 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import Navbar from './Navbar';
 import MyIcon from '../icons/MyIcon';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useNavigation } from '@react-navigation/native';
 
 const AppHeader = () => {
+    const navigation = useNavigation();
     const [navbarVisible, setNavbarVisible] = useState(false);
 
     const toggleNavbar = () => {
@@ -22,17 +24,19 @@ const AppHeader = () => {
                     end={{ x: 1.5, y: 0 }}
                     className="flex-row items-center w-full  px-6 h-full "
                 >
-                    <View className="flex-row items-center flex-1 space-x-2">
-                        <Image
-                            source={{
-                                uri: "https://quickcaronline.obbaramarket.com/wp-content/uploads/2024/05/cropped-quickcar-1-127x79.png",
+                    <TouchableOpacity className="flex-1" onPress={() => navigation.navigate('Home')}>
+                        <View className="flex-row items-center flex-1 space-x-2">
+                            <Image
+                                source={{
+                                    uri: "https://quickcaronline.obbaramarket.com/wp-content/uploads/2024/05/cropped-quickcar-1-127x79.png",
 
-                            }}
-                            style={[styles.logo]}
-                            resizeMode="contain"
-                        />
-                        <Text className="font-bold text-3xl text-[#FFCD57] ">Quickcar</Text>
-                    </View>
+                                }}
+                                style={[styles.logo]}
+                                resizeMode="contain"
+                            />
+                            <Text className="font-bold text-3xl text-[#FFCD57] ">Quickcar</Text>
+                        </View>
+                    </TouchableOpacity>
                     <View>
 
                         <TouchableOpacity onPress={toggleNavbar}>
