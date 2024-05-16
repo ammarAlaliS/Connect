@@ -1,23 +1,25 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
-import Navbar from './Navbar';
-import MyIcon from '../icons/MyIcon';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useSelector, useDispatch } from 'react-redux';
+import Icon from 'react-native-vector-icons/Ionicons';
+import MyIcon from '../icons/MyIcon';
 import { useNavigation } from '@react-navigation/native';
+import { toggleNavbar } from '../globalState/navbarSlice';
+import Navbar from './Navbar';
 
 const AppHeader = () => {
-    const navigation = useNavigation();
-    const [navbarVisible, setNavbarVisible] = useState(false);
+    const navigation = useNavigation()
+    const navbarVisible = useSelector(state => state.navbar.visible);
+    const dispatch = useDispatch();
 
-    const toggleNavbar = () => {
-        setNavbarVisible(!navbarVisible);
+    const handleToggleNavbar = () => {
+        dispatch(toggleNavbar());
     };
 
     return (
         <>
-
-            <View className=" flex-row items-center h-24 border-b-1 border-white/5 shadow-2xl shadow-black">
+            <View className="flex-row items-center h-24 border-b-1 border-white/5 shadow-2xl shadow-black">
                 <LinearGradient
                     colors={['#060097', '#8204ff', '#c10fff']}
                     start={{ x: 0.2, y: 0.6 }}
@@ -29,7 +31,6 @@ const AppHeader = () => {
                             <Image
                                 source={{
                                     uri: "https://quickcaronline.obbaramarket.com/wp-content/uploads/2024/05/cropped-quickcar-1-127x79.png",
-
                                 }}
                                 style={[styles.logo]}
                                 resizeMode="contain"
@@ -38,8 +39,7 @@ const AppHeader = () => {
                         </View>
                     </TouchableOpacity>
                     <View>
-
-                        <TouchableOpacity onPress={toggleNavbar}>
+                        <TouchableOpacity onPress={handleToggleNavbar}>
                             {!navbarVisible ? (
                                 <View className=" border-2 border-white/0 border-dotted  p-1">
                                     <Icon name="menu-outline" size={30} color="white" />
@@ -50,15 +50,11 @@ const AppHeader = () => {
                                 </View>
 
                             )}
-
                         </TouchableOpacity>
-
                     </View>
-                </LinearGradient >
+                </LinearGradient>
             </View>
-
-            {navbarVisible && <Navbar onClose={() => setNavbarVisible(false)} />
-            }
+            {navbarVisible && <Navbar />}
         </>
     );
 };
@@ -72,4 +68,3 @@ const styles = StyleSheet.create({
 });
 
 export default AppHeader;
-

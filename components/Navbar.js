@@ -59,7 +59,10 @@ const Navbar = () => {
 
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={styles.navItem}>
+                    <TouchableOpacity
+                        style={styles.navItem}
+                        onPress={() => navigation.navigate('Market')}
+                    >
 
                         <View className=" flex-row items-center space-x-2 ">
                             <View className=" flex-row items-center space-x-3 flex-1">
