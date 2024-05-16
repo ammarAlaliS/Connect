@@ -6,7 +6,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import MyIcon from '../icons/MyIcon';
 import { useNavigation } from '@react-navigation/native';
 import { toggleNavbar } from '../globalState/navbarSlice';
-import { scrollToTop } from '../utils/scrollToTop';
+
 
 import Navbar from './Navbar';
 
@@ -30,7 +30,7 @@ const AppHeader = ({ scrollViewRef }) => {
                     end={{ x: 1.5, y: 0 }}
                     className="flex-row items-center w-full  px-6 h-full "
                 >
-                    <TouchableOpacity className="flex-1" onPress={() => scrollToTop(scrollViewRef)}>
+                    <TouchableOpacity className="flex-1" onPress={() => navigation.navigate("Home")}>
                         <View className="flex-row items-center flex-1 space-x-2">
                             <Image
                                 source={{

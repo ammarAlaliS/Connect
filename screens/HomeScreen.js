@@ -1,5 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
-import { useLayoutEffect, useState, React, useRef } from 'react';
+import { useLayoutEffect, React, useRef } from 'react';
 import { View, Text, SafeAreaView, Image, ScrollView, TouchableOpacity } from 'react-native';
 import GlobalStyles from '../components/GlobalStyles';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -8,6 +8,8 @@ import HomeSection from '../components/HomeSection';
 import ServiceOffered_C from '../components/ServiceOffered_C';
 import How_to_be_Quickcar from '../components/How_to_be_Quickcar';
 import Carousel from '../components/Carousel';
+import { ButtonToTop } from '../components/ButtonToTop';
+
 
 const HomeScreen = () => {
 
@@ -24,7 +26,7 @@ const HomeScreen = () => {
 
     return (
         <SafeAreaView style={GlobalStyles.androidSafeArea}>
-            <AppHeader scrollViewRef={scrollViewRef} />
+            <AppHeader />
 
             <ScrollView
                 flashScrollIndicators={false}
@@ -85,10 +87,6 @@ const HomeScreen = () => {
 
                 />
 
-
-
-
-
                 <View className="flex-col bg-white items-center justify-center h-auto  w-full px-6 pb-20   ">
 
                     <Text className="text-3xl text-center font-bold pt-20 ">Cómo ser Conductor Quickcar</Text>
@@ -128,8 +126,10 @@ const HomeScreen = () => {
                     <Text className="text-2xl text-center font-bold text-[#67768E] ">Copyright © 2024 Quickcar</Text>
                 </View>
 
-            </ScrollView>
 
+
+            </ScrollView>
+            <ButtonToTop scrollViewRef={scrollViewRef}/>
         </SafeAreaView>
     );
 }
