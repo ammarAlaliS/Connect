@@ -117,7 +117,7 @@ const Navbar = () => {
                 <View className=" ">
                     <TouchableOpacity
                         style={styles.LastLink}
-                        onPress={()=> navigation.navigate("signIn")}
+                        onPress={()=> handleNavigation('signIn')}
                         >
 
                         <View className=" flex-row items-center space-x-2 ">

@@ -39,7 +39,7 @@ const AppHeader = ({ scrollViewRef }) => {
                                 style={[styles.logo]}
                                 resizeMode="contain"
                             />
-                            <Text className="font-bold text-3xl text-[#FFCD57] ">Quickcar</Text>
+                            <Text className="font-bold text-3xl text-[#fff] ">Quickcar</Text>
                         </View>
                     </TouchableOpacity>
                     <View>
