@@ -20,8 +20,8 @@ const Navbar = () => {
         dispatch(toggleNavbar());
     };
     const handleNavigation = (screen) => {
-        handleToggleNavbar(); 
-        navigation.navigate(screen); 
+        handleToggleNavbar();
+        navigation.navigate(screen);
     };
 
     return (
@@ -115,7 +115,10 @@ const Navbar = () => {
 
                 </View>
                 <View className=" ">
-                    <TouchableOpacity style={styles.LastLink}>
+                    <TouchableOpacity
+                        style={styles.LastLink}
+                        onPress={()=> navigation.navigate("signIn")}
+                        >
 
                         <View className=" flex-row items-center space-x-2 ">
                             <View className=" flex-row items-baseline space-x-3 flex-1">
