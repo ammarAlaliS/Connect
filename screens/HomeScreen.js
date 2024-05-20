@@ -52,6 +52,7 @@ const HomeScreen = () => {
                         button_title="Explorar Tienda"
                         button_color=" "
                         icon_color="#fff"
+                        screen="Market"
 
                     />
 
@@ -63,6 +64,7 @@ const HomeScreen = () => {
                         button_title="Conocer Servicio"
                         button_color="#FFCD57"
                         icon_color="#FFFFFF"
+                        screen="Driver"
 
 
                     />
@@ -75,6 +77,7 @@ const HomeScreen = () => {
                         button_title="Ver Más"
                         button_color="#09009A"
                         icon_color="#FFF"
+                        screen="Blog"
 
                     />
 
@@ -116,7 +119,9 @@ const HomeScreen = () => {
                         className="flex-col  items-center justify-center h-auto  w-full px-6 py-20 space-y-2"
                     >
                         <Text style={{fontFamily:'PlusJakartaSans-Bold'}} className="text-3xl text-center text-white ">Busca a tu Conductor Quickcar</Text>
-                        <TouchableOpacity >
+                        <TouchableOpacity 
+                            onPress={()=> navigation.navigate("Driver")}
+                        >
                             <Text  style={{fontFamily:'PlusJakartaSans-Bold'}} className="w-28 text-[#1E293B] bg-[#FFCD57] mt-3 text-center text-xl p-3 rounded-[9999px] ">Buscar</Text>
                         </TouchableOpacity>
                     </LinearGradient>

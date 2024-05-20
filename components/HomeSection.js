@@ -36,7 +36,11 @@ const HomeSection = () => {
                 <Text style={styles.textDescription}>
                     Ahora puedes alquilar las plazas de tu vehículo y compartir tu ruta con otras personas. Juntos en cada kilómetro. Comparte tu espacio, comparte el viaje. Hazte Quickcar
                 </Text>
-                <TouchableOpacity className='w-full  ' >
+                <TouchableOpacity 
+                    className='w-full  ' 
+                    onPress={()=> navigation.navigate('Register')}
+                
+                >
                     <Text style={styles.button_one} className=" font-medium w-48 text-[#1E293B] bg-[#FFCD57] text-center text-xl p-3 rounded-[9999px] ">Hazte Quickcar</Text>
                 </TouchableOpacity>
             </View>

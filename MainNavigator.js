@@ -7,6 +7,8 @@ import MarketScreen from './screens/MarketScreen';
 import SignIn from './screens/SignIn';
 import LoadScreen from './screens/LoadScreen';
 import { useNavigation } from '@react-navigation/native';
+import BlogScreen from './screens/BlogScreen';
+import DriversScreen from './screens/DriversScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -43,6 +45,9 @@ export default function MainNavigator() {
       <Stack.Screen name="Register" component={RegisterScreen} />
       <Stack.Screen name="Market" component={MarketScreen} />
       <Stack.Screen name="signIn" component={SignIn} />
+      <Stack.Screen name="Blog" component={BlogScreen} />
+      <Stack.Screen name="Driver" component={DriversScreen} />
+
     </Stack.Navigator>
   );
 }

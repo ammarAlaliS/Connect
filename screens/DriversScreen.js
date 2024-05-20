@@ -4,7 +4,7 @@ import { StyleSheet, View, Text} from 'react-native';
 const DriversScreen = () => {
     return (
         <View>
-            <Text>Register</Text>
+            <Text>DriversScreen</Text>
         </View>
     );
 }
