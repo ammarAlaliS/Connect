@@ -88,7 +88,7 @@ const HomeScreen = () => {
 
                 <View className="flex-col bg-white items-center justify-center h-auto  w-full px-6 pb-20   ">
 
-                    <Text className="text-3xl text-center font-bold pt-20 ">Cómo ser Conductor Quickcar</Text>
+                    <Text  style={{fontFamily:'PlusJakartaSans-Bold'}} className="text-3xl text-center pt-20 ">Cómo ser Conductor Quickcar</Text>
                     <How_to_be_Quickcar
                         icon_name="user-circle"
                         title="Regístrate"
@@ -115,14 +115,14 @@ const HomeScreen = () => {
                         end={{ x: 1.5, y: 0 }}
                         className="flex-col  items-center justify-center h-auto  w-full px-6 py-20 space-y-2"
                     >
-                        <Text className="text-3xl text-center font-bold text-white ">Busca a tu Conductor Quickcar</Text>
+                        <Text style={{fontFamily:'PlusJakartaSans-Bold'}} className="text-3xl text-center text-white ">Busca a tu Conductor Quickcar</Text>
                         <TouchableOpacity >
-                            <Text className=" font-bold w-28 text-[#1E293B] bg-[#FFCD57] mt-3 text-center text-xl p-3 rounded-[9999px] ">Buscar</Text>
+                            <Text  style={{fontFamily:'PlusJakartaSans-Bold'}} className="w-28 text-[#1E293B] bg-[#FFCD57] mt-3 text-center text-xl p-3 rounded-[9999px] ">Buscar</Text>
                         </TouchableOpacity>
                     </LinearGradient>
                 </View>
                 <View className="flex-col bg-white  items-center justify-center h-auto  w-full px-6 py-10 space-y-2">
-                    <Text className="text-2xl text-center font-bold text-[#67768E] ">Copyright © 2024 Quickcar</Text>
+                    <Text style={{fontFamily:'PlusJakartaSans-Bold'}} className="text-2xl text-center text-[#67768E] ">Copyright © 2024 Quickcar</Text>
                 </View>
 
 

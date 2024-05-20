@@ -178,12 +178,12 @@ export default function Carousel() {
                                             uri: item.img,
                                         }}
                                         style={styles.posterImage} />
-                                    <Text className=" text-2xl text-center font-semibold text-[#6C7B92]">
+                                    <Text style={{fontFamily:'PlusJakartaSans-Bold',}} className=" text-xl text-center  text-[#6C7B92]">
                                         {item.description}
                                     </Text>
                                     <View className=" mt-4">
-                                        <Text className="text-xl font-bold text-[#4a4c4e] text-center">{item.title}</Text>
-                                        <Text className=" text-base font-bold text-[#76787d] text-center">{item.position}</Text>
+                                        <Text style={{fontFamily:'PlusJakartaSans-Bold'}} className="text-xl font-bold text-[#4a4c4e] text-center">{item.title}</Text>
+                                        <Text style={{fontFamily:'PlusJakartaSans-Bold'}} className=" text-base font-bold text-[#76787d] text-center">{item.position}</Text>
                                     </View>
                                 </View>
 
