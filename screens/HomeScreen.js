@@ -9,13 +9,19 @@ import ServiceOffered_C from '../components/ServiceOffered_C';
 import How_to_be_Quickcar from '../components/How_to_be_Quickcar';
 import Carousel from '../components/Carousel';
 import { ButtonToTop } from '../components/ButtonToTop';
-
+import useCustomFonts from '../fonts/useCustomFonts';
 
 const HomeScreen = () => {
 
     const navigation = useNavigation()
     const scrollViewRef = useRef(null);
+    const { fontsLoaded, onLayoutRootView } = useCustomFonts();
 
+    if (!fontsLoaded) {
+        return null; // Return null when fonts are not loaded
+    }
+
+   
     return (
         <SafeAreaView style={GlobalStyles.androidSafeArea}>
             <AppHeader />
@@ -36,16 +42,16 @@ const HomeScreen = () => {
                         <HomeSection />
                     </LinearGradient>
                 </View>
-                <View className="flex bg-white items-center h-auto py-20 w-full px-6 flex-1">
-                    <Text className=" text-3xl font-bold w-full text-center ">¿Qué puedes encontrar aquí?</Text>
+                <View className="flex bg-[#F3F3F3] items-center h-auto py-20 w-full px-6 flex-1">
+                    <Text style={{fontFamily:'PlusJakartaSans-Bold', fontSize:30, textAlign:'center', width:'100%'}} >¿Qué puedes encontrar aquí?</Text>
 
                     <ServiceOffered_C
                         img="https://quickcaronline.obbaramarket.com/wp-content/uploads/2024/05/comprar-coches-usados-1.jpg"
                         title="Tienda Vehiculos"
                         description="Tu tienda para comprar o vender vehiculos de segunda mano"
                         button_title="Explorar Tienda"
-                        button_color="#09009A"
-                        icon_color="#FFCD57"
+                        button_color=" "
+                        icon_color="#fff"
 
                     />
 
@@ -68,7 +74,7 @@ const HomeScreen = () => {
                         description="Para estar al día en el mundo del motor, podrás leer nuestros consejos y trucos."
                         button_title="Ver Más"
                         button_color="#09009A"
-                        icon_color="#FFCD57"
+                        icon_color="#FFF"
 
                     />
 

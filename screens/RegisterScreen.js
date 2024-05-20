@@ -24,8 +24,9 @@ const RegisterScreen = () => {
                 flashScrollIndicators={false}
                 className=""
                 ref={scrollViewRef}
+                className=" bg-white"
             >
-                <View className="  h-full flex-col  items-center justify-center py-10">
+                <View className=" bg-white  h-full flex-col  items-center justify-center py-10">
                     <SelectRegister
                         icon_name="car"
                         icon_color="333333"
