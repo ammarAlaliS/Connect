@@ -6,14 +6,31 @@ import Fontisto from '@expo/vector-icons/Fontisto';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Eyes from '../icons/Eyes';
 import UnEye from '../icons/UnEye';
+import useCustomFonts from '../fonts/useCustomFonts';
 
 
 const SignIn = () => {
+
+    // navegacion
     const navigation = useNavigation();
+
+
+    // estados del component
+
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [showEye, setShowEye] = useState(false);
     const [passwordVisible, setPasswordVisible] = useState(false);
+
+    // cargar las fuentes 
+
+    const { fontsLoaded, onLayoutRootView } = useCustomFonts();
+
+    if (!fontsLoaded) {
+        return null;
+    }
+
+    // desactivar header
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -21,14 +38,19 @@ const SignIn = () => {
         });
     }, []);
 
+    // funcion encargada para solicitar consultas a las ApiRest
     const handleLogin = () => {
         console.log('Username:', username);
         console.log('Password:', password);
     };
 
+    // funcion para mostrar la contraseña
+
     const togglePasswordVisibility = () => {
         setPasswordVisible(!passwordVisible);
     };
+
+    // funcion para detectar cuando cambia el input 
 
     const handleInputChange = (text) => {
         setPassword(text);
@@ -47,7 +69,7 @@ const SignIn = () => {
                 style={{ flex: 1 }}
             >
                 <View style={styles.container}>
-                    <ScrollView  className="  ">
+                    <ScrollView className="  ">
                         <View className="  h-[700px] items-center justify-center py-10 px-4 ">
                             <TouchableOpacity className=" mb-12" onPress={() => navigation.navigate("Home")}>
                                 <View className="flex-col items-center ">
@@ -62,15 +84,16 @@ const SignIn = () => {
                                 </View>
                             </TouchableOpacity>
                             <View style={{ width: '100%' }}>
-                                <Text style={{ fontSize: 24, fontWeight: 'bold', textAlign: 'start', color: '#000',  marginBottom: 10 }}>Bienvenido</Text>
+                                <Text style={styles.welcome}>Bienvenido</Text>
                             </View>
                             <View className="flex w-full space-y-3">
                                 <View style={styles.input}>
                                     <Fontisto name="email" size={24} color="black" />
                                     <TextInput
-                                        placeholder="Nombre de usuario"
+                                        placeholder="Email"
                                         onChangeText={setUsername}
                                         value={username}
+                                        style={styles.username}
                                     />
                                 </View>
                                 <View style={styles.input}>
@@ -79,7 +102,8 @@ const SignIn = () => {
                                         placeholder="Contraseña"
                                         onChangeText={handleInputChange}
                                         secureTextEntry={!passwordVisible}
-                                        className="flex-1"
+                                        style={styles.username}
+                                        
                                     />
                                     <TouchableOpacity onPress={togglePasswordVisibility}>
                                         {showEye ? (
@@ -91,7 +115,10 @@ const SignIn = () => {
                                         ) : null}
                                     </TouchableOpacity>
                                 </View>
-                                <View className="flex items-end">
+                                <View className="flex-row justify-between ">
+                                    <TouchableOpacity onPress={() => navigation.navigate("Register")}>
+                                        <Text style={styles.text}> Regístrate</Text>
+                                    </TouchableOpacity>
                                     <Text style={styles.text_password}>¿Olvidastes la Contraseña?</Text>
                                 </View>
                                 <TouchableOpacity onPress={handleLogin}>
@@ -101,12 +128,10 @@ const SignIn = () => {
                                         end={{ x: 1.5, y: 0 }}
                                         className=" py-3 px-6 items-center rounded-md"
                                     >
-                                        <Text className="text-white text-base font-semi">INICIAR SESION</Text>
+                                        <Text style={styles.buttom}>INICIAR SESION</Text>
                                     </LinearGradient>
                                 </TouchableOpacity>
-                                <TouchableOpacity onPress={() => navigation.navigate("Register")}>
-                                    <Text style={styles.text}>¿No tienes una cuenta? Regístrate</Text>
-                                </TouchableOpacity>
+
                             </View>
                         </View>
                     </ScrollView>
@@ -126,6 +151,7 @@ const styles = StyleSheet.create({
     },
 
     input: {
+        fontFamily: 'PlusJakartaSans-Regular',
         width: '100%',
         padding: 10,
         borderWidth: 1,
@@ -133,14 +159,34 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         backgroundColor: "#fff",
         flexDirection: "row",
+        alignItems: "center",
         gap: 10
     },
+    username: {
+        fontFamily: 'PlusJakartaSans-Bold',
+        fontSize:14,
+        flex:1
+    }, 
     text: {
+        fontFamily: 'PlusJakartaSans-Regular',
         color: 'blue',
+        fontSize: 16
     },
     text_password: {
+        fontFamily: 'PlusJakartaSans-Regular',
         color: 'blue',
+        fontSize: 16
     },
+    welcome:{
+        fontFamily:'PlusJakartaSans-SemiBold',
+        fontSize:24,
+        marginBottom:10
+
+    },
+    buttom:{
+        fontFamily:'PlusJakartaSans-SemiBold',
+        color:'#FFF'
+    }
 });
 
 export default SignIn;

@@ -11,11 +11,18 @@ const Stack = createNativeStackNavigator();
 export default function MainNavigator() {
   return (
 
-      <Stack.Navigator>
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="Register" component={RegisterScreen} />
-        <Stack.Screen name="Market" component={MarketScreen} />
-        <Stack.Screen name="signIn" component={SignIn} />
-      </Stack.Navigator>
+    <Stack.Navigator>
+      <Stack.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{
+          headerShown: false
+        }}
+
+      />
+      <Stack.Screen name="Register" component={RegisterScreen} />
+      <Stack.Screen name="Market" component={MarketScreen} />
+      <Stack.Screen name="signIn" component={SignIn} />
+    </Stack.Navigator>
   );
 }

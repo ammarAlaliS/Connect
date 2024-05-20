@@ -1,77 +1,83 @@
 import React from 'react';
 import { View, Image, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import useCustomFonts from '../fonts/useCustomFonts';
 import { useNavigation } from '@react-navigation/native';
-
+import useCustomFonts from '../fonts/useCustomFonts';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const HomeSection = () => {
-    const navigation = useNavigation()
+    const navigation = useNavigation();
     const { fontsLoaded, onLayoutRootView } = useCustomFonts();
 
     if (!fontsLoaded) {
-        return null;
+        return null; // Return null when fonts are not loaded
     }
-    return (
-        <View className=" flex-1 items-center justify-center mb-10 mx-6">
-            <View className=" w-full flex items-center mb-10 ">
-                <Image
 
+    return (
+        <View style={styles.container}>
+            <View style={styles.imageContainer}>
+                <Image
                     source={{
                         uri: 'https://quickcaronline.obbaramarket.com/wp-content/uploads/2024/05/Quickcar.png'
                     }}
-                    className=" w-[350px]  h-[200px] object-contain"
+                    style={styles.image}
                 />
             </View>
-            <View className="  w-full   flex justify-center ">
-                <Text style={styles.text_title}>
+            
+            <View style={styles.contentContainer}>
+                <Text style={styles.textTitle}>
                     ¡Comparte tu vehículo!
                 </Text>
-                <Text style={styles.text_description}>
-                    Ahora puedes alquilar las plazas de tu vehículo y compartir tu ruta con otras personas. Juntos en cada kilómetro. Comparte tu espacio, comparte el viaje.
-                    Hazte Quickcar
+                <Text style={styles.textDescription}>
+                    Ahora puedes alquilar las plazas de tu vehículo y compartir tu ruta con otras personas. Juntos en cada kilómetro. Comparte tu espacio, comparte el viaje. Hazte Quickcar
                 </Text>
-                <TouchableOpacity 
-                    onPress={()=> navigation.navigate("Register")}
-                >
-                    <Text style={styles.text_button}>Hazte Quickcar</Text>
+                <TouchableOpacity className='w-full px-6 ' >
+                    <Text style={styles.button_one} className=" font-medium w-48 text-[#1E293B] bg-[#FFCD57] text-center text-xl p-3 rounded-[9999px] ">Hazte Quickcar</Text>
                 </TouchableOpacity>
             </View>
         </View>
     );
 }
-const styles = StyleSheet.create({
 
-    text_title: {
-        fontFamily: 'PlusJakartaSans',
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 10,
+        marginHorizontal: 6
+    },
+    imageContainer: {
+        width: '100%',
+        alignItems: 'center',
+        marginBottom: 10
+    },
+    image: {
+        width: 350,
+        height: 200,
+        resizeMode: 'contain'
+    },
+    contentContainer: {
+        width: '100%',
+        alignItems: 'center'
+    },
+    textTitle: {
+        fontFamily: 'PlusJakartaSans-Bold',
         fontSize: 30,
         lineHeight: 36,
-        color: "#fff",
+        color: 'rgba(255, 255, 255, 0.9)',
         marginBottom: 20
-
     },
-    text_description: {
+    textDescription: {
         fontFamily: 'PlusJakartaSans-Medium',
         fontSize: 18,
         lineHeight: 24,
-        color: "#fff",
+        color: 'rgba(255, 255, 255, 0.8)',
         marginBottom: 20
-
     },
-    text_button: {
+    button_one:{
         fontFamily: 'PlusJakartaSans-Bold',
-        backgroundColor: '#FFCD57',
-        borderRadius: 9999,
-        color: '#1E293B',
-        textAlign: 'center',
-        justifyContent: "center",
-        fontSize: 20,
-        paddingVertical:10,
-        paddingBottom:12,
-        width: 200
-
-
-    },
+    }
 
 });
 
-export default HomeSection;
+export default HomeSection

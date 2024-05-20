@@ -16,14 +16,6 @@ const HomeScreen = () => {
     const navigation = useNavigation()
     const scrollViewRef = useRef(null);
 
-    useLayoutEffect(() => {
-        navigation.setOptions({
-            headerShown: false,
-
-        })
-    }, [])
-
-
     return (
         <SafeAreaView style={GlobalStyles.androidSafeArea}>
             <AppHeader />
@@ -31,6 +23,7 @@ const HomeScreen = () => {
             <ScrollView
                 flashScrollIndicators={false}
                 ref={scrollViewRef}
+                
             >
                 <View className=" relative max-h-[720px]">
                     <LinearGradient
