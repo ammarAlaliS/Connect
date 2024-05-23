@@ -9,6 +9,7 @@ import LoadScreen from './screens/LoadScreen';
 import { useNavigation } from '@react-navigation/native';
 import BlogScreen from './screens/BlogScreen';
 import DriversScreen from './screens/DriversScreen';
+import HomeAppScreen from './screens/HomeAppScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -42,6 +43,7 @@ export default function MainNavigator() {
   return (
     <Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen name="HomeApp" component={HomeAppScreen} />
       <Stack.Screen name="Register" component={RegisterScreen} />
       <Stack.Screen name="Market" component={MarketScreen} />
       <Stack.Screen name="signIn" component={SignIn} />

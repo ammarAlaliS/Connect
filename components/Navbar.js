@@ -83,8 +83,23 @@ const Navbar = () => {
                                             <KeyIcon width={35} height={35} color="#1E293B" />
                                             <Text style={styles.link}>Registro</Text>
                                         </View>
+
                                     </View>
 
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    className="  px-6 bg-white mt-2  border-2 border-gray-200/20 shadow-lg shadow-black "
+                                    onPress={() => handleNavigation('signIn')}
+                                >
+                                    <View className=" flex-row items-center space-x-2 ">
+
+                                        <View className=" flex-row items-center space-x-2 ">
+                                            <View className=" flex-row items-center space-x-3 flex-1">
+                                                <LogginIcon width={35} height={35} color="#1E293B" />
+                                                <Text style={styles.link}>Iniciar sesion</Text>
+                                            </View>
+                                        </View>
+                                    </View>
                                 </TouchableOpacity>
 
 
@@ -140,31 +155,19 @@ const Navbar = () => {
                                     </View>
                                 </TouchableOpacity>
 
-                                <TouchableOpacity
-                                    className="  px-6 bg-white mt-2  border-2 border-gray-200/20 shadow-lg shadow-black "
-                                >
-                                    <View className=" flex-row items-center space-x-2 ">
-                                        <View className=" flex-row items-center space-x-3 flex-1">
-                                            <ContactIcon width={35} height={35} color="#1E293B" />
-                                            <Text style={styles.link}>Contacto</Text>
-                                        </View>
-                                    </View>
-                                </TouchableOpacity>
+
 
 
 
                                 <TouchableOpacity
                                     style={styles.LastLink}
-                                    onPress={() => handleNavigation('signIn')}
                                     className="  px-4 bg-white  mt-2 mb-[120] border-2 border-gray-200/20 shadow-lg shadow-black "
                                 >
-
-                                    <View className=" flex-row items-center space-x-2 ">
-                                        <View className=" flex-row items-center space-x-3 flex-1">
-                                            <LogginIcon width={35} height={35} color="#1E293B" />
-                                            <Text style={styles.link}>Iniciar sesion</Text>
-                                        </View>
+                                    <View className=" flex-row items-center space-x-3 flex-1">
+                                        <ContactIcon width={35} height={35} color="#1E293B" />
+                                        <Text style={styles.link}>Contacto</Text>
                                     </View>
+
 
                                 </TouchableOpacity>
 
@@ -214,7 +217,7 @@ const styles = StyleSheet.create({
     },
     icon: {
         marginTop: 10,
-        marginLeft:10
+        marginLeft: 10
     },
 
 });

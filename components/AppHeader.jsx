@@ -6,6 +6,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import MyIcon from '../icons/MyIcon';
 import { useNavigation } from '@react-navigation/native';
 import { toggleNavbar } from '../globalState/navbarSlice';
+import * as Animatable from 'react-native-animatable';
 
 
 import Navbar from './Navbar';
@@ -19,7 +20,7 @@ const AppHeader = ({ scrollViewRef }) => {
         dispatch(toggleNavbar());
     };
 
-  
+
 
     return (
         <>
@@ -32,7 +33,11 @@ const AppHeader = ({ scrollViewRef }) => {
                 >
                     <TouchableOpacity className="flex-1" onPress={() => navigation.navigate("Home")}>
                         <View className="flex-row items-center flex-1 space-x-2">
-                            <Image
+                            <Animatable.Image
+                                animation="tada"
+                                easing="ease-out"
+                                iterationCount="infinite"
+                                iterationDelay={500}
                                 source={{
                                     uri: "https://quickcaronline.obbaramarket.com/wp-content/uploads/2024/05/cropped-quickcar-1-127x79.png",
                                 }}
@@ -58,7 +63,7 @@ const AppHeader = ({ scrollViewRef }) => {
                     </View>
                 </LinearGradient>
             </View>
-            {navbarVisible && <Navbar/>}
+            {navbarVisible && <Navbar />}
         </>
     );
 };

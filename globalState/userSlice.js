@@ -1,27 +1,25 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-    name: "", 
-    username: "", 
-    email: ""
+  global_user: null,
+  driver_information: null,
 };
 
-export const userSlice = createSlice({
-    name: "user", 
-    initialState,
-    
-    reducers: {
-        addUser: (state, action) => {
-            const {name, username, email} = action.payload;
-            state.name = name;
-            state.username = username;
-            state.email = email;
-        }, 
-        changeEmail: (state, action) =>{
-            state.email = action.payload
-        }
-    }
+const userSlice = createSlice({
+  name: 'user',
+  initialState,
+  reducers: {
+    setUser: (state, action) => {
+      state.global_user = action.payload.global_user;
+      state.driver_information = action.payload.driver_information;
+    },
+    clearUser: (state) => {
+      state.global_user = null;
+      state.driver_information = null;
+    },
+  },
 });
 
-export const { addUser, changeEmail } = userSlice.actions;
+export const { setUser, clearUser } = userSlice.actions;
 export default userSlice.reducer;
+

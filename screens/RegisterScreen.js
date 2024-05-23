@@ -4,10 +4,17 @@ import { useNavigation } from '@react-navigation/native';
 import GlobalStyles from '../components/GlobalStyles';
 import AppHeader from '../components/AppHeader';
 import SelectRegister from '../components/SelectRegister';
+import useCustomFonts from '../fonts/useCustomFonts';
 
 const RegisterScreen = () => {
     const navigation = useNavigation()
     const scrollViewRef = useRef(null);
+    const { fontsLoaded, onLayoutRootView } = useCustomFonts();
+
+    if (!fontsLoaded) {
+        return null; 
+    }
+
 
     useLayoutEffect(() => {
         navigation.setOptions({
