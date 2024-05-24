@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Animated, Easing } from 'react-native'; // Importa Animated y Easing
+import { Animated, Easing } from 'react-native'; 
 import HomeScreen from './screens/HomeScreen';
-import RegisterScreen from './screens/RegisterScreen';
+import Register from './screens/Register';
 import MarketScreen from './screens/MarketScreen';
 import SignIn from './screens/SignIn';
 import LoadScreen from './screens/LoadScreen';
@@ -10,7 +10,7 @@ import { useNavigation } from '@react-navigation/native';
 import BlogScreen from './screens/BlogScreen';
 import DriversScreen from './screens/DriversScreen';
 import HomeAppScreen from './screens/HomeAppScreen';
-
+import SignInForm from './screens/SignInForm';
 const Stack = createNativeStackNavigator();
 
 export default function MainNavigator() {
@@ -42,14 +42,14 @@ export default function MainNavigator() {
 
   return (
     <Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Home" component={HomeScreen} />
-      <Stack.Screen name="HomeApp" component={HomeAppScreen} />
-      <Stack.Screen name="Register" component={RegisterScreen} />
-      <Stack.Screen name="Market" component={MarketScreen} />
-      <Stack.Screen name="signIn" component={SignIn} />
-      <Stack.Screen name="Blog" component={BlogScreen} />
-      <Stack.Screen name="Driver" component={DriversScreen} />
-
+      <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }}/>
+      <Stack.Screen name="HomeApp" component={HomeAppScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="Register" component={Register} options={{ headerShown: false }}/>
+      <Stack.Screen name="Market" component={MarketScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="signIn" component={SignIn} options={{ headerShown: false }} />
+      <Stack.Screen name="Blog" component={BlogScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="Driver" component={DriversScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="SignInForm" component={SignInForm} options={{ headerShown: false }}/>
     </Stack.Navigator>
   );
 }

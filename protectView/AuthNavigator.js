@@ -7,7 +7,7 @@ const Stack = createNativeStackNavigator();
 export default function AuthNavigator() {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="HomeApp" component={HomeAppScreen} />
+     
     </Stack.Navigator>
   );
 }
