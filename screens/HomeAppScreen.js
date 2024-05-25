@@ -28,14 +28,16 @@ const HomeAppScreen = () => {
         translucent
       />
 
-      {user && user.global_user && (
-        <View>
-          <Text>Nombre: {user.global_user.first_name} {user.global_user.last_name}</Text>
-          <Text>Apellido: {user.global_user.last_name}</Text>
-          <Text>Email: {user.global_user.email}</Text>
-          {/* Agrega más campos según la estructura de datos de tu usuario */}
-        </View>
-      )}
+      <View className="flex-1 items-center justify-center">
+        {user && user.global_user && (
+          <View>
+            <Text>Nombre: {user.global_user.first_name} {user.global_user.last_name}</Text>
+            <Text>Apellido: {user.global_user.last_name}</Text>
+            <Text>Email: {user.global_user.email}</Text>
+            {/* Agrega más campos según la estructura de datos de tu usuario */}
+          </View>
+        )}
+      </View>
     </SafeAreaView>
   );
 };
