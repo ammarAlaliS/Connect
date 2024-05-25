@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, TextInput, StyleSheet, Text, TouchableOpacity, Image, ScrollView, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native';
+import { View, TextInput, StyleSheet, Text, TouchableOpacity, StatusBar, ScrollView, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native';
 import { useNavigation, CommonActions } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Fontisto from '@expo/vector-icons/Fontisto';
@@ -23,6 +23,8 @@ const SignInSchema = Yup.object().shape({
         .min(6, 'La contraseña debe tener al menos 6 caracteres')
         .required('La contraseña es obligatoria'),
 });
+
+const statusBarHeight = StatusBar.currentHeight || 0;
 
 const Register = () => {
     const navigation = useNavigation();
@@ -51,8 +53,12 @@ const Register = () => {
                 colors={['#060097', '#8204ff', '#c10fff']}
                 start={{ x: 0.2, y: 0.6 }}
                 end={{ x: 1.5, y: 0 }}
-                style={{ flex: 1 }}
+                style={{ flex: 1, marginTop:statusBarHeight   }}
             >
+            <StatusBar
+            backgroundColor="#fff"
+            barStyle="dark-content"            
+        />
                 <View style={styles.container}>
                     <ScrollView>
                         <View className="h-[700px] items-center justify-center py-10 px-4">
@@ -193,9 +199,9 @@ const Register = () => {
                                             <TouchableOpacity onPress={togglePasswordVisibility}>
                                                 {values.password ? (
                                                     passwordVisible ? (
-                                                        <UnEye width={24} height={24} color="black" />
+                                                        <UnEye width={30} height={30} color="black" />
                                                     ) : (
-                                                        <Eyes width={24} height={24} color="black" />
+                                                        <Eyes width={30} height={30} color="black" />
                                                     )
                                                 ) : null}
                                             </TouchableOpacity>
@@ -250,33 +256,40 @@ const styles = StyleSheet.create({
     inputName: {
         flex: 1,
         fontFamily: 'PlusJakartaSans-Regular',
-        padding: 10,
         borderWidth: 1,
         borderColor: '#ccc',
+        paddingLeft: 10,
+        paddingRight: 10,
         borderRadius: 5,
         backgroundColor: "rgba(173, 216, 230, 0.09)",
         flexDirection: "row",
         alignItems: "center",
         gap: 10
     },
+
     input: {
         fontFamily: 'PlusJakartaSans-Regular',
         width: '100%',
-        padding: 10,
+        paddingLeft: 10,
+        paddingRight: 10,
         borderWidth: 1,
         borderColor: '#ccc',
         borderRadius: 5,
         backgroundColor: "rgba(173, 216, 230, 0.09)",
         flexDirection: "row",
         alignItems: "center",
-        gap: 10
+        gap: 10,
+        
+
     },
+
     inputError: {
         fontFamily: 'PlusJakartaSans-Regular',
         width: '100%',
-        padding: 10,
+        paddingLeft: 10,
+        paddingRight: 10,
         borderWidth: 1,
-        borderColor: '#CE0F0F',
+        borderColor: '#ccc',
         borderRadius: 5,
         backgroundColor: "rgba(255, 0, 0, 0.02)",
         flexDirection: "row",
@@ -286,7 +299,8 @@ const styles = StyleSheet.create({
     username: {
         fontFamily: 'PlusJakartaSans-Bold',
         fontSize: 14,
-        flex: 1
+        flex: 1,
+        paddingVertical: 10,     
     },
     text: {
         fontFamily: 'PlusJakartaSans-Regular',

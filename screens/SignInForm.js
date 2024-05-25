@@ -264,7 +264,9 @@ const styles = StyleSheet.create({
         backgroundColor: "rgba(173, 216, 230, 0.09)",
         flexDirection: "row",
         alignItems: "center",
-        gap: 10
+        gap: 10,
+        
+
     },
 
     inputError: {
@@ -284,7 +286,9 @@ const styles = StyleSheet.create({
         fontFamily: 'PlusJakartaSans-Bold',
         fontSize: 14,
         flex: 1,
-        paddingVertical: 10
+        paddingVertical: 10, 
+        
+        
     },
     text: {
         fontFamily: 'PlusJakartaSans-Regular',

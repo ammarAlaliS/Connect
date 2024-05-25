@@ -89,7 +89,7 @@ const Navbar = () => {
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     className="  px-6 bg-white mt-2  border-2 border-gray-200/20 shadow-lg shadow-black "
-                                    onPress={() => handleNavigation('signIn')}
+                                    onPress={() => handleNavigation('SignInForm')}
                                 >
                                     <View className=" flex-row items-center space-x-2 ">
 
