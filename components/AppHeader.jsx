@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, Image, StyleSheet, StatusBar } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSelector, useDispatch } from 'react-redux';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -7,9 +7,9 @@ import MyIcon from '../icons/MyIcon';
 import { useNavigation } from '@react-navigation/native';
 import { toggleNavbar } from '../globalState/navbarSlice';
 import * as Animatable from 'react-native-animatable';
-
-
 import Navbar from './Navbar';
+
+const statusBarHeight = StatusBar.currentHeight || 0;
 
 const AppHeader = ({ scrollViewRef }) => {
     const navigation = useNavigation()
@@ -29,37 +29,56 @@ const AppHeader = ({ scrollViewRef }) => {
                     colors={['#060097', '#8204ff', '#c10fff']}
                     start={{ x: 0.2, y: 0.6 }}
                     end={{ x: 1.5, y: 0 }}
-                    className="flex-row items-center w-full  px-6 h-full "
-                >
-                    <TouchableOpacity className="flex-1" onPress={() => navigation.navigate("Home")}>
-                        <View className="flex-row items-center flex-1 space-x-2">
-                            <Animatable.Image
-                                animation="tada"
-                                easing="ease-out"
-                                iterationCount="infinite"
-                                iterationDelay={500}
-                                source={{
-                                    uri: "https://quickcaronline.obbaramarket.com/wp-content/uploads/2024/05/cropped-quickcar-1-127x79.png",
-                                }}
-                                style={[styles.logo]}
-                                resizeMode="contain"
-                            />
-                            <Text className="font-bold text-3xl text-[#fff] ">Quickcar</Text>
-                        </View>
-                    </TouchableOpacity>
-                    <View>
-                        <TouchableOpacity onPress={handleToggleNavbar}>
-                            {!navbarVisible ? (
-                                <View className=" border-2 border-white/0 border-dotted  p-1">
-                                    <Icon name="menu-outline" size={30} color="white" />
-                                </View>
-                            ) : (
-                                <View className=" border-2 border-white/50 border-dotted p-1">
-                                    <MyIcon width={30} height={30} color="white" />
-                                </View>
+                    style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        width: '100%',
+                        height:'100%'
+                    }}
 
-                            )}
+                >
+                    <StatusBar
+                        backgroundColor="transparent"
+                        barStyle="light-content"
+                        translucent
+                    />
+                    <View  style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        width: '100%',
+                        paddingHorizontal: 24,
+                        marginTop:statusBarHeight,
+                    }}>
+                        <TouchableOpacity style={{ flex: 1 }} onPress={() => navigation.navigate("Home")}>
+                            <View className="flex-row items-center flex-1 space-x-2">
+                                <Animatable.Image
+                                    animation="tada"
+                                    easing="ease-out"
+                                    iterationCount="infinite"
+                                    iterationDelay={500}
+                                    source={{
+                                        uri: "https://quickcaronline.obbaramarket.com/wp-content/uploads/2024/05/cropped-quickcar-1-127x79.png",
+                                    }}
+                                    style={[styles.logo]}
+                                    resizeMode="contain"
+                                />
+                                <Text className="font-bold text-3xl text-[#fff] ">Quickcar</Text>
+                            </View>
                         </TouchableOpacity>
+                        <View>
+                            <TouchableOpacity onPress={handleToggleNavbar}>
+                                {!navbarVisible ? (
+                                    <View className=" border-2 border-white/0 border-dotted  p-1">
+                                        <Icon name="menu-outline" size={30} color="white" />
+                                    </View>
+                                ) : (
+                                    <View className=" border-2 border-white/50 border-dotted p-1">
+                                        <MyIcon width={30} height={30} color="white" />
+                                    </View>
+
+                                )}
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 </LinearGradient>
             </View>

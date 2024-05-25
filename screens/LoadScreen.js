@@ -1,11 +1,25 @@
 import React, { useLayoutEffect } from 'react';
-import { StyleSheet, View, Text, SafeAreaView, Image, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, Text, SafeAreaView, Image, ActivityIndicator, StatusBar } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Animatable from 'react-native-animatable';
 
+const statusBarHeight = StatusBar.currentHeight || 0;
 const LoadScreen = () => {
     return (
         <SafeAreaView style={styles.container}>
+            <LinearGradient
+                colors={['#060097', '#8204ff', '#c10fff']}
+                start={{ x: 0.2, y: 0.6 }}
+                end={{ x: 1.5, y: 0 }}
+                style={{
+                    height: statusBarHeight 
+                }}
+            />
+            <StatusBar
+                backgroundColor="transparent"
+                barStyle="light-content"
+                translucent
+            />
             <View style={styles.container}>
                 <LinearGradient
                     colors={['#060097', '#8204ff', '#c10fff']}
@@ -63,9 +77,9 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     container_content: {
-        flex:1,
-        alignItems:'center', 
-        justifyContent:'center'
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center'
 
     },
     text: {

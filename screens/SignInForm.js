@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, TextInput, StyleSheet, Text, TouchableOpacity, Image, ScrollView, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native';
+import { View, TextInput, StyleSheet, Text, TouchableOpacity, StatusBar, ScrollView, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native';
 import { useNavigation, CommonActions } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Fontisto from '@expo/vector-icons/Fontisto';
@@ -13,6 +13,8 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import Toast from 'react-native-toast-message';
 import * as Animatable from 'react-native-animatable';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import GlobalStyles from '../components/GlobalStyles';
 
 const SignInSchema = Yup.object().shape({
     email: Yup.string()
@@ -22,6 +24,7 @@ const SignInSchema = Yup.object().shape({
         .min(6, 'La contraseña debe tener al menos 6 caracteres')
         .required('La contraseña es obligatoria'),
 });
+
 
 const SignInForm = () => {
     const navigation = useNavigation();
@@ -44,8 +47,13 @@ const SignInForm = () => {
     return (
         <KeyboardAvoidingView
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            style={{ flex: 1 }}
+            style={{flex:1}}
         >
+            <StatusBar
+                backgroundColor={Platform.OS === 'android' ? '#FFFFFF' : '#000000'}
+                barStyle={Platform.OS === 'android' ? 'dark-content' : 'light-content'}
+                translucent={false}
+            />
             <LinearGradient
                 colors={['#060097', '#8204ff', '#c10fff']}
                 start={{ x: 0.2, y: 0.6 }}
@@ -89,9 +97,9 @@ const SignInForm = () => {
                                     style={styles.welcome}
 
                                 >
-                                Iniciar Sesion
+                                    Iniciar Sesion
                                 </Animatable.Text>
-                               
+
                             </View>
                             <Formik
                                 initialValues={{ email: '', password: '' }}
@@ -108,37 +116,56 @@ const SignInForm = () => {
 
                                         if (response.ok) {
                                             const data = await response.json();
-                                            dispatch(setUser(data));
+                                            console.log(data)
+                                            // Persistir los datos del usuario en AsyncStorage
+                                            await AsyncStorage.setItem('userData', JSON.stringify(data));
+                                            // Actualizar el estado global con la información del usuario
+                                            dispatch(setUser({
+                                                global_user: {
+                                                    _id: data._id,
+                                                    email: data.email,
+                                                    first_name: data.first_name,
+                                                    last_name: data.last_name,
+                                                    token: data.token
+                                                },
+                                                driver_information: data.QuickCar
+                                            }));
+                                            // Mostrar mensaje de éxito
                                             Toast.show({
                                                 type: 'success',
                                                 text1: 'Inicio de sesión exitoso',
                                                 text2: 'Redirigiendo...',
                                             });
+                                            // Redirigir al usuario a la pantalla principal después de un breve retraso
                                             setTimeout(() => {
                                                 navigation.dispatch(
                                                     CommonActions.reset({
                                                         index: 0,
-                                                        routes: [{ name: 'HomeApp' }],
+                                                        routes: [{ name: 'MainScreen' }],
                                                     })
                                                 );
                                             }, 1000);
-                                            setButtonText(false);
+                                            // Limpiar el formulario
                                             resetForm();
+                                            setButtonText(false)
                                         } else {
+                                            // Mostrar mensaje de error si las credenciales son incorrectas
                                             Toast.show({
                                                 type: 'error',
                                                 text1: 'Error contraseña o correo incorrecto',
                                                 text2: 'Por favor, intenta de nuevo.',
                                             });
-                                            setButtonText(false);
+                                            setButtonText(false)
                                         }
                                     } catch (error) {
+                                        // Manejar errores generales
                                         Toast.show({
                                             type: 'error',
                                             text1: 'Error',
                                             text2: 'Algo salió mal. Por favor, intenta de nuevo.',
                                         });
                                     } finally {
+                                        // Establecer isSubmitting en falso para permitir nuevos envíos
                                         setSubmitting(false);
                                     }
                                 }}
@@ -229,7 +256,8 @@ const styles = StyleSheet.create({
     input: {
         fontFamily: 'PlusJakartaSans-Regular',
         width: '100%',
-        padding: 10,
+        paddingLeft: 10,
+        paddingRight: 10,
         borderWidth: 1,
         borderColor: '#ccc',
         borderRadius: 5,
@@ -242,11 +270,11 @@ const styles = StyleSheet.create({
     inputError: {
         fontFamily: 'PlusJakartaSans-Regular',
         width: '100%',
-        padding: 10,
+        paddingLeft: 10,
+        paddingRight: 10,
         borderWidth: 1,
-        borderColor: '#CE0F0F',
+        borderColor: '#ccc',
         borderRadius: 5,
-        backgroundColor: "#fff",
         backgroundColor: "rgba(255, 0, 0, 0.02)",
         flexDirection: "row",
         alignItems: "center",
@@ -255,7 +283,8 @@ const styles = StyleSheet.create({
     username: {
         fontFamily: 'PlusJakartaSans-Bold',
         fontSize: 14,
-        flex: 1
+        flex: 1,
+        paddingVertical: 10
     },
     text: {
         fontFamily: 'PlusJakartaSans-Regular',

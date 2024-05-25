@@ -116,7 +116,6 @@ export default function Carousel() {
     return (
 
         <SafeAreaView style={styles.container}>
-            <StatusBar hidden />
             <Backdrop scrollX={scrollX} />
             <Animated.FlatList
                 
