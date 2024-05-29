@@ -12,6 +12,10 @@ const useCustomFonts = () => {
     'PlusJakartaSans-SemiBold': require('../assets/fonts/PlusJakartaSans-SemiBold.ttf'),
     'PlusJakartaSans-Bold': require('../assets/fonts/PlusJakartaSans-Bold.ttf'),
     'PlusJakartaSans-ExtraBold': require('../assets/fonts/PlusJakartaSans-ExtraBold.ttf'),
+
+    // Elina font 
+
+    'Eina01-BoldItalic': require('../assets/fonts/Eina01-BoldItalic.ttf')
  
    
 

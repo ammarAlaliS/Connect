@@ -18,7 +18,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.ammaralisali.Quickcar"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -27,9 +28,16 @@
       [
         "expo-font",
         {
-          "fonts": ["./assets/fonts/PlusJakartaSans-Regular.ttf"]
+          "fonts": [
+            "./assets/fonts/PlusJakartaSans-Regular.ttf"
+          ]
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "cd10bf1a-dc65-4fdd-9545-83955fc41c35"
+      }
+    }
   }
 }

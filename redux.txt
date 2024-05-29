@@ -8,3 +8,9 @@ y el reducer devuelve un nuevo estado y este nuevo estado se almacena en el stor
 luego redux actualiza a todos los componentes que esten utlizando este estado. 
 
 <View style={styles[inputColor.input || (touched.email && errors.email ? 'inputError' : 'inputSuccess')]}>
+
+    <StatusBar
+        backgroundColor="transparent"
+        barStyle="light-content"
+        translucent
+      />

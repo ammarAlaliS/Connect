@@ -8,6 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 import { toggleNavbar } from '../globalState/navbarSlice';
 import * as Animatable from 'react-native-animatable';
 import Navbar from './Navbar';
+import useCustomFonts from '../fonts/useCustomFonts';
 
 const statusBarHeight = StatusBar.currentHeight || 0;
 
@@ -15,6 +16,11 @@ const AppHeader = ({ scrollViewRef }) => {
     const navigation = useNavigation()
     const navbarVisible = useSelector(state => state.navbar.visible);
     const dispatch = useDispatch();
+    const { fontsLoaded, onLayoutRootView } = useCustomFonts();
+
+    if (!fontsLoaded) {
+        return null; 
+    }
 
     const handleToggleNavbar = () => {
         dispatch(toggleNavbar());
@@ -62,14 +68,14 @@ const AppHeader = ({ scrollViewRef }) => {
                                     style={[styles.logo]}
                                     resizeMode="contain"
                                 />
-                                <Text className="font-bold text-3xl text-[#fff] ">Quickcar</Text>
+                                <Text style={{fontFamily:'Eina01-BoldItalic'}} className=" text-3xl text-[#fff] ">QuickCar</Text>
                             </View>
                         </TouchableOpacity>
                         <View>
                             <TouchableOpacity onPress={handleToggleNavbar}>
                                 {!navbarVisible ? (
                                     <View className=" border-2 border-white/0 border-dotted  p-1">
-                                        <Icon name="menu-outline" size={30} color="white" />
+                                        <Icon name="menu-outline" size={40} color="white" />
                                     </View>
                                 ) : (
                                     <View className=" border-2 border-white/50 border-dotted p-1">

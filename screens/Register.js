@@ -14,6 +14,7 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import Toast from 'react-native-toast-message';
 import * as Animatable from 'react-native-animatable';
+import Image_C from '../components/Image_C';
 
 const SignInSchema = Yup.object().shape({
     email: Yup.string()
@@ -34,12 +35,7 @@ const Register = () => {
     const [buttonText, setButtonText] = React.useState(false);
     const [inputColor, setInputColor] = React.useState(["input", "inputError", "inputSuccess"]);
 
-    React.useLayoutEffect(() => {
-        navigation.setOptions({
-            headerShown: false,
-        });
-    }, [navigation]);
-
+   
     const togglePasswordVisibility = () => {
         setPasswordVisible(!passwordVisible);
     };
@@ -61,7 +57,7 @@ const Register = () => {
         />
                 <View style={styles.container}>
                     <ScrollView>
-                        <View className="h-[700px] items-center justify-center py-10 px-4">
+                        <View className="min-h-[700px] items-center justify-center py-10 px-4">
                             <TouchableOpacity className="mb-12" onPress={() => navigation.navigate("Home")}>
                                 <View className="flex-col items-center">
                                     <Animatable.Image
@@ -81,7 +77,8 @@ const Register = () => {
                                         animation="pulse"
                                         iterationDelay={1500}
                                         iterationCount="infinite"
-                                        className="font-bold text-4xl text-[#3402BE]"
+                                        className=" text-4xl text-[#3402BE]"
+                                        style={{fontFamily:'Eina01-BoldItalic'}} 
 
                                     >
                                         Quickcar
@@ -209,6 +206,8 @@ const Register = () => {
                                         {errors.password && touched.password ? (
                                             <Text style={styles.error}>{errors.password}</Text>
                                         ) : null}
+
+                                        <Image_C/>
                                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingTop: 5, paddingBottom: 5 }}>
                                             <TouchableOpacity onPress={() => navigation.navigate("SignInForm")}>
                                                 <Text style={styles.text}>Ya tienes cuentas? Inicia sesion</Text>

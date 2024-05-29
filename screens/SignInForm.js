@@ -31,14 +31,9 @@ const SignInForm = () => {
     const dispatch = useDispatch();
     const [passwordVisible, setPasswordVisible] = React.useState(false);
     const { fontsLoaded } = useCustomFonts();
+    
     const [buttonText, setButtonText] = React.useState(false);
     const [inputColor, setInputColor] = React.useState(["input", "inputError", "inputSuccess"])
-
-    React.useLayoutEffect(() => {
-        navigation.setOptions({
-            headerShown: false,
-        });
-    }, [navigation]);
 
     const togglePasswordVisibility = () => {
         setPasswordVisible(!passwordVisible);
@@ -47,7 +42,7 @@ const SignInForm = () => {
     return (
         <KeyboardAvoidingView
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            style={{flex:1}}
+            style={{ flex: 1 }}
         >
             <StatusBar
                 backgroundColor={Platform.OS === 'android' ? '#FFFFFF' : '#000000'}
@@ -55,9 +50,9 @@ const SignInForm = () => {
                 translucent={false}
             />
             <LinearGradient
-                colors={['#060097', '#8204ff', '#c10fff']}
-                start={{ x: 0.2, y: 0.6 }}
-                end={{ x: 1.5, y: 0 }}
+                colors={['#4F03D4', '#BA0EFF', '#FFCD57']}
+                start={{ x: 1, y: 0.5 }}
+                end={{ x: 0, y: 0.1 }} 
                 style={{ flex: 1 }}
             >
                 <View style={styles.container}>
@@ -82,7 +77,8 @@ const SignInForm = () => {
                                         animation="pulse"
                                         iterationDelay={1500}
                                         iterationCount="infinite"
-                                        className="font-bold text-4xl text-[#3402BE]"
+                                        className=" text-4xl text-[#3402BE]"
+                                        style={{fontFamily:'Eina01-BoldItalic'}}
 
                                     >
                                         Quickcar
@@ -251,6 +247,12 @@ const styles = StyleSheet.create({
         marginVertical: 20,
         backgroundColor: "#fff",
         borderRadius: 5,
+        borderWidth: 2,
+        borderColor: 'rgba(200, 200, 200, 0.5)',
+        shadowColor: '#000000',
+        shadowOffset: { width: 20, height: 20 }, 
+        shadowRadius: 10,
+        elevation: 30,
     },
 
     input: {
@@ -265,7 +267,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         gap: 10,
-        
+
 
     },
 
@@ -286,9 +288,9 @@ const styles = StyleSheet.create({
         fontFamily: 'PlusJakartaSans-Bold',
         fontSize: 14,
         flex: 1,
-        paddingVertical: 10, 
-        
-        
+        paddingVertical: 10,
+
+
     },
     text: {
         fontFamily: 'PlusJakartaSans-Regular',
