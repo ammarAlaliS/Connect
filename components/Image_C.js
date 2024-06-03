@@ -3,7 +3,7 @@ import { Button, Image, View, StyleSheet } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import * as ImagePicker from 'expo-image-picker';
 
-const Image_C = () => {
+const Image_C = ({ onImageSelected }) => {
     const { control, handleSubmit, setValue } = useForm();
     const [selectedImage, setSelectedImage] = useState(null);
 
@@ -24,10 +24,9 @@ const Image_C = () => {
 
         if (!result.canceled) {
             setSelectedImage(result.assets[0]);
-            setValue('photo', result.assets[0]);
+            onImageSelected(result.assets[0]);
         }
     };
-
 
     return (
         <View style={styles.container}>
@@ -38,7 +37,6 @@ const Image_C = () => {
                     style={styles.image}
                 />
             )}
-
         </View>
     );
 };
@@ -47,7 +45,7 @@ const styles = StyleSheet.create({
     container: {
         width: '100%',
         padding: 20,
-        alignItems:'center'
+        alignItems: 'center'
     },
     image: {
         width: 100,

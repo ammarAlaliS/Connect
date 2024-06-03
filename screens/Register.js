@@ -34,10 +34,14 @@ const Register = () => {
     const { fontsLoaded } = useCustomFonts();
     const [buttonText, setButtonText] = React.useState(false);
     const [inputColor, setInputColor] = React.useState(["input", "inputError", "inputSuccess"]);
+    const [selectedImage, setSelectedImage] = React.useState(null);
 
-   
     const togglePasswordVisibility = () => {
         setPasswordVisible(!passwordVisible);
+    };
+
+    const handleImageSelected = (selectedImage) => {
+        setSelectedImage(selectedImage);
     };
 
     return (
@@ -49,12 +53,12 @@ const Register = () => {
                 colors={['#060097', '#8204ff', '#c10fff']}
                 start={{ x: 0.2, y: 0.6 }}
                 end={{ x: 1.5, y: 0 }}
-                style={{ flex: 1, marginTop:statusBarHeight   }}
+                style={{ flex: 1, marginTop: statusBarHeight }}
             >
-            <StatusBar
-            backgroundColor="#fff"
-            barStyle="dark-content"            
-        />
+                <StatusBar
+                    backgroundColor="#fff"
+                    barStyle="dark-content"
+                />
                 <View style={styles.container}>
                     <ScrollView>
                         <View className="min-h-[700px] items-center justify-center py-10 px-4">
@@ -65,21 +69,18 @@ const Register = () => {
                                         easing="ease-out"
                                         iterationCount="infinite"
                                         iterationDelay={1000}
-
                                         source={{
                                             uri: "https://quickcaronline.obbaramarket.com/wp-content/uploads/2024/05/cropped-quickcar-1-127x79.png",
                                         }}
                                         className="w-24 h-24"
                                         resizeMode="contain"
-
                                     />
                                     <Animatable.Text
                                         animation="pulse"
                                         iterationDelay={1500}
                                         iterationCount="infinite"
-                                        className=" text-4xl text-[#3402BE]"
-                                        style={{fontFamily:'Eina01-BoldItalic'}} 
-
+                                        className="text-4xl text-[#3402BE]"
+                                        style={{ fontFamily: 'Eina01-BoldItalic' }}
                                     >
                                         Quickcar
                                     </Animatable.Text>
@@ -91,61 +92,80 @@ const Register = () => {
                                     iterationCount={1}
                                     iterationDelay={2000}
                                     style={styles.welcome}
-
                                 >
-                                    Registro de Usuario                                
+                                    Registro de Usuario
                                 </Animatable.Text>
                             </View>
                             <Formik
-                                initialValues={{ email: '', password: '' }}
-                                validationSchema={SignInSchema}
-                                onSubmit={async (values, { setSubmitting, resetForm }) => {
-                                    try {
-                                        const response = await fetch('https://obbaramarket-backend-1.onrender.com/api/ObbaraMarket/register', {
-                                            method: 'POST',
-                                            headers: {
-                                                'Content-Type': 'application/json',
-                                            },
-                                            body: JSON.stringify({ global_user: values })
+                            initialValues={{
+                                first_name: '',
+                                last_name: '',
+                                email: '',
+                                password: ''
+                            }}
+                            validationSchema={SignInSchema}
+                            onSubmit={async (values, { setSubmitting, resetForm }) => {
+                                try {
+                                    const formData = new FormData();
+                                    formData.append('email', values.email);
+                                    formData.append('password', values.password);
+                                    formData.append('first_name', values.first_name);
+                                    formData.append('last_name', values.last_name);
+                                    if (selectedImage) {
+                                        formData.append('profile_img_url', {
+                                            uri: selectedImage.uri,
+                                            type: 'image/jpeg',
+                                            name: 'profile_img.jpg'
                                         });
+                                    }
+                                    console.log(values)
 
-                                        if (response.ok) {
-                                            const data = await response.json();
+                                    // Log the FormData as key-value pairs
+                                    console.log("Datos enviados:", formData);
 
-                                            Toast.show({
-                                                type: 'success',
-                                                text1: 'Registro exitoso',
-                                                text2: 'Redirigiendo...',
-                                            });
-                                            setTimeout(() => {
-                                                navigation.dispatch(
-                                                    CommonActions.reset({
-                                                        index: 0,
-                                                        routes: [{ name: 'SignInForm' }],
-                                                    })
-                                                );
-                                            }, 1000);
-                                            setButtonText(false);
-                                            resetForm();
-                                        } else {
-                                            Toast.show({
-                                                type: 'error',
-                                                text1: 'Error al registrarse.',
-                                                text2: 'Por favor, intenta de nuevo.',
-                                            });
-                                            setButtonText(false);
-                                        }
-                                    } catch (error) {
+                                    const response = await fetch('https://obbaramarket-backend-1.onrender.com/api/ObbaraMarket/register', {
+                                        method: 'POST',
+                                        body: formData,
+                                    });
+
+                                    if (response.ok) {
+                                        Toast.show({
+                                            type: 'success',
+                                            text1: 'Registro exitoso',
+                                            text2: 'Redirigiendo...',
+                                        });
+                                        setTimeout(() => {
+                                            navigation.dispatch(
+                                                CommonActions.reset({
+                                                    index: 0,
+                                                    routes: [{ name: 'SignInForm' }],
+                                                })
+                                            );
+                                        }, 1000);
+                                        setButtonText(false);
+                                        resetForm();
+                                    } else {
+                                        const errorData = await response.json();
+                                        console.error('Error en el backend:', errorData);
                                         Toast.show({
                                             type: 'error',
-                                            text1: 'Error',
-                                            text2: 'Algo salió mal. Por favor, intenta de nuevo.',
+                                            text1: 'Error al registrarse.',
+                                            text2: errorData.message || 'Por favor, intenta de nuevo.',
                                         });
-                                    } finally {
-                                        setSubmitting(false);
+                                        setButtonText(false);
                                     }
-                                }}
-                            >
+                                } catch (error) {
+                                    console.error('Error al enviar la solicitud:', error);
+                                    Toast.show({
+                                        type: 'error',
+                                        text1: 'Error',
+                                        text2: 'Algo salió mal. Por favor, intenta de nuevo.',
+                                    });
+                                } finally {
+                                    setSubmitting(false);
+                                }
+                            }}
+                        >
                                 {({ handleChange, handleBlur, handleSubmit, values, errors, touched, isValid, isSubmitting }) => (
                                     <View className="flex w-full space-y-3">
                                         <View className="flex-row w-full space-x-3">
@@ -207,23 +227,17 @@ const Register = () => {
                                             <Text style={styles.error}>{errors.password}</Text>
                                         ) : null}
 
-                                        <Image_C/>
-                                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingTop: 5, paddingBottom: 5 }}>
-                                            <TouchableOpacity onPress={() => navigation.navigate("SignInForm")}>
-                                                <Text style={styles.text}>Ya tienes cuentas? Inicia sesion</Text>
-                                            </TouchableOpacity>
-
-                                        </View>
-                                        <TouchableOpacity onPress={() => { handleSubmit(); setButtonText(true); }} disabled={!values.email || !values.password || isSubmitting || !isValid}>
+                                        <Image_C onImageSelected={handleImageSelected} />
+                                        <TouchableOpacity onPress={() => { handleSubmit(); setButtonText(true); }} disabled={!values.email || !values.password || isSubmitting}>
                                             <LinearGradient
                                                 colors={['#060097', '#8204ff', '#c10fff']}
                                                 start={{ x: 0.2, y: 0.6 }}
                                                 end={{ x: 1.5, y: 0 }}
-                                                style={{ paddingVertical: 12, paddingHorizontal: 24, alignItems: 'center', borderRadius: 5 }}
+                                                style={{ padding: 10, borderRadius: 5 }}
                                             >
-                                                <View>
+                                                <View className="flex-row items-center justify-center">
                                                     {!buttonText ? (
-                                                        <Text style={styles.buttom}>REGISTRARSE</Text>
+                                                        <Text style={styles.buttom}>REGISTRAR</Text>
                                                     ) : (
                                                         <View className="flex-row items-center space-x-4">
                                                             <Text style={styles.buttom}>REGISTRANDO ...</Text>
@@ -265,7 +279,6 @@ const styles = StyleSheet.create({
         alignItems: "center",
         gap: 10
     },
-
     input: {
         fontFamily: 'PlusJakartaSans-Regular',
         width: '100%',
@@ -278,10 +291,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         gap: 10,
-        
-
     },
-
     inputError: {
         fontFamily: 'PlusJakartaSans-Regular',
         width: '100%',
@@ -299,7 +309,7 @@ const styles = StyleSheet.create({
         fontFamily: 'PlusJakartaSans-Bold',
         fontSize: 14,
         flex: 1,
-        paddingVertical: 10,     
+        paddingVertical: 10,
     },
     text: {
         fontFamily: 'PlusJakartaSans-Regular',

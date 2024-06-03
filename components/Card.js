@@ -22,11 +22,13 @@ const Card = () => {
                             uri:  user.global_user.profile_img_url
                         }}
                         style={{
-                            width: 65,
-                            height: 65,
-                            borderRadius: 9999
+                            width: 70,
+                            height: 70,
+                            borderRadius: 9999, 
+                            borderWidth: 2,
+                            borderColor: 'rgba(255, 205, 87, 0.6)',
                         }}
-                        resizeMode="contain"
+                        resizeMode="cover"
                     />
                     <Text style={{ fontFamily: 'PlusJakartaSans-SemiBold' }} className="text-sm">Usuario</Text>
                 </View> 
@@ -72,7 +74,7 @@ const Card = () => {
                                 alignSelf: 'flex-start',
 
                             }}>
-                                <Text style={{ color: 'white', fontSize: 14, fontFamily: 'PlusJakartaSans-SemiBold', paddingBottom: 1 }}>Buscar viaje</Text>
+                                <Text style={{ color: 'white', fontSize: 14, fontFamily: 'PlusJakartaSans-SemiBold', paddingBottom: 2 }}>Buscar viaje</Text>
                             </View>
                         </TouchableOpacity>
                         <TouchableOpacity>
@@ -91,10 +93,9 @@ const Card = () => {
                                 alignItems: 'center',
                                 gap: 10
 
-
                             }}>
                                 <AntDesign name="pluscircle" size={16} color="white" />
-                                <Text style={{ color: 'black', fontSize: 14, fontFamily: 'PlusJakartaSans-SemiBold', paddingBottom: 1 }}>Se conductor</Text>
+                                <Text style={{ color: 'black', fontSize: 14, fontFamily: 'PlusJakartaSans-SemiBold', paddingBottom: 2}}>Ser conductor</Text>
                             </View>
                         </TouchableOpacity>
 
