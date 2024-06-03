@@ -68,10 +68,15 @@ const HomeAppScreen = () => {
             <Ionicons name="notifications-circle-outline" size={40} color="#FFCD57" />
           </Animatable.View>
         </View>
+
+
         <View style={{ flex: 1, backgroundColor: '#F9F6FE', paddingVertical: 6 }}>
           <Card />
         </View>
+
+        
         <View
+
           className=" flex-row items-center w-full px-[24px] bg-[#3205ff] h-[80px] border-t-[1px] shadow-2xl shadow-black/40 justify-between "
         >
           <TouchableOpacity

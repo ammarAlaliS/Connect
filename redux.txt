@@ -14,3 +14,8 @@ luego redux actualiza a todos los componentes que esten utlizando este estado.
         barStyle="light-content"
         translucent
       />
+
+       <LinearGradient
+                                            >
+                                               
+                                            </LinearGradient>

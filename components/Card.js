@@ -19,7 +19,7 @@ const Card = () => {
                     <Animatable.Image
                        
                         source={{
-                            uri: "https://scontent.fmga3-2.fna.fbcdn.net/v/t39.30808-6/430662477_3753105765016122_830661294830137238_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=5f2048&_nc_ohc=n6xvJJmffccQ7kNvgGwP0rx&_nc_ht=scontent.fmga3-2.fna&oh=00_AYDURnrPBrAnZEiqyzE25xmuX-lDQWG0-yFZJFp88HNi7w&oe=665C4D51",
+                            uri:  user.global_user.profile_img_url
                         }}
                         style={{
                             width: 65,
@@ -70,8 +70,6 @@ const Card = () => {
                                 paddingVertical: 5,
                                 paddingHorizontal: 10,
                                 alignSelf: 'flex-start',
-
-
 
                             }}>
                                 <Text style={{ color: 'white', fontSize: 14, fontFamily: 'PlusJakartaSans-SemiBold', paddingBottom: 1 }}>Buscar viaje</Text>
