@@ -1,0 +1,21 @@
+los estados de redux se almacenan en un objeto que se llama store 
+para cambiar el estado de la web o app se utliza el reducer. 
+el reducer es una funcion que toma el estado actual y una accion como entrada
+y devuelve un nuevo estado 
+una accion es un objeto que container un typo y un payload
+cuando una accion se ejecuta se envia al store y se procesa atravez del reducer. 
+y el reducer devuelve un nuevo estado y este nuevo estado se almacena en el store. 
+luego redux actualiza a todos los componentes que esten utlizando este estado. 
+
+<View style={styles[inputColor.input || (touched.email && errors.email ? 'inputError' : 'inputSuccess')]}>
+
+    <StatusBar
+        backgroundColor="transparent"
+        barStyle="light-content"
+        translucent
+      />
+
+       <LinearGradient
+                                            >
+                                               
+                                            </LinearGradient>
