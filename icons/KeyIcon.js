@@ -1,5 +1,5 @@
-import React from 'react';
-import Svg, { Path } from 'react-native-svg';
+import React from "react";
+import Svg, { Path } from "react-native-svg";
 
 const KeyIcon = ({ width, height, color }) => (
   <Svg width={width} height={height} viewBox="0 0 24 24" fill={color}>
