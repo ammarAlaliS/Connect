@@ -9,11 +9,10 @@ import {
 } from "react-native";
 import MarketHeader from "../components/MarketComponents/MarketHeader.jsx";
 import { useDispatch } from "react-redux";
-import { addUser } from "../globalState/userSlice";
-import AppHeader from "../components/AppHeader";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { ScrollView } from "react-native";
 import ArticleCard from "../components/MarketComponents/ArticleCard.jsx";
+import FooterMarket from "../components/MarketComponents/FooterMarket.jsx";
 
 const MarketScreen = () => {
   const dispatch = useDispatch();
@@ -25,6 +24,7 @@ const MarketScreen = () => {
   }, []);
   const [search, setSearch] = useState("");
   const [selectedclassification, setSelectedclassification] = useState(1);
+  const [carroDeCompras, setCarroDeCompras] = useState([]);
   const handleFilterPress = () => {
     Alert.alert("Modal para los filtros");
   };
@@ -120,11 +120,6 @@ const MarketScreen = () => {
       urlImage:
         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
     },
-    {
-      id: 17,
-      urlImage:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-    },
   ];
 
   return (
@@ -139,7 +134,7 @@ const MarketScreen = () => {
                 style={styles.searchIcon}
                 name="search"
                 size={20}
-                color="#000"
+                color={search ? "#000000" : "#00000099"}
               />
               <TextInput
                 style={styles.input}
@@ -208,25 +203,39 @@ const MarketScreen = () => {
         {/* Cards de articulos */}
 
         <ScrollView showsVerticalScrollIndicator={false} horizontal={false}>
-          <View
-            className="d-flex flex-row"
-            style={{ flexWrap: "wrap", justifyContent: "space-evenly" }}
-          >
+          <View className="d-flex flex-row" style={styles.articlesContainer}>
             {productList.map((item, index) => {
               return (
-                <ArticleCard urlImage={item.urlImage} key={index}></ArticleCard>
+                <ArticleCard
+                  carroDeCompras={carroDeCompras}
+                  setCarroDeCompras={setCarroDeCompras}
+                  urlImage={item.urlImage}
+                  id={item.id}
+                  key={index}
+                ></ArticleCard>
               );
             })}
           </View>
         </ScrollView>
+        {/* FooterMarket */}
+
+        <FooterMarket></FooterMarket>
       </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  blurContainer: {
+    flex: 1,
+    padding: 20,
+    margin: 16,
+    textAlign: "center",
+    justifyContent: "center",
+    overflow: "hidden",
+  },
   principalContainer: {
-    height: "100%",
+    height: "90%",
     width: "100%",
     backgroundColor: "#f4f5f6",
   },
@@ -296,6 +305,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#2b00b6",
     fontFamily: "Eina01-BoldItalic",
     borderRadius: 5,
+  },
+  articlesContainer: {
+    flexWrap: "wrap",
+    justifyContent: "space-evenly",
+    paddingBottom: 100,
   },
 });
 
