@@ -19,10 +19,12 @@ import MarketScreen from '../screens/MarketScreen';
 import ProfileScreen from '../screens/ProfileScreen'
 import ContactScreen from '../screens/ContactScreen'
 
+
 const HomeAppScreen = () => {
   const [activeScreen, setActiveScreen] = React.useState('Card');
   const user = useSelector(state => state.user);
   const { fontsLoaded, onLayoutRootView } = useCustomFonts();
+  const [animation, setAnimation] = React.useState('fadeIn');
 
   if (!fontsLoaded) {
     return null;
@@ -42,6 +44,14 @@ const HomeAppScreen = () => {
       default:
         return <Card />;
     }
+  };
+
+  const handlePress = (screen) => {
+    setAnimation('fadeIn');
+    setTimeout(() => {
+      setActiveScreen(screen);
+      setAnimation('fadeIn');
+    }, 300); // Duración de la animación
   };
 
   return (
@@ -80,36 +90,40 @@ const HomeAppScreen = () => {
           </Animatable.View>
         </View>
 
-        <View style={{ flex: 1, backgroundColor: '#F9F6FE', paddingVertical: 6 }}>
+        <Animatable.View
+          animation={animation}
+          style={{ flex: 1, backgroundColor: '#F9F6FE', paddingVertical: 6 }}
+          duration={300}
+        >
           {renderContent()}
-        </View>
+        </Animatable.View>
 
         <View className="flex-row items-center w-full px-[24px] bg-[#080099] h-[80px] border-t-[1px] shadow-2xl shadow-black/40 justify-between">
-          <TouchableOpacity onPress={() => setActiveScreen('Store')}>
+          <TouchableOpacity onPress={() => handlePress('Store')}>
             <View className="flex items-center justify-center px-2 space-y-1">
               <StoreIcon width={28} height={28} color="#FFF" />
               <Text style={{ fontFamily: 'PlusJakartaSans-SemiBold' }} className="text-xs text-[#fff]">Tienda</Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => setActiveScreen('Blog')}>
+          <TouchableOpacity onPress={() => handlePress('Blog')}>
             <View className="flex items-center justify-center px-2 space-y-1">
               <BlogIcon width={28} height={28} color="#FFF" />
               <Text style={{ fontFamily: 'PlusJakartaSans-SemiBold' }} className="text-xs text-[#fff]">Blog</Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => setActiveScreen('Profile')}>
+          <TouchableOpacity onPress={() => handlePress('Profile')}>
             <View className="flex items-center justify-center px-2 space-y-1">
               <UserIcon width={28} height={28} color="#fff" />
-              <Text style={{ fontFamily: 'PlusJakartaSans-SemiBold' }} className="text-xs text-[#fff]">Perfil</Text>
+              <Text style={{ fontFamily: 'PlusJakartaSans-SemiBold' }} className=" text-xs text-[#fff]">Perfil</Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => setActiveScreen('Contact')}>
+          <TouchableOpacity onPress={() => handlePress('Contact')}>
             <View className="flex items-center justify-center px-2 space-y-1">
               <ContactIcon width={28} height={28} color="#FFF" />
               <Text style={{ fontFamily: 'PlusJakartaSans-SemiBold' }} className="text-xs text-[#fff]">Contacto</Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => setActiveScreen('Loggin')}>
+          <TouchableOpacity onPress={() => handlePress('Loggin')}>
             <View className="flex items-center justify-center px-2 space-y-1">
               <LogginIcon width={28} height={28} color="#FFF" />
               <Text style={{ fontFamily: 'PlusJakartaSans-SemiBold' }} className="text-xs text-[#fff]">Salir</Text>
