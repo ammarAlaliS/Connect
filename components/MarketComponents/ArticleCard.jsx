@@ -1,8 +1,19 @@
-import { Alert, Image, StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 import { TouchableOpacity } from "react-native";
 import MessageIcon from "../../icons/MessageIcon";
+import { useDispatch, useSelector } from "react-redux";
+import { setMessageBoxState } from "../../globalState/marketSlice.js";
 
 const ArticleCard = ({ urlImage, id }) => {
+  const dispatch = useDispatch();
+  const isMessageBoxActive = useSelector(
+    (state) => state.market?.isMessageBoxActive
+  );
+
+  const handleToggleMessageBox = () => {
+    dispatch(setMessageBoxState());
+  };
+
   return (
     <View style={styles.container}>
       <View style={{ position: "relative", width: "100%", height: 100 }}>
@@ -13,7 +24,10 @@ const ArticleCard = ({ urlImage, id }) => {
           style={styles.imageContainer}
           resizeMode="cover"
         />
-        <TouchableOpacity style={styles.messageContainer}>
+        <TouchableOpacity
+          style={styles.messageContainer}
+          onPress={handleToggleMessageBox}
+        >
           <MessageIcon width={28} height={30} color="#000" />
         </TouchableOpacity>
       </View>

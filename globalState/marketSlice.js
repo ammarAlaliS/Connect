@@ -3,7 +3,8 @@ import { createSlice } from "@reduxjs/toolkit";
 const marketSlice = createSlice({
   name: "market",
   initialState: {
-    idProduct: 1,
+    isMessageBoxActive: false,
+    idProduct: 453,
     userName: "UserA",
     urlProductImage:
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
@@ -17,8 +18,11 @@ const marketSlice = createSlice({
       state.urlProductImage = action.payload.urlProductImage;
       state.urlSellerImage = action.payload.urlSellerImage;
     },
+    setMessageBoxState: (state) => {
+      state.isMessageBoxActive = !state.isMessageBoxActive;
+    },
   },
 });
 
-export const { setProduct } = marketSlice.actions;
+export const { setProduct, setMessageBoxState } = marketSlice.actions;
 export default marketSlice.reducer;

@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
-import MarketHeader from "../components/MarketComponents/MarketHeader.jsx";
 import { useDispatch } from "react-redux";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { ScrollView } from "react-native";
@@ -123,104 +122,100 @@ const MarketScreen = () => {
   ];
 
   return (
-    <View>
-      <MarketHeader />
+    <View style={styles.principalContainer}>
+      <View className="d-flex flex-row">
+        <View style={styles.searchContainer}>
+          <View style={styles.searchSection}>
+            <Icon
+              style={styles.searchIcon}
+              name="search"
+              size={20}
+              color={search ? "#000000" : "#00000099"}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Busca por nombre o codigo"
+              onChangeText={(text) => setSearch(text)}
+              value={search}
+              underlineColorAndroid="transparent"
+            />
+          </View>
+        </View>
 
-      <View style={styles.principalContainer}>
-        <View className="d-flex flex-row">
-          <View style={styles.searchContainer}>
-            <View style={styles.searchSection}>
+        <View style={styles.container}>
+          <View style={styles.searchSection}>
+            <TouchableOpacity onPress={handleFilterPress}>
               <Icon
-                style={styles.searchIcon}
-                name="search"
+                style={styles.secondFilterIcon}
+                name="filter"
                 size={20}
-                color={search ? "#000000" : "#00000099"}
+                color="#000"
               />
-              <TextInput
-                style={styles.input}
-                placeholder="Busca por nombre o codigo"
-                onChangeText={(text) => setSearch(text)}
-                value={search}
-                underlineColorAndroid="transparent"
-              />
-            </View>
-          </View>
-
-          <View style={styles.container}>
-            <View style={styles.searchSection}>
-              <TouchableOpacity onPress={handleFilterPress}>
-                <Icon
-                  style={styles.secondFilterIcon}
-                  name="filter"
-                  size={20}
-                  color="#000"
-                />
-              </TouchableOpacity>
-              <TextInput
-                style={styles.secondImput}
-                onChangeText={(text) => setSearch(text)}
-              />
-            </View>
+            </TouchableOpacity>
+            <TextInput
+              style={styles.secondImput}
+              onChangeText={(text) => setSearch(text)}
+            />
           </View>
         </View>
-
-        <View>
-          <ScrollView
-            style={styles.scrollStyles}
-            horizontal={true}
-            showsHorizontalScrollIndicator={false}
-          >
-            {listClasifications.map((item, index) => {
-              if (item.id == selectedclassification) {
-                return (
-                  <TouchableOpacity
-                    key={index}
-                    style={styles.selectedItem}
-                    onPress={() => {
-                      setSelectedclassification(item.id);
-                    }}
-                  >
-                    <Text style={{ color: "#fff" }}>{item.name}</Text>
-                  </TouchableOpacity>
-                );
-              } else {
-                return (
-                  <TouchableOpacity
-                    key={index}
-                    style={styles.item}
-                    onPress={() => {
-                      setSelectedclassification(item.id);
-                    }}
-                  >
-                    <Text>{item.name}</Text>
-                  </TouchableOpacity>
-                );
-              }
-            })}
-          </ScrollView>
-        </View>
-
-        {/* Cards de articulos */}
-
-        <ScrollView showsVerticalScrollIndicator={false} horizontal={false}>
-          <View className="d-flex flex-row" style={styles.articlesContainer}>
-            {productList.map((item, index) => {
-              return (
-                <ArticleCard
-                  carroDeCompras={carroDeCompras}
-                  setCarroDeCompras={setCarroDeCompras}
-                  urlImage={item.urlImage}
-                  id={item.id}
-                  key={index}
-                ></ArticleCard>
-              );
-            })}
-          </View>
-        </ScrollView>
-        {/* FooterMarket */}
-
-        <FooterMarket></FooterMarket>
       </View>
+
+      <View>
+        <ScrollView
+          style={styles.scrollStyles}
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+        >
+          {listClasifications.map((item, index) => {
+            if (item.id == selectedclassification) {
+              return (
+                <TouchableOpacity
+                  key={index}
+                  style={styles.selectedItem}
+                  onPress={() => {
+                    setSelectedclassification(item.id);
+                  }}
+                >
+                  <Text style={{ color: "#fff" }}>{item.name}</Text>
+                </TouchableOpacity>
+              );
+            } else {
+              return (
+                <TouchableOpacity
+                  key={index}
+                  style={styles.item}
+                  onPress={() => {
+                    setSelectedclassification(item.id);
+                  }}
+                >
+                  <Text>{item.name}</Text>
+                </TouchableOpacity>
+              );
+            }
+          })}
+        </ScrollView>
+      </View>
+
+      {/* Cards de articulos */}
+
+      <ScrollView showsVerticalScrollIndicator={false} horizontal={false}>
+        <View className="d-flex flex-row" style={styles.articlesContainer}>
+          {productList.map((item, index) => {
+            return (
+              <ArticleCard
+                carroDeCompras={carroDeCompras}
+                setCarroDeCompras={setCarroDeCompras}
+                urlImage={item.urlImage}
+                id={item.id}
+                key={index}
+              ></ArticleCard>
+            );
+          })}
+        </View>
+      </ScrollView>
+      {/* FooterMarket */}
+
+      <FooterMarket></FooterMarket>
     </View>
   );
 };
@@ -235,7 +230,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   principalContainer: {
-    height: "90%",
+    height: "100%",
     width: "100%",
     backgroundColor: "#f4f5f6",
   },
