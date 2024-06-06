@@ -44,16 +44,15 @@ export default function MainNavigator() {
   return (
 
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-
      
-      <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
+     
+       <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
       <Stack.Screen name="Register" component={Register} options={{ headerShown: false }} />
       <Stack.Screen name="Market" component={MarketScreen} options={{ headerShown: false }} />
       <Stack.Screen name="Blog" component={BlogScreen} options={{ headerShown: false }} />
       <Stack.Screen name="Driver" component={DriversScreen} options={{ headerShown: false }} />
       <Stack.Screen name="SignInForm" component={SignInForm} options={{ headerShown: false }} />
       <Stack.Screen name="MainScreen" component={HomeAppScreen} />
-
     </Stack.Navigator>
 
   );
