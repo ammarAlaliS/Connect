@@ -25,6 +25,8 @@ const MarketScreen = () => {
   const [search, setSearch] = useState("");
   const [selectedclassification, setSelectedclassification] = useState(1);
   const [carroDeCompras, setCarroDeCompras] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+
   const handleFilterPress = () => {
     Alert.alert("Modal para los filtros");
   };
@@ -207,8 +209,8 @@ const MarketScreen = () => {
                 carroDeCompras={carroDeCompras}
                 setCarroDeCompras={setCarroDeCompras}
                 urlImage={item.urlImage}
-                id={item.id}
                 key={index}
+                setShowModal={setShowModal}
               ></ArticleCard>
             );
           })}
@@ -216,8 +218,8 @@ const MarketScreen = () => {
       </ScrollView>
       {/* FooterMarket */}
       <Modal
-        visible={true}
-        animationType="fade"
+        visible={showModal}
+        animationType="slide"
         style={{
           height: 100,
           width: "100%",
@@ -227,7 +229,7 @@ const MarketScreen = () => {
         }}
         transparent={true}
       >
-        <ArticleModal></ArticleModal>
+        <ArticleModal setShowModal={setShowModal}></ArticleModal>
       </Modal>
     </View>
   );
