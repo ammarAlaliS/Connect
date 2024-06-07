@@ -6,12 +6,13 @@ import {
   TextInput,
   TouchableOpacity,
   Alert,
+  Modal,
 } from "react-native";
 import { useDispatch } from "react-redux";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { ScrollView } from "react-native";
 import ArticleCard from "../components/MarketComponents/ArticleCard.jsx";
-import FooterMarket from "../components/MarketComponents/FooterMarket.jsx";
+import ArticleModal from "../components/MarketComponents/ArticleModal.jsx";
 
 const MarketScreen = () => {
   const dispatch = useDispatch();
@@ -214,8 +215,20 @@ const MarketScreen = () => {
         </View>
       </ScrollView>
       {/* FooterMarket */}
-
-      <FooterMarket></FooterMarket>
+      <Modal
+        visible={true}
+        animationType="fade"
+        style={{
+          height: 100,
+          width: "100%",
+          marginTop: "25%",
+          backgroundColor: "red",
+          padding: 40,
+        }}
+        transparent={true}
+      >
+        <ArticleModal></ArticleModal>
+      </Modal>
     </View>
   );
 };
