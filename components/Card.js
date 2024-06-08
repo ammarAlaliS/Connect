@@ -17,7 +17,6 @@ const Card = () => {
             <View className="flex-row space-x-2 items-center">
                 <View className="flex items-center">
                     <Animatable.Image
-                       
                         source={{
                             uri:  user.global_user.profile_img_url
                         }}
@@ -32,7 +31,7 @@ const Card = () => {
                     />
                     <Text style={{ fontFamily: 'PlusJakartaSans-SemiBold' }} className="text-sm">Usuario</Text>
                 </View> 
-                <View className="p-2 mt-4 space-y-2 " style={{ flex: 1 }}>
+                <View className="p-2 space-y-2 " style={{ flex: 1 }}>
                     <View>
                         <Text style={{ fontFamily: 'PlusJakartaSans-SemiBold' }} className="text-base">
                             ¡Hola de nuevo!
@@ -42,7 +41,7 @@ const Card = () => {
                     <Animatable.View
                         animation="fadeIn"
                         duration={1000}
-                        style={{ backgroundColor: '#F9F6FE', padding: 8, borderRadius: 16, textAlign: 'left', borderWidth:1, borderColor: 'rgba(0, 0, 0, 0.1)' }}
+                        style={{ backgroundColor: '#F9F6FE', padding: 8, borderRadius: 5, textAlign: 'left', borderWidth:1, borderColor: 'rgba(0, 0, 0, 0.1)' }}
                     >
                         <Animatable.Text
                             animation="bounceIn"
@@ -98,7 +97,6 @@ const Card = () => {
                                 <Text style={{ color: 'black', fontSize: 14, fontFamily: 'PlusJakartaSans-SemiBold', paddingBottom: 2}}>Ser conductor</Text>
                             </View>
                         </TouchableOpacity>
-
                     </View>
                 </View>
             </View>
