@@ -1,22 +1,17 @@
 import { Image, StyleSheet, Text, View } from "react-native";
 import { TouchableOpacity } from "react-native";
 import MessageIcon from "../../icons/MessageIcon";
-import { useDispatch, useSelector } from "react-redux";
-import { setMessageBoxState } from "../../globalState/marketSlice.js";
 
-const ArticleCard = ({ urlImage, id }) => {
-  const dispatch = useDispatch();
-  const isMessageBoxActive = useSelector(
-    (state) => state.market?.isMessageBoxActive
-  );
-
-  const handleToggleMessageBox = () => {
-    dispatch(setMessageBoxState());
-  };
-
+const ArticleCard = ({ urlImage, setShowModal }) => {
   return (
     <View style={styles.container}>
-      <View style={{ position: "relative", width: "100%", height: 100 }}>
+      <View
+        style={styles.secondContainer}
+        onTouchEnd={() => {
+          setShowModal(true);
+        }}
+      >
+        {/* <TouchableOpacity> */}
         <Image
           source={{
             uri: urlImage,
@@ -24,10 +19,8 @@ const ArticleCard = ({ urlImage, id }) => {
           style={styles.imageContainer}
           resizeMode="cover"
         />
-        <TouchableOpacity
-          style={styles.messageContainer}
-          onPress={handleToggleMessageBox}
-        >
+        {/* </TouchableOpacity> */}
+        <TouchableOpacity style={styles.messageContainer}>
           <MessageIcon width={28} height={30} color="#000" />
         </TouchableOpacity>
       </View>
@@ -62,5 +55,6 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     justifyContent: "center",
   },
+  secondContainer: { position: "relative", width: "100%", height: 100 },
 });
 export default ArticleCard;

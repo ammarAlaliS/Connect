@@ -6,12 +6,13 @@ import {
   TextInput,
   TouchableOpacity,
   Alert,
+  Modal,
 } from "react-native";
 import { useDispatch } from "react-redux";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { ScrollView } from "react-native";
 import ArticleCard from "../components/MarketComponents/ArticleCard.jsx";
-import FooterMarket from "../components/MarketComponents/FooterMarket.jsx";
+import ArticleModal from "../components/MarketComponents/ArticleModal.jsx";
 
 const MarketScreen = () => {
   const dispatch = useDispatch();
@@ -24,6 +25,8 @@ const MarketScreen = () => {
   const [search, setSearch] = useState("");
   const [selectedclassification, setSelectedclassification] = useState(1);
   const [carroDeCompras, setCarroDeCompras] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+
   const handleFilterPress = () => {
     Alert.alert("Modal para los filtros");
   };
@@ -206,16 +209,28 @@ const MarketScreen = () => {
                 carroDeCompras={carroDeCompras}
                 setCarroDeCompras={setCarroDeCompras}
                 urlImage={item.urlImage}
-                id={item.id}
                 key={index}
+                setShowModal={setShowModal}
               ></ArticleCard>
             );
           })}
         </View>
       </ScrollView>
       {/* FooterMarket */}
-
-      <FooterMarket></FooterMarket>
+      <Modal
+        visible={showModal}
+        animationType="slide"
+        style={{
+          height: 100,
+          width: "100%",
+          marginTop: "25%",
+          backgroundColor: "red",
+          padding: 40,
+        }}
+        transparent={true}
+      >
+        <ArticleModal setShowModal={setShowModal}></ArticleModal>
+      </Modal>
     </View>
   );
 };
