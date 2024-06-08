@@ -1,15 +1,23 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import React from 'react';
+import EvilIcons from '@expo/vector-icons/EvilIcons';
+import { AntDesign } from '@expo/vector-icons';
+import { FontAwesome5 } from '@expo/vector-icons';
+import { toggleHeaderVisibility } from '../globalState/headerSlice';
+import { useDispatch } from 'react-redux';
+
 
 const BlogCard = ({ image_url, blog_title, blog_tag, blog_description }) => {
     const [showMore, setShowMore] = React.useState(false);
+    const dispatch = useDispatch();
 
     const toggleShowMore = () => {
         setShowMore(!showMore);
+        dispatch(toggleHeaderVisibility())
     };
 
     return (
-        <View style={styles.card} className="p-4 border-2 border-gray-400/10 z-50">
+        <View style={styles.card} className="px-4 pt-4 border-2 border-gray-400/10 z-50">
             <Image source={{ uri: image_url }} style={styles.image} resizeMode="cover" />
             <View className="space-y-2">
                 <Text style={styles.title}>{blog_title}</Text>
@@ -21,11 +29,55 @@ const BlogCard = ({ image_url, blog_title, blog_tag, blog_description }) => {
                 <Text style={styles.description}>
                     {showMore ? blog_description : `${blog_description.slice(0, 120)}...`}
                 </Text>
-                <TouchableOpacity onPress={toggleShowMore}>
-                    <Text style={styles.showMoreText}>
-                        {showMore ? 'Leer menos' : 'Leer más'}
-                    </Text>
-                </TouchableOpacity>
+
+                <View className=" flex-row justify-between items-center">
+                    <TouchableOpacity onPress={toggleShowMore} >
+                        <View>
+                            <Text style={styles.showMoreText} className="">
+                                {showMore ? 'Leer menos' : 'Leer más'}
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
+                    <View>
+                        <Text style={{ fontFamily: 'PlusJakartaSans-Bold', }} className=" text-sm ">
+                            Jose Luis
+                        </Text>
+                        <Text style={{ fontFamily: 'PlusJakartaSans-Bold', }} className=" text-[12px]">
+                            6/8/2024
+                        </Text>
+                    </View>
+                </View>
+                <View className=" w-full flex-row justify-between py-2 ">
+                    <View className="flex-row  space-x-[4px]">
+                    <View className=" bg-[#080099] h-[28px] w-[28px] items-center justify-center rounded-full"><EvilIcons name="comment" size={24} color="white" style={styles.icon} /></View>
+                        <Text style={{ fontFamily: 'PlusJakartaSans-Bold', }} className=" mt-[3px]">6</Text>
+                    </View>
+                    <View className="flex-row space-x-[4px]">
+                        <View className=" bg-[#ff226e] h-[28px] w-[28px] items-center justify-center rounded-full"><EvilIcons name="like" size={24} color="white" style={styles.icon}/></View>
+                        <Text style={{ fontFamily: 'PlusJakartaSans-Bold', }} className=" mt-[3px]">10</Text>
+                    </View>
+                </View>
+                <View className="border-t-[1px] border-gray-400/20 py-4  flex-row space-x-[6px] justify-between" >
+                    <TouchableOpacity className=" bg-[#ff226e] py-2 px-4 rounded-md border-[1px] border-black/10">
+                        <View className=" flex-row space-x-[2px] items-center justify-center">
+                            <AntDesign name="like2" size={20} color="white" />
+                            <Text style={{ fontFamily: 'PlusJakartaSans-Bold', }} className=" text-[14px] text-white">Mola</Text>
+                        </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity className=" bg-gray-500/10 py-2 px-2 rounded-md border-[1px] border-black/10  flex-1">
+                        <View className=" flex-row space-x-[2px] items-center justify-center">
+                            <EvilIcons name="comment" size={24} color="black" />
+                            <Text style={{ fontFamily: 'PlusJakartaSans-Bold', }} className=" text-[14px]">Comentar</Text>
+                        </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity className=" bg-gray-500/10 py-2 px-2 rounded-md border-[1px] border-black/10  ">
+                        <View className=" flex-row space-x-[2px] items-center justify-center">
+                            <AntDesign name="save" size={20} color="black" />
+                            <Text style={{ fontFamily: 'PlusJakartaSans-Bold', }} className=" text-[14px]">Guardar</Text>
+                        </View>
+                    </TouchableOpacity>
+                </View>
+
             </View>
         </View>
     );
@@ -67,6 +119,10 @@ const styles = StyleSheet.create({
         color: 'blue',
         fontSize: 16,
     },
+    icon: {
+        marginBottom:5,
+        
+    }
 });
 
 export default BlogCard;

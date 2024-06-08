@@ -50,7 +50,7 @@ const HomeAppScreen = () => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={{ flex: 1 }}>
-        <HeaderC />
+      <HeaderC />
         <View style={{ flex: 1, backgroundColor: '#F9F6FE', }}>
           {renderContent()}
         </View>

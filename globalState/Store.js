@@ -4,6 +4,7 @@ import userReducer from "./userSlice";
 import scrollYReducer from "./scrollYslice";
 import marketSlice from "./marketSlice";
 import menuReducer from './menuSlice';
+import headerReducer from './headerSlice';
 
 export const store = configureStore({
   reducer: {
@@ -12,5 +13,6 @@ export const store = configureStore({
     scrollY: scrollYReducer,
     market: marketSlice,
     menu: menuReducer,
+    header: headerReducer,
   },
 });

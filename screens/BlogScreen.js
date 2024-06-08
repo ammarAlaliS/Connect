@@ -19,7 +19,7 @@ const BlogScreen = () => {
             <ScrollView
                 showsVerticalScrollIndicator={false}
                 scrollEventThrottle={16}
-                stickyHeaderIndices={[1]} // Índice para la barra de clasificaciones
+                stickyHeaderIndices={[1]}
             >
                 <View style={styles.headerContainer}>
                     <View style={styles.headerContent}>

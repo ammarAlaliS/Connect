@@ -41,6 +41,7 @@ const HomeScreen = () => {
 
                         <HomeSection />
                     </LinearGradient>
+
                 </View>
                 <View className="flex bg-[#F3F3F3] items-center h-auto py-20 w-full px-6 flex-1">
                     <Text style={{fontFamily:'PlusJakartaSans-Bold', fontSize:30, textAlign:'center', width:'100%'}} >¿Qué puedes encontrar aquí?</Text>
@@ -129,8 +130,6 @@ const HomeScreen = () => {
                 <View className="flex-col bg-white  items-center justify-center h-auto  w-full px-6 py-10 space-y-2">
                     <Text style={{fontFamily:'PlusJakartaSans-Bold'}} className="text-2xl text-center text-[#67768E] ">Copyright © 2024 Quickcar</Text>
                 </View>
-
-
 
             </ScrollView>
             <ButtonToTop scrollViewRef={scrollViewRef}/>
