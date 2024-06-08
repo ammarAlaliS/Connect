@@ -9,7 +9,7 @@ const BlogCard = ({ image_url, blog_title, blog_tag, blog_description }) => {
     };
 
     return (
-        <View style={styles.card} className="p-4 border-2 border-gray-400/10">
+        <View style={styles.card} className="p-4 border-2 border-gray-400/10 z-50">
             <Image source={{ uri: image_url }} style={styles.image} resizeMode="cover" />
             <View className="space-y-2">
                 <Text style={styles.title}>{blog_title}</Text>
@@ -19,7 +19,7 @@ const BlogCard = ({ image_url, blog_title, blog_tag, blog_description }) => {
                     ))}
                 </View>
                 <Text style={styles.description}>
-                    {showMore ? blog_description : `${blog_description.slice(0, 101)}...`}
+                    {showMore ? blog_description : `${blog_description.slice(0, 120)}...`}
                 </Text>
                 <TouchableOpacity onPress={toggleShowMore}>
                     <Text style={styles.showMoreText}>

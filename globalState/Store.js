@@ -3,6 +3,7 @@ import navbarReducer from "./navbarSlice";
 import userReducer from "./userSlice";
 import scrollYReducer from "./scrollYslice";
 import marketSlice from "./marketSlice";
+import menuReducer from './menuSlice';
 
 export const store = configureStore({
   reducer: {
@@ -10,5 +11,6 @@ export const store = configureStore({
     user: userReducer,
     scrollY: scrollYReducer,
     market: marketSlice,
+    menu: menuReducer,
   },
 });
