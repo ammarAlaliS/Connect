@@ -1,14 +1,43 @@
-import { View, Text, StyleSheet, Modal, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
-import React from 'react';
+import { View, Text, StyleSheet, Modal, ScrollView, KeyboardAvoidingView, Platform, Animated } from 'react-native';
+import React, { useState, useEffect } from 'react';
 import Commet_C from './Commet_C';
 import CommentHeader_C from './CommentHeader_C';
 import CommentForm from './CommentForm';
 
 const CommentsModal_C = ({ visible, onClose }) => {
+    const [fadeAnim] = useState(new Animated.Value(0)); 
+
+    useEffect(() => {
+        let animationTimeout;
+        if (visible) {
+            animationTimeout = setTimeout(() => {
+                Animated.timing(                 
+                    fadeAnim,
+                    {
+                        toValue: 1,
+                        duration: 100,            
+                        useNativeDriver: true     
+                    }
+                ).start();
+            }, 300); 
+        } else {
+            Animated.timing(                  
+                fadeAnim,
+                {
+                    toValue: 0,
+                    duration: 100,            
+                    useNativeDriver: true
+                }
+            ).start();
+        }
+
+        return () => clearTimeout(animationTimeout);
+    }, [visible]);
+
     return (
         <Modal
             visible={visible}
-            animationType="slide"
+            animationType="escala"
             transparent={true}
             statusBarTranslucent={true}
         >
@@ -16,16 +45,20 @@ const CommentsModal_C = ({ visible, onClose }) => {
                 style={modalStyles.modalContainer}
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             >
-                <View style={modalStyles.fullWidth}>
-                    <View style={[modalStyles.modalContent, modalStyles.shadow]} className="bg-gray-200">
+                <Animated.View
+                    style={[
+                        modalStyles.fullWidth,
+                        { opacity: fadeAnim } 
+                    ]}
+                >
+                    <View style={modalStyles.modalContent} className="bg-gray-200">
                         <CommentHeader_C onClose={onClose} />
-                        <ScrollView style={modalStyles.scrollView} 
-                        showsVerticalScrollIndicator={false}>
+                        <ScrollView style={modalStyles.scrollView} showsVerticalScrollIndicator={false}>
                             <Commet_C />
                         </ScrollView>
                         <CommentForm />
                     </View>
-                </View>
+                </Animated.View>
             </KeyboardAvoidingView>
         </Modal>
     );
@@ -49,27 +82,10 @@ const modalStyles = StyleSheet.create({
         width: '100%',
         borderRadius: 10,
         maxHeight: '90%',
+        overflow: 'hidden', 
     },
     scrollView: {
         flex: 1,
-    },
-    shadow: {
-
-        shadowColor: 'black',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.8,
-        shadowRadius: 2,
-        elevation: 5,
-    },
-    modalHeader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-    },
-    modalTitle: {
-        fontSize: 24,
-        fontFamily: 'PlusJakartaSans-Bold',
-        paddingBottom: 6,
     },
 });
 
