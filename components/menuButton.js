@@ -22,9 +22,7 @@ const MenuButton = ({ activeScreen, handlePress }) => {
             useNativeDriver: false,
         }).start();
 
-        if (!headerVisible) {
-            dispatch(toggleHeaderVisibility(true)); // Solo cambia la visibilidad del encabezado si no está visible
-        }
+       
     };
 
     const menuStyle = {

@@ -14,7 +14,7 @@ import * as Yup from 'yup';
 import Toast from 'react-native-toast-message';
 import * as Animatable from 'react-native-animatable';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import GlobalStyles from '../components/GlobalStyles';
+
 
 const SignInSchema = Yup.object().shape({
     email: Yup.string()
