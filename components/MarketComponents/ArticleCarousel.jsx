@@ -150,7 +150,12 @@ const ArticleCarousel = () => {
         </ScrollView>
       </View>
       <Modal visible={modal} transparent={true} animationType="fade">
-        <View style={styles.imageZoomModal}>
+        <View
+          style={styles.imageZoomModal}
+          onTouchEnd={() => {
+            showModal(false);
+          }}
+        >
           <View
             style={styles.xMarkIconContainer}
             onTouchEnd={() => {

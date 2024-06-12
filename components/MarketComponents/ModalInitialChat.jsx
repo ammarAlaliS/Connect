@@ -42,7 +42,13 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     alignItems: "center",
   },
-  chatTitleContainer: { marginLeft: 10, fontWeight: "600", fontSize: 16 },
+  chatTitleContainer: {
+    marginLeft: 10,
+    fontWeight: "600",
+    fontSize: 16,
+    fontFamily: "PlusJakartaSans-Bold",
+    marginBottom: 7,
+  },
   ThirdChatContainer: {
     height: 50,
     width: "96%",
@@ -59,6 +65,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     width: "90%",
     paddingHorizontal: 10,
+    fontFamily: "PlusJakartaSans-Regular",
   },
 });
 

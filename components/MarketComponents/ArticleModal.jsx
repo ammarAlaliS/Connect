@@ -1,4 +1,11 @@
-import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  Image,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import React from "react";
 import { Animated, StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
@@ -11,7 +18,7 @@ const ArticleModal = ({ setShowModal }) => {
   const ulrImage = useSelector((state) => state.market?.urlProductImage);
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} className="px-4">
       <Animated.View style={[styles.animatedContainer]}>
         <View style={styles.detailsContainer}>
           <View style={styles.secondDetailsContainer}>
@@ -89,7 +96,7 @@ const ArticleModal = ({ setShowModal }) => {
                   style={styles.quickcarImage}
                   resizeMode="contain"
                 />
-                <Text>Se unio en 2019</Text>
+                <Text style={styles.firstJoinDate}>Se unio en 2019</Text>
               </View>
             </ScrollView>
           </View>
@@ -106,14 +113,11 @@ const styles = StyleSheet.create({
   animatedContainer: {
     width: "100%",
     backgroundColor: "#f4f5f6",
-    padding: 3,
     borderRadius: 5,
     height: "95%",
     borderWidth: 2,
     borderColor: "#fff",
     borderStyle: "solid",
-    // position: "absolute",
-    // bottom: 0,
   },
   detailsContainer: {
     backgroundColor: "#2b00b6",
@@ -154,12 +158,18 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
-  fisrtSubTitle: { fontSize: 18, color: "#f1f1f1", fontWeight: "700" },
+  fisrtSubTitle: {
+    fontSize: 18,
+    color: "#f1f1f1",
+    fontWeight: "700",
+    fontFamily: "PlusJakartaSans-Bold",
+  },
   secondSubtitle: {
     marginLeft: 20,
     fontSize: 14,
     color: "#f1f1f1",
     fontWeight: "700",
+    fontFamily: "PlusJakartaSans-Regular",
   },
   xMarkIconContainer: {
     position: "absolute",
@@ -200,9 +210,20 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     width: "40%",
     textAlign: "left",
+    fontFamily: "PlusJakartaSans-Bold",
   },
-  state: { fontSize: 15, width: "40%", textAlign: "left" },
-  detailsTitle: { fontSize: 20, fontWeight: "900", marginLeft: 5 },
+  state: {
+    fontSize: 15,
+    width: "40%",
+    textAlign: "left",
+    fontFamily: "PlusJakartaSans-Regular",
+  },
+  detailsTitle: {
+    fontSize: 20,
+    fontWeight: "900",
+    marginLeft: 5,
+    fontFamily: "PlusJakartaSans-Bold",
+  },
   locationContainer: {
     display: "flex",
     flexDirection: "row",
@@ -211,11 +232,16 @@ const styles = StyleSheet.create({
   },
   locationTitle: {
     fontSize: 15,
-    fontWeight: "700",
     width: "40%",
     textAlign: "left",
+    fontFamily: "PlusJakartaSans-Bold",
   },
-  location: { fontSize: 15, width: "40%", textAlign: "left" },
+  location: {
+    fontSize: 15,
+    width: "40%",
+    textAlign: "left",
+    fontFamily: "PlusJakartaSans-Regular",
+  },
   descriptionTitleContainer: {
     display: "flex",
     flexDirection: "row",
@@ -223,11 +249,15 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginTop: 5,
   },
-  descriptionTitle: { fontSize: 15, fontWeight: "700" },
+  descriptionTitle: {
+    fontSize: 15,
+    fontFamily: "PlusJakartaSans-Bold",
+  },
   principalDescriptionContainer: {
     paddingHorizontal: 10,
     textAlign: "justify",
-    fontWeight: "400",
+    fontFamily: "PlusJakartaSans-Regular",
+    fontSize: 13,
   },
   sellerInfoContainer: {
     display: "flex",
@@ -237,7 +267,10 @@ const styles = StyleSheet.create({
     marginTop: 5,
     paddingLeft: 10,
   },
-  sellerInfo: { fontSize: 15, fontWeight: "700" },
+  sellerInfo: {
+    fontSize: 15,
+    fontFamily: "PlusJakartaSans-Bold",
+  },
   secondSellerInfoContainer: {
     display: "flex",
     flexDirection: "row",
@@ -247,14 +280,16 @@ const styles = StyleSheet.create({
   sellerImage: { width: 60, height: 60, borderRadius: 30 },
   sellerName: {
     marginLeft: 10,
-    fontWeight: "800",
+    // fontWeight: "800",
     textDecorationLine: "underline",
     textDecorationStyle: "solid",
+    fontFamily: "PlusJakartaSans-Bold",
   },
   sellerContactInfo: {
     fontSize: 12,
     marginLeft: 10,
     fontStyle: "italic",
+    fontFamily: "PlusJakartaSans-Regular",
   },
   quickcarImageContainer: {
     marginLeft: 10,
@@ -273,5 +308,8 @@ const styles = StyleSheet.create({
     borderColor: "#f4f5f6",
   },
   chatContainer: { width: "100%" },
+  firstJoinDate: {
+    fontFamily: "PlusJakartaSans-Regular",
+  },
 });
 export default ArticleModal;

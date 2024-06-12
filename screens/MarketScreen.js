@@ -13,6 +13,8 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import { ScrollView } from "react-native";
 import ArticleCard from "../components/MarketComponents/ArticleCard.jsx";
 import ArticleModal from "../components/MarketComponents/ArticleModal.jsx";
+import BottomSellModal from "../components/MarketComponents/BottomSellModal.jsx";
+import NewProductForm from "../components/MarketComponents/NewProductForm.jsx";
 
 const MarketScreen = () => {
   const dispatch = useDispatch();
@@ -26,6 +28,7 @@ const MarketScreen = () => {
   const [selectedclassification, setSelectedclassification] = useState(1);
   const [carroDeCompras, setCarroDeCompras] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [showNewProductModal, setShowNewProductModal] = useState(false);
 
   const handleFilterPress = () => {
     Alert.alert("Modal para los filtros");
@@ -122,99 +125,127 @@ const MarketScreen = () => {
       urlImage:
         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
     },
+    {
+      id: 17,
+      urlImage:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
+    },
   ];
 
   return (
     <View style={styles.principalContainer}>
-      <View className="d-flex flex-row">
-        <View style={styles.searchContainer}>
-          <View style={styles.searchSection}>
-            <Icon
-              style={styles.searchIcon}
-              name="search"
-              size={20}
-              color={search ? "#000000" : "#00000099"}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Busca por nombre o codigo"
-              onChangeText={(text) => setSearch(text)}
-              value={search}
-              underlineColorAndroid="transparent"
-            />
-          </View>
-        </View>
-
-        <View style={styles.container}>
-          <View style={styles.searchSection}>
-            <TouchableOpacity onPress={handleFilterPress}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        scrollEventThrottle={16}
+        stickyHeaderIndices={[1]}
+      >
+        <View className="d-flex flex-row">
+          <View style={styles.searchContainer}>
+            <View style={styles.searchSection}>
               <Icon
-                style={styles.secondFilterIcon}
-                name="filter"
+                style={styles.searchIcon}
+                name="search"
                 size={20}
-                color="#000"
+                color={search ? "#000000" : "#00000099"}
               />
-            </TouchableOpacity>
-            <TextInput
-              style={styles.secondImput}
-              onChangeText={(text) => setSearch(text)}
-            />
+              <TextInput
+                style={styles.input}
+                placeholder="Busca por nombre o codigo"
+                onChangeText={(text) => setSearch(text)}
+                value={search}
+                underlineColorAndroid="transparent"
+              />
+            </View>
+          </View>
+
+          <View style={styles.container}>
+            <View style={styles.searchSection}>
+              <TouchableOpacity onPress={handleFilterPress}>
+                <Icon
+                  style={styles.secondFilterIcon}
+                  name="filter"
+                  size={20}
+                  color="#000"
+                />
+              </TouchableOpacity>
+              <TextInput
+                style={styles.secondImput}
+                onChangeText={(text) => setSearch(text)}
+              />
+            </View>
           </View>
         </View>
-      </View>
 
-      <View>
-        <ScrollView
-          style={styles.scrollStyles}
-          horizontal={true}
-          showsHorizontalScrollIndicator={false}
+        <View
+          style={{
+            backgroundColor: "white",
+            zIndex: 100,
+            paddingVertical: 10,
+            paddingHorizontal: 10,
+            borderBottomWidth: 1,
+            borderBottomColor: "#ccc",
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 1 },
+            shadowOpacity: 0.3,
+            shadowRadius: 2,
+            elevation: 5,
+          }}
         >
-          {listClasifications.map((item, index) => {
-            if (item.id == selectedclassification) {
-              return (
-                <TouchableOpacity
-                  key={index}
-                  style={styles.selectedItem}
-                  onPress={() => {
-                    setSelectedclassification(item.id);
-                  }}
-                >
-                  <Text style={{ color: "#fff" }}>{item.name}</Text>
-                </TouchableOpacity>
-              );
-            } else {
-              return (
-                <TouchableOpacity
-                  key={index}
-                  style={styles.item}
-                  onPress={() => {
-                    setSelectedclassification(item.id);
-                  }}
-                >
-                  <Text>{item.name}</Text>
-                </TouchableOpacity>
-              );
-            }
-          })}
-        </ScrollView>
-      </View>
-
-      {/* Cards de articulos */}
-
-      <ScrollView showsVerticalScrollIndicator={false} horizontal={false}>
-        <View className="d-flex flex-row" style={styles.articlesContainer}>
-          {productList.map((item, index) => {
-            return (
-              <ArticleCard
-                carroDeCompras={carroDeCompras}
-                setCarroDeCompras={setCarroDeCompras}
-                urlImage={item.urlImage}
-                key={index}
-                setShowModal={setShowModal}
-              ></ArticleCard>
-            );
-          })}
+          <ScrollView
+            style={styles.scrollStyles}
+            horizontal={true}
+            showsHorizontalScrollIndicator={false}
+          >
+            {listClasifications.map((item, index) => {
+              if (item.id == selectedclassification) {
+                return (
+                  <TouchableOpacity
+                    key={index}
+                    style={styles.selectedItem}
+                    onPress={() => {
+                      setSelectedclassification(item.id);
+                    }}
+                  >
+                    <Text style={{ color: "#fff" }}>{item.name}</Text>
+                  </TouchableOpacity>
+                );
+              } else {
+                return (
+                  <TouchableOpacity
+                    key={index}
+                    style={styles.item}
+                    onPress={() => {
+                      setSelectedclassification(item.id);
+                    }}
+                  >
+                    <Text>{item.name}</Text>
+                  </TouchableOpacity>
+                );
+              }
+            })}
+          </ScrollView>
         </View>
+
+        {/* Cards de articulos */}
+
+        <ScrollView showsVerticalScrollIndicator={false} horizontal={false}>
+          <View
+            className="d-flex flex-row mx-4 my-2"
+            style={[styles.articlesContainer]}
+          >
+            {productList.map((item, index) => {
+              return (
+                <ArticleCard
+                  carroDeCompras={carroDeCompras}
+                  setCarroDeCompras={setCarroDeCompras}
+                  urlImage={item.urlImage}
+                  key={index}
+                  setShowModal={setShowModal}
+                ></ArticleCard>
+              );
+            })}
+          </View>
+        </ScrollView>
       </ScrollView>
       {/* FooterMarket */}
       <Modal
@@ -230,6 +261,23 @@ const MarketScreen = () => {
         transparent={true}
       >
         <ArticleModal setShowModal={setShowModal}></ArticleModal>
+      </Modal>
+      <BottomSellModal
+        setShowNewProductModal={setShowNewProductModal}
+      ></BottomSellModal>
+      <Modal
+        visible={showNewProductModal}
+        animationType="slide"
+        style={{
+          height: 100,
+          width: "100%",
+          marginTop: "25%",
+          backgroundColor: "red",
+          padding: 40,
+        }}
+        transparent={true}
+      >
+        <NewProductForm setShowModal={setShowNewProductModal}></NewProductForm>
       </Modal>
     </View>
   );
@@ -276,6 +324,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
     color: "#424242",
     borderRadius: 10,
+    fontFamily: "PlusJakartaSans-SemiBold",
   },
   secondFilterIcon: {
     flexDirection: "row",
@@ -296,30 +345,41 @@ const styles = StyleSheet.create({
   scrollStyles: {
     display: "flex",
     flexDirection: "row",
-    margin: 10,
-    marginTop: 5,
   },
   item: {
-    padding: 5,
-    margin: 5,
-    backgroundColor: "#fff",
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+    marginRight: 10,
     borderRadius: 5,
-    borderWidth: 0.5,
-    borderColor: "#c3c3c3",
-    borderStyle: "solid",
+    borderWidth: 1,
+    borderColor: "#ccc",
+    backgroundColor: "#fff",
     fontFamily: "Eina01-BoldItalic",
   },
   selectedItem: {
-    padding: 5,
-    margin: 5,
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+    marginRight: 10,
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: "#ccc",
     backgroundColor: "#2b00b6",
     fontFamily: "Eina01-BoldItalic",
-    borderRadius: 5,
   },
   articlesContainer: {
     flexWrap: "wrap",
     justifyContent: "space-evenly",
-    paddingBottom: 100,
+    paddingBottom: 10,
+    backgroundColor: "#fff",
+    borderRadius: 5,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 3,
+    // paddingRight: 12,
+    marginBottom: 0,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
   },
 });
 
