@@ -112,7 +112,6 @@ const SignInForm = () => {
 
                                         if (response.ok) {
                                             const data = await response.json();
-                                            console.log(data)
                                             // Persistir los datos del usuario en AsyncStorage
                                             await AsyncStorage.setItem('userData', JSON.stringify(data));
                                             // Actualizar el estado global con la información del usuario

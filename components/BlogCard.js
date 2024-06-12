@@ -7,7 +7,7 @@ import { toggleHeaderVisibility } from '../globalState/headerSlice';
 import { useDispatch } from 'react-redux';
 import CommentsModal_C from './CommentsModal _C';
 
-const BlogCard = ({ image_url, blog_title, blog_tag, blog_description, autor_name, autor_last_name, time }) => {
+const BlogCard = ({ image_url, blog_title, blog_tag, blog_description, author_name, author_last_name, time }) => {
     const [showMore, setShowMore] = React.useState(false);
     const [modalVisible, setModalVisible] = React.useState(false);
 
@@ -39,7 +39,7 @@ const BlogCard = ({ image_url, blog_title, blog_tag, blog_description, autor_nam
                     </TouchableOpacity>
                     <View>
                         <Text style={{ fontFamily: 'PlusJakartaSans-Bold', }} className=" text-sm ">
-                            {autor_name} {autor_last_name}
+                            {author_name} {author_last_name}
                         </Text>
                         <Text style={{ fontFamily: 'PlusJakartaSans-Bold', }} className=" text-[12px]">
                             {time}

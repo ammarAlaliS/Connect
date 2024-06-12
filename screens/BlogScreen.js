@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ScrollView, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchBlogs } from '../globalState/blogsSlice';
-
+import { fetchBlogsAndAuthors } from '../globalState/blogsSlice';
 import BlogIcon from '../icons/BlogIcon';
 import BlogCard from '../components/BlogCard';
 
@@ -10,12 +9,15 @@ const BlogScreen = () => {
     const [selectedClassification, setSelectedClassification] = useState(1);
     const dispatch = useDispatch();
     const blogs = useSelector((state) => state.blogs.blogs);
+    const authorsById = useSelector((state) => state.blogs.authorsById);
     const status = useSelector((state) => state.blogs.status);
     const error = useSelector((state) => state.blogs.error);
 
     useEffect(() => {
-        dispatch(fetchBlogs());
+        dispatch(fetchBlogsAndAuthors());
     }, [dispatch]);
+
+    console.log("Estado de authorsById:", authorsById);
 
     const listClassifications = [
         { id: 1, name: "Todos" },
@@ -49,9 +51,9 @@ const BlogScreen = () => {
                         showsHorizontalScrollIndicator={false}
                         style={styles.horizontalScroll}
                     >
-                        {listClassifications.map((item, index) => (
+                        {listClassifications.map((item) => (
                             <TouchableOpacity
-                                key={index}
+                                key={item.id}
                                 style={item.id === selectedClassification ? styles.selectedItem : styles.item}
                                 onPress={() => setSelectedClassification(item.id)}
                             >
@@ -62,24 +64,23 @@ const BlogScreen = () => {
                 </View>
 
                 <View style={styles.content}>
-                    {console.log(blogs)}
                     {status === 'loading' && <Text>Loading...</Text>}
                     {status === 'failed' && <Text>Error: {error}</Text>}
                     {status === 'succeeded' && (
                         <>
-                            {blogs.map((blog) => (
-                                <View key={blog._id}>
-                                    <BlogCard
-                                        image_url={blog.blog_image_url}
-                                        blog_title={blog.title}
-                                        blog_tag={blog.tags}
-                                        blog_description={blog.blog_description}
-                                        autor_name={blog.first_name}
-                                        author_last_name={blog.last_name}
-                                        time={new Date(blog.createdAt).toLocaleTimeString()}
-                                    />
-                                </View>
-                            ))}
+                        {blogs.map((blog) => (
+                            <View key={blog._id}>
+                                <BlogCard
+                                    image_url={blog.blog_image_url}
+                                    blog_title={blog.title}
+                                    blog_tag={blog.tags}
+                                    blog_description={blog.blog_description}
+                                    author_name={blog.author ? authorsById[blog.author.id]?.first_name || 'Autor no disponible' : 'Autor no disponible'}
+                                    author_last_name={blog.author ? authorsById[blog.author.id]?.last_name || '' : ''}
+                                    time={new Date(blog.createdAt).toLocaleTimeString()}
+                                />
+                            </View>
+                        ))}
                         </>
                     )}
                 </View>
