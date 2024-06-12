@@ -7,7 +7,7 @@ import { useNavigation } from '@react-navigation/native';
 const ServiceOffered_C = ({ img, title, description, button_title, button_color, icon_color, screen }) => {
     const navigation = useNavigation();
     return (
-        <View className=" h-auto bg-white w-full mt-20 border-2 border-gray-200/40 p-4 rounded-lg  shadow-lg shadow-black ">
+        <View className=" h-auto bg-white w-full mt-20 border-2 border-gray-200/40  shadow-lg shadow-black p-4 rounded-lg  ">
             <View className="  w-full h-[300px] ">
                 <Image
                     source={{

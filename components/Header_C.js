@@ -33,7 +33,7 @@ const HeaderC = () => {
             />
 
             <Animated.View style={[styles.headerContainer, { transform: [{ translateY }] }]}>
-                <TouchableOpacity style={{ flex: 1 }} onPress={() => dispatch(toggleHeaderVisibility())}>
+                <TouchableOpacity style={{ flex: 1 }}>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <Animatable.Image
                             animation="pulse"

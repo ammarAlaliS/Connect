@@ -1,17 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ScrollView, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchBlogsAndAuthors } from '../globalState/blogsSlice';
 import BlogIcon from '../icons/BlogIcon';
 import BlogCard from '../components/BlogCard';
 
-
 const BlogScreen = () => {
     const [selectedClassification, setSelectedClassification] = useState(1);
+    const dispatch = useDispatch();
+    const blogs = useSelector((state) => state.blogs.blogs);
+    const authorsById = useSelector((state) => state.blogs.authorsById);
+    const status = useSelector((state) => state.blogs.status);
+    const error = useSelector((state) => state.blogs.error);
+
+    useEffect(() => {
+        dispatch(fetchBlogsAndAuthors());
+    }, [dispatch]);
+
+    console.log("Estado de authorsById:", authorsById);
 
     const listClassifications = [
         { id: 1, name: "Todos" },
-        { id: 2, name: "Articulos de carros" },
-        { id: 3, name: "Articulos de Motocicletas" },
-        { id: 4, name: "Articulos variados" },
+        { id: 2, name: "Artículos de carros" },
+        { id: 3, name: "Artículos de Motocicletas" },
+        { id: 4, name: "Artículos variados" },
     ];
 
     return (
@@ -24,7 +36,7 @@ const BlogScreen = () => {
                 <View style={styles.headerContainer}>
                     <View style={styles.headerContent}>
                         <View style={styles.headerTitle}>
-                            <Text style={{ fontFamily: 'PlusJakartaSans-Bold', lineHeight: 33 }} className="text-3xl">Blog</Text>
+                            <Text style={styles.blogTitle}>Blog</Text>
                             <View style={styles.iconContainer}>
                                 <BlogIcon width={36} height={36} />
                             </View>
@@ -39,9 +51,9 @@ const BlogScreen = () => {
                         showsHorizontalScrollIndicator={false}
                         style={styles.horizontalScroll}
                     >
-                        {listClassifications.map((item, index) => (
+                        {listClassifications.map((item) => (
                             <TouchableOpacity
-                                key={index}
+                                key={item.id}
                                 style={item.id === selectedClassification ? styles.selectedItem : styles.item}
                                 onPress={() => setSelectedClassification(item.id)}
                             >
@@ -51,23 +63,26 @@ const BlogScreen = () => {
                     </ScrollView>
                 </View>
 
-                <View style={styles.content} className=" px-4 py-4 space-y-4">
-                    <View>
-                        <BlogCard
-                            image_url="https://quickcaronline.obbaramarket.com/wp-content/uploads/2024/05/Quickcar.png"
-                            blog_title="Ruedas Compactas: El Blog Definitivo de Autos Pequeños"
-                            blog_tag={["Blog", "Obb_Mercado"]}
-                            blog_description="¡Bienvenidos a Carro Peque! Este es tu destino definitivo para todo lo relacionado con autos compactos. Aquí, celebramos la eficiencia, la practicidad y el encanto de los vehículos pequeños. Desde reseñas detalladas de los últimos modelos hasta consejos de mantenimiento y trucos para maximizar el espacio, Carro Peque te ofrece una guía completa para aprovechar al máximo tu experiencia de conducción. Ya sea que estés buscando tu primer auto, quieras reducir tu huella de carbono o simplemente disfrutes de la agilidad y el estilo de los autos pequeños, este blog es para ti. ¡Únete a nuestra comunidad y descubre por qué los mejores regalos vienen en paquetes pequeños!"
-                        />
-                    </View>
-                    <View>
-                        <BlogCard
-                            image_url="https://quickcaronline.obbaramarket.com/wp-content/uploads/2024/05/quickcar.jpg"
-                            blog_title="Ruedas Compactas: El Blog Definitivo de Autos Pequeños"
-                            blog_tag={["Blog", "Obb_Mercado"]}
-                            blog_description="Este es un artículo de prueba"
-                        />
-                    </View>
+                <View style={styles.content}>
+                    {status === 'loading' && <Text>Loading...</Text>}
+                    {status === 'failed' && <Text>Error: {error}</Text>}
+                    {status === 'succeeded' && (
+                        <>
+                        {blogs.map((blog) => (
+                            <View key={blog._id}>
+                                <BlogCard
+                                    image_url={blog.blog_image_url}
+                                    blog_title={blog.title}
+                                    blog_tag={blog.tags}
+                                    blog_description={blog.blog_description}
+                                    author_name={blog.author ? authorsById[blog.author.id]?.first_name || 'Autor no disponible' : 'Autor no disponible'}
+                                    author_last_name={blog.author ? authorsById[blog.author.id]?.last_name || '' : ''}
+                                    time={new Date(blog.createdAt).toLocaleDateString()}
+                                />
+                            </View>
+                        ))}
+                        </>
+                    )}
                 </View>
             </ScrollView>
         </View>
@@ -143,7 +158,7 @@ const styles = StyleSheet.create({
     },
     content: {
         backgroundColor: '#F9F6FE',
-
+        padding: 10,
     },
 });
 
