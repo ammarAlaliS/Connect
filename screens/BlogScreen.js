@@ -14,8 +14,10 @@ const BlogScreen = () => {
     const error = useSelector((state) => state.blogs.error);
 
     useEffect(() => {
-        dispatch(fetchBlogsAndAuthors());
-    }, [dispatch]);
+        if (status === 'idle') {
+            dispatch(fetchBlogsAndAuthors());
+        }
+    }, [dispatch, status]);
 
     console.log("Estado de authorsById:", authorsById);
 
@@ -63,24 +65,24 @@ const BlogScreen = () => {
                     </ScrollView>
                 </View>
 
-                <View style={styles.content}>
-                    {status === 'loading' && <Text>Loading...</Text>}
+                <View style={styles.content} className=" px-4 pt-4">
+                    {status === 'loading' && <View className=" flex-1"><Text className=" m-auto text-2xl">Cargando blogs...</Text></View>}
                     {status === 'failed' && <Text>Error: {error}</Text>}
                     {status === 'succeeded' && (
                         <>
-                        {blogs.map((blog) => (
-                            <View key={blog._id}>
-                                <BlogCard
-                                    image_url={blog.blog_image_url}
-                                    blog_title={blog.title}
-                                    blog_tag={blog.tags}
-                                    blog_description={blog.blog_description}
-                                    author_name={blog.author ? authorsById[blog.author.id]?.first_name || 'Autor no disponible' : 'Autor no disponible'}
-                                    author_last_name={blog.author ? authorsById[blog.author.id]?.last_name || '' : ''}
-                                    time={new Date(blog.createdAt).toLocaleDateString()}
-                                />
-                            </View>
-                        ))}
+                            {blogs.map((blog) => (
+                                <View key={blog._id} className="mb-4">
+                                    <BlogCard
+                                        image_url={blog.blog_image_url}
+                                        blog_title={blog.title}
+                                        blog_tag={blog.tags}
+                                        blog_description={blog.blog_description}
+                                        author_name={blog.author ? authorsById[blog.author.id]?.first_name || 'Autor no disponible' : 'Autor no disponible'}
+                                        author_last_name={blog.author ? authorsById[blog.author.id]?.last_name || '' : ''}
+                                        time={new Date(blog.createdAt).toLocaleDateString()}
+                                    />
+                                </View>
+                            ))}
                         </>
                     )}
                 </View>
@@ -158,7 +160,6 @@ const styles = StyleSheet.create({
     },
     content: {
         backgroundColor: '#F9F6FE',
-        padding: 10,
     },
 });
 

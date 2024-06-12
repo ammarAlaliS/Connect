@@ -1,14 +1,20 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 const API_BASE_URL = 'https://obbaramarket-backend-1.onrender.com';
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutos
 
 export const fetchBlogsAndAuthors = createAsyncThunk(
   'blogs/fetchBlogsAndAuthors',
-  async (_, { getState, dispatch }) => {
-    const { user: { global_user: { token } } } = getState();
+  async (_, { getState, dispatch, rejectWithValue }) => {
+    const { user: { global_user: { token } }, blogs: { lastFetched } } = getState();
 
     if (!token) {
-      throw new Error('Token de autenticación no disponible');
+      return rejectWithValue('Token de autenticación no disponible');
+    }
+
+    const now = Date.now();
+    if (lastFetched && (now - lastFetched) < CACHE_DURATION) {
+      return rejectWithValue('Datos ya están en caché');
     }
 
     try {
@@ -38,7 +44,6 @@ export const fetchBlogsAndAuthors = createAsyncThunk(
           }
 
           const authorData = await authorResponse.json();
-          console.log('Datos de author:', JSON.stringify(authorData));
           return { ...blog, author: authorData.global_user };
         } catch (error) {
           return { ...blog, author: null };
@@ -46,6 +51,7 @@ export const fetchBlogsAndAuthors = createAsyncThunk(
       }));
 
       dispatch(setBlogsAndAuthors(blogsWithAuthors));
+      dispatch(setLastFetched(now));
 
       return blogsWithAuthors;
     } catch (error) {
@@ -61,19 +67,17 @@ const blogsSlice = createSlice({
     authorsById: {},
     status: 'idle',
     error: null,
+    lastFetched: null,
   },
   reducers: {
     setBlogsAndAuthors: (state, action) => {
       state.status = 'succeeded';
-
-      // Mapear los blogs para guardar solo el ID del autor o null si no hay autor
       state.blogs = action.payload.map(blog => ({
         ...blog,
         author: blog.author ? blog.author._id : null,
         createdAt: new Date(blog.createdAt).toLocaleDateString()
       }));
 
-      // Filtrar y mapear los autores válidos para construir authorsById
       const authorsById = action.payload.reduce((acc, blog) => {
         if (blog.author) {
           acc[blog.author._id] = blog.author;
@@ -83,9 +87,16 @@ const blogsSlice = createSlice({
 
       state.authorsById = authorsById;
     },
+    setLastFetched: (state, action) => {
+      state.lastFetched = action.payload;
+    },
     setError: (state, action) => {
       state.status = 'failed';
       state.error = action.payload;
+    },
+    resetStatus: (state) => {
+      state.status = 'idle';
+      state.error = null;
     },
   },
   extraReducers: (builder) => {
@@ -98,13 +109,15 @@ const blogsSlice = createSlice({
         state.blogs = action.payload;
       })
       .addCase(fetchBlogsAndAuthors.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.error.message;
+        if (action.payload !== 'Datos ya están en caché') {
+          state.status = 'failed';
+          state.error = action.error.message;
+        }
       });
   },
 });
 
-export const { setBlogsAndAuthors, setError } = blogsSlice.actions;
+export const { setBlogsAndAuthors, setLastFetched, setError, resetStatus } = blogsSlice.actions;
 
 export default blogsSlice.reducer;
 

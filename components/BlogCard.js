@@ -20,9 +20,9 @@ const BlogCard = ({ image_url, blog_title, blog_tag, blog_description, author_na
             <Image source={{ uri: image_url }} style={styles.image} resizeMode="cover" />
             <View className="space-y-2">
                 <Text style={styles.title}>{blog_title}</Text>
-                <View style={styles.tags} className="space-x-2">
+                <View  className="w2esc  flex-row flex-wrap items-center justify-start space-y-2 ">
                     {blog_tag.map((tag, index) => (
-                        <Text key={index} style={styles.tag} className="px-2 py-[5px] rounded-[5px]">{tag}</Text>
+                        <Text key={index} style={styles.tag} className="px-2 mr-2 py-[5px] rounded-[5px]">{tag}</Text>
                     ))}
                 </View>
                 <Text style={styles.description}>
@@ -91,7 +91,7 @@ const BlogCard = ({ image_url, blog_title, blog_tag, blog_description, author_na
                             >
                                 <View >
 
-                                    <Text style={{ fontFamily: 'PlusJakartaSans-SemiBold' }} className="text-white text-base mb-[3px]">Leer el articulo</Text>
+                                    <Text style={{ fontFamily: 'PlusJakartaSans-SemiBold' }} className="text-white text-base mb-[3px]">Leer articulo</Text>
 
                                 </View>
                             </LinearGradient>
@@ -127,10 +127,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontFamily: 'PlusJakartaSans-Bold',
     },
-    tags: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-    },
+ 
     tag: {
         backgroundColor: '#8504FF',
         color: '#fff',
