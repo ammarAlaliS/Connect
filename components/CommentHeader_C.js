@@ -5,7 +5,7 @@ import MyIcon from '../icons/MyIcon';
 
 const CommentHeader_C = ({onClose}) => {
     return (
-        <View style={modalStyles.modalHeader} className=" py-6 px-4 bg-[#fff]   rounded-t-lg ">
+        <View style={modalStyles.modalHeader} className=" py-6 px-4 bg-[#fff]   rounded-t-lg border-b-[1px] border-black/10 ">
             <Text style={modalStyles.modalTitle}>Comentarios</Text>
             <TouchableOpacity onPress={onClose} >
                 <View style={modalStyles.closeButton} className=" bg-gray-50/30 border-2 border-black/10 border-dotted p-1">
@@ -18,7 +18,7 @@ const CommentHeader_C = ({onClose}) => {
 const modalStyles = StyleSheet.create({
    
     modalHeader: {
-        flexDirection: 'row',
+        flexDirection: 'row', 
         justifyContent: 'space-between',
         alignItems: 'center',
     },
