@@ -77,7 +77,7 @@ const BlogScreen = () => {
                                     blog_description={blog.blog_description}
                                     author_name={blog.author ? authorsById[blog.author.id]?.first_name || 'Autor no disponible' : 'Autor no disponible'}
                                     author_last_name={blog.author ? authorsById[blog.author.id]?.last_name || '' : ''}
-                                    time={new Date(blog.createdAt).toLocaleTimeString()}
+                                    time={new Date(blog.createdAt).toLocaleDateString()}
                                 />
                             </View>
                         ))}

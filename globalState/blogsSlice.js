@@ -69,7 +69,8 @@ const blogsSlice = createSlice({
       // Mapear los blogs para guardar solo el ID del autor o null si no hay autor
       state.blogs = action.payload.map(blog => ({
         ...blog,
-        author: blog.author ? blog.author._id : null
+        author: blog.author ? blog.author._id : null,
+        createdAt: new Date(blog.createdAt).toLocaleDateString()
       }));
 
       // Filtrar y mapear los autores válidos para construir authorsById
