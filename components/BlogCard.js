@@ -25,7 +25,7 @@ const BlogCard = ({ image_url, blog_title, blog_tag, blog_description, author_na
     const toggleShowMore = () => {
         setShowMore(!showMore);
     };
-  
+
 
     const fetchData = async () => {
         try {
@@ -71,6 +71,13 @@ const BlogCard = ({ image_url, blog_title, blog_tag, blog_description, author_na
     }, [blogId]);
 
     const handleLikePost = async () => {
+        const originalLikes = likes;
+        const originalLikeSubcribe = likeSubcribe;
+        
+        // Optimistically update the UI
+        setLikes(prevLikes => likeSubcribe ? prevLikes - 1 : prevLikes + 1);
+        setLikeSubcribe(!likeSubcribe);
+
         try {
             const response = await axios.post(
                 `${API_BASE_URL}/like/${blogId}`,
@@ -81,16 +88,14 @@ const BlogCard = ({ image_url, blog_title, blog_tag, blog_description, author_na
                     },
                 }
             );
-            updateLikes(response.data.likes);
             socket.emit('likePost', { blogId });
         } catch (error) {
             console.error('Error al realizar la solicitud POST:', error);
-        }
-    };
 
-    const updateLikes = async (newLikes) => {
-        await fetchData(); // Espera a que fetchData termine
-        setLikes(newLikes); // Actualiza el estado de likes después de fetchData
+            // Rollback to original state if request fails
+            setLikes(originalLikes);
+            setLikeSubcribe(originalLikeSubcribe);
+        }
     };
     return (
         <View style={styles.card} className="px-4 pt-4 border-2 border-gray-400/10 z-50">
