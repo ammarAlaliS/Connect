@@ -5,7 +5,7 @@ import scrollYReducer from "./scrollYslice";
 import marketSlice from "./marketSlice";
 import menuReducer from './menuSlice';
 import headerReducer from './headerSlice';
-import blogsReducer from './blogsSlice'; // Importa el reducer de blogsSlice
+import blogsReducer from './blogsSlice'; 
 
 export const store = configureStore({
   reducer: {
@@ -15,6 +15,7 @@ export const store = configureStore({
     market: marketSlice,
     menu: menuReducer,
     header: headerReducer,
-    blogs: blogsReducer, // Agrega el reducer de blogsSlice al store
+    blogs: blogsReducer,
+
   },
 });

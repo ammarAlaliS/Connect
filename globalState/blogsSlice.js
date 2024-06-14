@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 const API_BASE_URL = 'https://obbaramarket-backend-1.onrender.com';
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutos
+const CACHE_DURATION = 2 * 60 * 1000; 
 
 export const fetchBlogsAndAuthors = createAsyncThunk(
   'blogs/fetchBlogsAndAuthors',

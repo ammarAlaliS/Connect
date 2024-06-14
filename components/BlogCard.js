@@ -1,18 +1,72 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, ScrollView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import io from 'socket.io-client';
+import { useSelector } from 'react-redux';
+import axios from 'axios';
 import EvilIcons from '@expo/vector-icons/EvilIcons';
 import { AntDesign } from '@expo/vector-icons';
-import { toggleHeaderVisibility } from '../globalState/headerSlice';
-import { useDispatch } from 'react-redux';
 import CommentsModal_C from './CommentsModal _C';
 
-const BlogCard = ({ image_url, blog_title, blog_tag, blog_description, author_name, author_last_name, time }) => {
-    const [showMore, setShowMore] = React.useState(false);
-    const [modalVisible, setModalVisible] = React.useState(false);
+
+const API_BASE_URL = 'https://obbaramarket-backend-1.onrender.com/api/ObbaraMarket';
+const socket = io(API_BASE_URL, {
+    transports: ['websocket'],
+});
+
+const BlogCard = ({ image_url, blog_title, blog_tag, blog_description, author_name, author_last_name, time, blogId }) => {
+    const [likes, setLikes] = useState();
+    const [showMore, setShowMore] = useState(false);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [likeSubcribe, setLikeSubcribe] = useState()
+    const global_user = useSelector((state) => state.user.global_user);
+    const token = global_user?.token;
 
     const toggleShowMore = () => {
         setShowMore(!showMore);
+    };
+
+
+    useEffect(() => {
+        const getTotalLikes = async () => {
+            try {
+                const response = await axios.get(`${API_BASE_URL}/blogs/${blogId}/likes`);
+                setLikes(response.data.totalLikes);
+            } catch (error) {
+                console.error('Error fetching likes:', error);
+            }
+        };
+
+        getTotalLikes();
+
+        socket.on('likePost', ({ blogId: updatedBlogId }) => {
+            if (updatedBlogId === blogId) {
+                getTotalLikes();
+            }
+        });
+
+        return () => {
+            socket.off('likePost');
+        };
+    }, [blogId]);
+
+    const handleLikePost = async () => {
+        try {
+            const response = await axios.post(
+                `${API_BASE_URL}/like/${blogId}`,
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+            setLikes(response.data.likes);
+            setLikeSubcribe(response.data.likeSubcribe)
+            socket.emit('likePost', { blogId });
+        } catch (error) {
+            console.error('Error al realizar la solicitud POST:', error);
+        }
     };
 
     return (
@@ -20,7 +74,7 @@ const BlogCard = ({ image_url, blog_title, blog_tag, blog_description, author_na
             <Image source={{ uri: image_url }} style={styles.image} resizeMode="cover" />
             <View className="space-y-2">
                 <Text style={styles.title}>{blog_title}</Text>
-                <View  className="w2esc  flex-row flex-wrap items-center justify-start space-y-2 ">
+                <View className="w2esc  flex-row flex-wrap items-center justify-start space-y-2 ">
                     {blog_tag.map((tag, index) => (
                         <Text key={index} style={styles.tag} className="px-2 mr-2 py-[5px] rounded-[5px]">{tag}</Text>
                     ))}
@@ -48,18 +102,34 @@ const BlogCard = ({ image_url, blog_title, blog_tag, blog_description, author_na
                 </View>
                 <View className=" w-full flex-row justify-between py-2 ">
                     <View className="flex-row  space-x-[4px]">
-                        <View className=" bg-[#080099] h-[28px] w-[28px] items-center justify-center rounded-full"><EvilIcons name="comment" size={24} color="white" style={styles.icon} /></View>
-                        <Text style={{ fontFamily: 'PlusJakartaSans-Bold', }} className=" mt-[3px]">6</Text>
+                        <View className=" bg-[#080099] h-[28px] w-[28px] items-center justify-center rounded-full">
+                            <EvilIcons name="comment" size={24} color="white" style={styles.iconMessageContent} />
+                        </View>
+                        <Text style={{ fontFamily: 'PlusJakartaSans-Bold', }} className=" mt-[3px]">0</Text>
                     </View>
-                    <View className="flex-row space-x-[4px]">
-                        <View className=" bg-[#ff226e] h-[28px] w-[28px] items-center justify-center rounded-full"><EvilIcons name="like" size={24} color="white" style={styles.icon} /></View>
-                        <Text style={{ fontFamily: 'PlusJakartaSans-Bold', }} className=" mt-[3px]">10</Text>
+                    <View className=" flex-row space-x-[4px]" >
+                        <View
+                            style={[likes === 0 ? styles.likeContentDisable : styles.likeContentActive]}
+                            className="  h-[28px] w-[28px] items-center justify-center rounded-full">
+                            <EvilIcons
+                                name="like"
+                                size={24}
+                                style={[likes === 0 ? styles.iconLikeContentDisable : styles.iconLikeContentActive]}
+                            />
+                        </View>
+                        <Text
+                            style={{ fontFamily: 'PlusJakartaSans-Bold' }}
+                            className="mt-[3px] ">{likes}
+                        </Text>
+
                     </View>
                 </View>
 
                 <View className="border-t-[1px] border-gray-400/20 py-4  space-y-2  " >
                     <View className="flex-row space-x-[6px] justify-between">
-                        <TouchableOpacity className=" bg-[#ff226e] py-2 px-4 rounded-md border-[1px] border-black/10">
+                        <TouchableOpacity
+                            className=" bg-[#ff226e] py-2 px-4 rounded-md border-[1px] border-black/10"
+                            onPress={handleLikePost}>
                             <View className=" flex-row space-x-[2px] items-center justify-center">
                                 <AntDesign name="like2" size={20} color="white" />
                                 <Text style={{ fontFamily: 'PlusJakartaSans-Bold', }} className=" text-[14px] text-white">Mola</Text>
@@ -127,7 +197,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontFamily: 'PlusJakartaSans-Bold',
     },
- 
+
     tag: {
         backgroundColor: '#8504FF',
         color: '#fff',
@@ -142,9 +212,28 @@ const styles = StyleSheet.create({
         color: 'blue',
         fontSize: 16,
     },
-    icon: {
+
+    likeContentActive: {
+        backgroundColor: '#ff226e'
+
+    },
+    likeContentDisable: {
+        backgroundColor: 'rgba(107, 114, 128, 0.3)',
+    },
+
+    iconLikeContentActive: {
         marginBottom: 5,
-    }
+        color: '#fff'
+    },
+    iconLikeContentDisable: {
+        marginBottom: 5,
+        color: '#000'
+    },
+    iconMessageContent: {
+        marginBottom: 5,
+    },
+
+
 });
 
 

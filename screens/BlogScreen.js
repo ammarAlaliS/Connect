@@ -19,7 +19,6 @@ const BlogScreen = () => {
         }
     }, [dispatch, status]);
 
-    console.log("Estado de authorsById:", authorsById);
 
     const listClassifications = [
         { id: 1, name: "Todos" },
@@ -80,6 +79,8 @@ const BlogScreen = () => {
                                         author_name={blog.author ? authorsById[blog.author.id]?.first_name || 'Autor no disponible' : 'Autor no disponible'}
                                         author_last_name={blog.author ? authorsById[blog.author.id]?.last_name || '' : ''}
                                         time={new Date(blog.createdAt).toLocaleDateString()}
+                                        blogId={blog._id}
+                                        totalLikes={blog.likes}
                                     />
                                 </View>
                             ))}
