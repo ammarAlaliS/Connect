@@ -128,11 +128,20 @@ const BlogCard = ({ image_url, blog_title, blog_tag, blog_description, author_na
                 <View className="border-t-[1px] border-gray-400/20 py-4  space-y-2  " >
                     <View className="flex-row space-x-[6px] justify-between">
                         <TouchableOpacity
-                            className=" bg-[#ff226e] py-2 px-4 rounded-md border-[1px] border-black/10"
-                            onPress={handleLikePost}>
+                            className="  py-2 px-4 rounded-md border-[1px] border-black/10"
+                            onPress={handleLikePost}
+                            style={[likeSubcribe ? styles.molaButtonActive : styles.molaButtonDisable]}
+                        >
+
                             <View className=" flex-row space-x-[2px] items-center justify-center">
-                                <AntDesign name="like2" size={20} color="white" />
-                                <Text style={{ fontFamily: 'PlusJakartaSans-Bold', }} className=" text-[14px] text-white">Mola</Text>
+                                <EvilIcons
+                                    name="like"
+                                    size={24}
+                                    style={[likeSubcribe ? styles.molaIconActive : styles.molaIconDisable]}
+                                />
+                                <Text
+                                    style={[likeSubcribe ? styles.molaIconActive : styles.molaIconDisable]}
+                                    className=" text-[14px] text-white">Mola</Text>
                             </View>
                         </TouchableOpacity>
                         <TouchableOpacity
@@ -231,6 +240,22 @@ const styles = StyleSheet.create({
     },
     iconMessageContent: {
         marginBottom: 5,
+    },
+    molaButtonDisable: {
+        backgroundColor: 'rgba(107, 114, 128, 0.1)',
+    },
+    molaButtonActive: {
+        backgroundColor: '#ff226e',
+    },
+    molaIconActive: {
+        color: '#fff',
+        marginBottom: 3,
+        fontFamily: 'PlusJakartaSans-Bold',
+    },
+    molaIconDisable: {
+        color: '#000',
+        marginBottom: 3,
+        fontFamily: 'PlusJakartaSans-Bold',
     },
 
 
