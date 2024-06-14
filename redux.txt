@@ -18,4 +18,56 @@ luego redux actualiza a todos los componentes que esten utlizando este estado.
        <LinearGradient
                                             >
                                                
-                                            </LinearGradient>
+                                            </LinearGradie
+const BlogCard = ({ image_url, blog_title, blog_tag, blog_description, author_name, author_last_name, time, blogId }) => {
+    const [likes, setLikes] = useState();
+    const [showMore, setShowMore] = useState(false);
+    const [modalVisible, setModalVisible] = useState(false);
+    const global_user = useSelector((state) => state.user.global_user);
+    const token = global_user?.token;
+
+    const toggleShowMore = () => {
+        setShowMore(!showMore);
+    };
+
+
+    useEffect(() => {
+        const getTotalLikes = async () => {
+            try {
+                const response = await axios.get(`${API_BASE_URL}/blogs/${blogId}/likes`);
+                setLikes(response.data.totalLikes);
+            } catch (error) {
+                console.error('Error fetching likes:', error);
+            }
+        };
+
+        getTotalLikes();
+
+        socket.on('likePost', ({ blogId: updatedBlogId }) => {
+            if (updatedBlogId === blogId) {
+                getTotalLikes();
+            }
+        });
+
+        return () => {
+            socket.off('likePost');
+        };
+    }, [blogId]);
+
+    const handleLikePost = async () => {
+        try {
+            const response = await axios.post(
+                `${API_BASE_URL}/like/${blogId}`,
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+            setLikes(response.data.likes);
+            socket.emit('likePost', { blogId });
+        } catch (error) {
+            console.error('Error al realizar la solicitud POST:', error);
+        }
+    };

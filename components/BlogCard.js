@@ -25,7 +25,27 @@ const BlogCard = ({ image_url, blog_title, blog_tag, blog_description, author_na
     const toggleShowMore = () => {
         setShowMore(!showMore);
     };
+  
 
+    const fetchData = async () => {
+        try {
+            const response = await axios.get(
+                `${API_BASE_URL}/like/check/${blogId}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+            setLikeSubcribe(response.data.hasLiked);
+        } catch (error) {
+            console.error('Error al realizar la solicitud GET:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchData();
+    }, [blogId, token]);
 
     useEffect(() => {
         const getTotalLikes = async () => {
@@ -61,14 +81,17 @@ const BlogCard = ({ image_url, blog_title, blog_tag, blog_description, author_na
                     },
                 }
             );
-            setLikes(response.data.likes);
-            setLikeSubcribe(response.data.likeSubcribe)
+            updateLikes(response.data.likes);
             socket.emit('likePost', { blogId });
         } catch (error) {
             console.error('Error al realizar la solicitud POST:', error);
         }
     };
 
+    const updateLikes = async (newLikes) => {
+        await fetchData(); // Espera a que fetchData termine
+        setLikes(newLikes); // Actualiza el estado de likes después de fetchData
+    };
     return (
         <View style={styles.card} className="px-4 pt-4 border-2 border-gray-400/10 z-50">
             <Image source={{ uri: image_url }} style={styles.image} resizeMode="cover" />
