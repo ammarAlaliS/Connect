@@ -5,7 +5,6 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  Alert,
   Modal,
 } from "react-native";
 import { useDispatch } from "react-redux";
@@ -15,6 +14,7 @@ import ArticleCard from "../components/MarketComponents/ArticleCard.jsx";
 import ArticleModal from "../components/MarketComponents/ArticleModal.jsx";
 import BottomSellModal from "../components/MarketComponents/BottomSellModal.jsx";
 import NewProductForm from "../components/MarketComponents/NewProductForm.jsx";
+import FilterModal from "../components/MarketComponents/FilterModal.jsx";
 
 const MarketScreen = () => {
   const dispatch = useDispatch();
@@ -29,10 +29,7 @@ const MarketScreen = () => {
   const [carroDeCompras, setCarroDeCompras] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [showNewProductModal, setShowNewProductModal] = useState(false);
-
-  const handleFilterPress = () => {
-    Alert.alert("Modal para los filtros");
-  };
+  const [showFilterModal, setShowFilterModal] = useState(false);
 
   const listClasifications = [
     { id: 1, name: "Todos" },
@@ -141,7 +138,7 @@ const MarketScreen = () => {
       >
         <View className="d-flex flex-row">
           <View style={styles.searchContainer}>
-            <View style={styles.searchSection}>
+            <View style={styles.searchSection} className="d-flex flex-row">
               <Icon
                 style={styles.searchIcon}
                 name="search"
@@ -159,8 +156,12 @@ const MarketScreen = () => {
           </View>
 
           <View style={styles.container}>
-            <View style={styles.searchSection}>
-              <TouchableOpacity onPress={handleFilterPress}>
+            <View style={styles.searchSection} className="d-flex flex-row">
+              <TouchableOpacity
+                onPress={() => {
+                  setShowFilterModal(true);
+                }}
+              >
                 <Icon
                   style={styles.secondFilterIcon}
                   name="filter"
@@ -176,25 +177,11 @@ const MarketScreen = () => {
           </View>
         </View>
 
-        <View
-          style={{
-            backgroundColor: "white",
-            zIndex: 100,
-            paddingVertical: 10,
-            paddingHorizontal: 10,
-            borderBottomWidth: 1,
-            borderBottomColor: "#ccc",
-            shadowColor: "#000",
-            shadowOffset: { width: 0, height: 1 },
-            shadowOpacity: 0.3,
-            shadowRadius: 2,
-            elevation: 5,
-          }}
-        >
+        <View style={styles.clasificationContainer}>
           <ScrollView
-            style={styles.scrollStyles}
             horizontal={true}
             showsHorizontalScrollIndicator={false}
+            className="d-flex flex-row"
           >
             {listClasifications.map((item, index) => {
               if (item.id == selectedclassification) {
@@ -251,13 +238,7 @@ const MarketScreen = () => {
       <Modal
         visible={showModal}
         animationType="slide"
-        style={{
-          height: 100,
-          width: "100%",
-          marginTop: "25%",
-          backgroundColor: "red",
-          padding: 40,
-        }}
+        style={styles.modalContainer}
         transparent={true}
       >
         <ArticleModal setShowModal={setShowModal}></ArticleModal>
@@ -268,16 +249,18 @@ const MarketScreen = () => {
       <Modal
         visible={showNewProductModal}
         animationType="slide"
-        style={{
-          height: 100,
-          width: "100%",
-          marginTop: "25%",
-          backgroundColor: "red",
-          padding: 40,
-        }}
+        style={styles.secondModalContainer}
         transparent={true}
       >
         <NewProductForm setShowModal={setShowNewProductModal}></NewProductForm>
+      </Modal>
+      <Modal
+        visible={showFilterModal}
+        animationType="fade"
+        style={styles.thirdModalContainer}
+        transparent={true}
+      >
+        <FilterModal setShowFilterModal={setShowFilterModal}></FilterModal>
       </Modal>
     </View>
   );
@@ -306,7 +289,6 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   searchSection: {
-    flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#ffffff",
     borderRadius: 10,
@@ -342,10 +324,6 @@ const styles = StyleSheet.create({
     color: "#424242",
     borderRadius: 10,
   },
-  scrollStyles: {
-    display: "flex",
-    flexDirection: "row",
-  },
   item: {
     paddingHorizontal: 8,
     paddingVertical: 5,
@@ -380,6 +358,40 @@ const styles = StyleSheet.create({
     marginBottom: 0,
     borderBottomLeftRadius: 0,
     borderBottomRightRadius: 0,
+  },
+  clasificationContainer: {
+    backgroundColor: "white",
+    zIndex: 100,
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.3,
+    shadowRadius: 2,
+    elevation: 5,
+  },
+  modalContainer: {
+    height: 100,
+    width: "100%",
+    marginTop: "25%",
+    backgroundColor: "red",
+    padding: 40,
+  },
+  secondModalContainer: {
+    height: 100,
+    width: "100%",
+    marginTop: "25%",
+    backgroundColor: "red",
+    padding: 40,
+  },
+  thirdModalContainer: {
+    height: 100,
+    width: "100%",
+    marginTop: "25%",
+    backgroundColor: "red",
+    padding: 40,
   },
 });
 

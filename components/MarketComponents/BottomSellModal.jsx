@@ -29,6 +29,7 @@ const BottomSellModal = ({ setShowNewProductModal }) => {
         onPress={() => {
           setShowNewProductModal(true);
         }}
+        className="d-flex"
       >
         <PlusIcon
           width={34}
@@ -45,6 +46,7 @@ const BottomSellModal = ({ setShowNewProductModal }) => {
             borderWidth: widthAnim > 0 ? 1.5 : 0,
           },
         ]}
+        className="d-flex"
       >
         <Text style={styles.textSuggestion}>Vende un producto</Text>
       </Animated.View>
@@ -68,7 +70,6 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    display: "flex",
     justifyContent: "center",
     alignItems: "center",
     zIndex: 10,
@@ -82,7 +83,6 @@ const styles = StyleSheet.create({
     zIndex: 1,
     borderColor: "#c3c3c3",
     borderStyle: "solid",
-    display: "flex",
     justifyContent: "center",
     borderTopLeftRadius: 25,
     borderBottomLeftRadius: 25,

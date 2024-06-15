@@ -103,7 +103,7 @@ const ArticleCarousel = () => {
   }, [imageActive, modal]);
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} className="d-flex flex-column">
       <TouchableOpacity
         style={styles.leftArrowContainer}
         onPress={PreviuosImage}
@@ -113,7 +113,10 @@ const ArticleCarousel = () => {
       <TouchableOpacity style={styles.rightArrowContainer} onPress={NextImage}>
         <ArrowRightHeroIcon width={40} height={40} color={"#000"} styles={{}} />
       </TouchableOpacity>
-      <View style={styles.carrucelPrincipalContainer}>
+      <View
+        style={styles.carrucelPrincipalContainer}
+        className="d-flex flex-row"
+      >
         <ScrollView
           horizontal={true}
           onScroll={handleScroll}
@@ -155,6 +158,7 @@ const ArticleCarousel = () => {
           onTouchEnd={() => {
             showModal(false);
           }}
+          className="d-flex"
         >
           <View
             style={styles.xMarkIconContainer}
@@ -176,7 +180,10 @@ const ArticleCarousel = () => {
         </View>
       </Modal>
       {/* CARRUCEL */}
-      <View style={styles.itemScrollCarrucelContainer}>
+      <View
+        style={styles.itemScrollCarrucelContainer}
+        className="d-flex flex-row"
+      >
         {imageList.map((item, index) => {
           return (
             <View
@@ -205,8 +212,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
   },
   container: {
-    display: "flex",
-    flexDirection: "column",
     alignItems: "center",
     marginTop: 5,
     backgroundColor: "#f1f1f1",
@@ -230,14 +235,11 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     overflow: "hidden",
     marginBottom: 15,
-    display: "flex",
-    flexDirection: "row",
   },
   imageZoomModal: {
     width: "100%",
     height: "100%",
     backgroundColor: "#00000099",
-    display: "flex",
     justifyContent: "center",
     padding: 20,
   },
@@ -252,8 +254,6 @@ const styles = StyleSheet.create({
   itemScrollCarrucelContainer: {
     height: 5,
     width: 5,
-    display: "flex",
-    flexDirection: "row",
     width: "100%",
     justifyContent: "center",
     paddingBottom: 5,

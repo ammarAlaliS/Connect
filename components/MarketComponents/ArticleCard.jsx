@@ -19,7 +19,10 @@ const ArticleCard = ({ urlImage, setShowModal }) => {
           resizeMode="cover"
         />
 
-        <TouchableOpacity style={styles.messageContainer}>
+        <TouchableOpacity
+          className="d-flex flex-row"
+          style={styles.messageContainer}
+        >
           <ContactIcon width={25} height={30} color="#3725dd" />
         </TouchableOpacity>
       </View>
@@ -57,8 +60,6 @@ const styles = StyleSheet.create({
     height: 29,
     width: 29,
     borderRadius: 5,
-    display: "flex",
-    flexDirection: "row",
     alignItems: "center",
     alignSelf: "center",
     justifyContent: "center",
