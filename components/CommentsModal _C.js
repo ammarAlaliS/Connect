@@ -4,28 +4,28 @@ import Commet_C from './Commet_C';
 import CommentHeader_C from './CommentHeader_C';
 import CommentForm from './CommentForm';
 
-const CommentsModal_C = ({ visible, onClose }) => {
-    const [fadeAnim] = useState(new Animated.Value(0)); 
+const CommentsModal_C = ({ visible, onClose, blogId, time }) => {
+    const [fadeAnim] = useState(new Animated.Value(0));
 
     useEffect(() => {
         let animationTimeout;
         if (visible) {
             animationTimeout = setTimeout(() => {
-                Animated.timing(                 
+                Animated.timing(
                     fadeAnim,
                     {
                         toValue: 1,
-                        duration: 100,            
-                        useNativeDriver: true     
+                        duration: 100,
+                        useNativeDriver: true
                     }
                 ).start();
-            }, 300); 
+            }, 300);
         } else {
-            Animated.timing(                  
+            Animated.timing(
                 fadeAnim,
                 {
                     toValue: 0,
-                    duration: 100,            
+                    duration: 100,
                     useNativeDriver: true
                 }
             ).start();
@@ -48,13 +48,16 @@ const CommentsModal_C = ({ visible, onClose }) => {
                 <Animated.View
                     style={[
                         modalStyles.fullWidth,
-                        { opacity: fadeAnim } 
+                        { opacity: fadeAnim }
                     ]}
                 >
-                    <View style={modalStyles.modalContent} className="bg-gray-200">
+                    <View style={modalStyles.modalContent} className="bg-gray-200 ">
                         <CommentHeader_C onClose={onClose} />
                         <ScrollView style={modalStyles.scrollView} showsVerticalScrollIndicator={false}>
-                            <Commet_C />
+                            <Commet_C
+                                blogId={blogId}
+                                time={time}
+                            />
                         </ScrollView>
                         <CommentForm />
                     </View>
@@ -82,7 +85,7 @@ const modalStyles = StyleSheet.create({
         width: '100%',
         borderRadius: 10,
         maxHeight: '90%',
-        overflow: 'hidden', 
+        overflow: 'hidden',
     },
     scrollView: {
         flex: 1,

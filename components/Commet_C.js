@@ -1,67 +1,97 @@
-import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, ScrollView } from 'react-native';
-import React from 'react';
+import { View, Text, Image, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import io from 'socket.io-client';
+import axios from 'axios';
 
-const comments = [
-  {
-    username: 'John Doe',
-  text: 'Este es un artículo increíblemente bien escrito. Realmente disfruté cómo abordaste todos los puntos clave y proporcionaste ejemplos claros. ¡Gracias por compartir tu conocimiento y experiencia!',
-    avatarUrl: 'https://scontent.fmga3-1.fna.fbcdn.net/v/t39.30808-6/430662477_3753105765016122_830661294830137238_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=5f2048&_nc_ohc=h8WnIp0t09oQ7kNvgEoLAc5&_nc_ht=scontent.fmga3-1.fna&oh=00_AYA0rNhX7kli6UFFqyyCOSLokYY2JCOWZLg2LY1r8hKneg&oe=666BE711',
-  },
-  {
-    username: 'Jane Smith',
-    text: 'Thanks for sharing!',
-    avatarUrl: 'https://scontent.fmga3-1.fna.fbcdn.net/v/t39.30808-6/430662477_3753105765016122_830661294830137238_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=5f2048&_nc_ohc=h8WnIp0t09oQ7kNvgEoLAc5&_nc_ht=scontent.fmga3-1.fna&oh=00_AYA0rNhX7kli6UFFqyyCOSLokYY2JCOWZLg2LY1r8hKneg&oe=666BE711',
-  },
-  {
-    username: 'John Doe',
-  text: 'Este es un artículo increíblemente bien escrito. Realmente disfruté cómo abordaste todos los puntos clave y proporcionaste ejemplos claros. ¡Gracias por compartir tu conocimiento y experiencia!',
-    avatarUrl: 'https://scontent.fmga3-1.fna.fbcdn.net/v/t39.30808-6/430662477_3753105765016122_830661294830137238_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=5f2048&_nc_ohc=h8WnIp0t09oQ7kNvgEoLAc5&_nc_ht=scontent.fmga3-1.fna&oh=00_AYA0rNhX7kli6UFFqyyCOSLokYY2JCOWZLg2LY1r8hKneg&oe=666BE711',
-  },
-  {
-    username: 'Jane Smith',
-    text: 'Thanks for sharing!',
-    avatarUrl: 'https://scontent.fmga3-1.fna.fbcdn.net/v/t39.30808-6/430662477_3753105765016122_830661294830137238_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=5f2048&_nc_ohc=h8WnIp0t09oQ7kNvgEoLAc5&_nc_ht=scontent.fmga3-1.fna&oh=00_AYA0rNhX7kli6UFFqyyCOSLokYY2JCOWZLg2LY1r8hKneg&oe=666BE711',
-  },
-  {
-    username: 'John Doe',
-  text: 'Este es un artículo increíblemente bien escrito. Realmente disfruté cómo abordaste todos los puntos clave y proporcionaste ejemplos claros. ¡Gracias por compartir tu conocimiento y experiencia!',
-    avatarUrl: 'https://scontent.fmga3-1.fna.fbcdn.net/v/t39.30808-6/430662477_3753105765016122_830661294830137238_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=5f2048&_nc_ohc=h8WnIp0t09oQ7kNvgEoLAc5&_nc_ht=scontent.fmga3-1.fna&oh=00_AYA0rNhX7kli6UFFqyyCOSLokYY2JCOWZLg2LY1r8hKneg&oe=666BE711',
-  },
-  {
-    username: 'Jane Smith',
-    text: 'Thanks for sharing!',
-    avatarUrl: 'https://scontent.fmga3-1.fna.fbcdn.net/v/t39.30808-6/430662477_3753105765016122_830661294830137238_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=5f2048&_nc_ohc=h8WnIp0t09oQ7kNvgEoLAc5&_nc_ht=scontent.fmga3-1.fna&oh=00_AYA0rNhX7kli6UFFqyyCOSLokYY2JCOWZLg2LY1r8hKneg&oe=666BE711',
-  },
-];
+const API_BASE_URL = 'https://obbaramarket-backend-1.onrender.com/api/ObbaraMarket';
+const socket = io('https://obbaramarket-backend-1.onrender.com', {
+  transports: ['websocket'],
+});
 
-const Commet_C = () => {
+const Comment = ({ data }) => {
+  const [showMore, setShowMore] = useState(false);
+
+  const toggleShowMore = () => {
+    setShowMore(!showMore);
+  };
+
+  const formatTime = (dateString) => {
+    const options = { hour: '2-digit', minute: '2-digit', hour12: false };
+    return new Date(dateString).toLocaleTimeString([], options);
+  };
+
   return (
-    <View className=" flex-1  px-4  bg-gray-200 py-2">
-      <ScrollView className=" space-y-2">
-        {comments.map((comment, index) => (
-          <View key={index} className="flex-row bg-[#f9f9f9] rounded-lg items-center space-x-2  py-5 px-4 border-[1px] border-gray-200/10  shadow-sm shadow-black ">
-            <View className="h-full">
-              <Image source={{ uri: comment.avatarUrl }} className=" w-16 h-16 rounded-full" />
-            </View>
-            <View className="flex-1 space-y-4">
-              <View className="flex-row justify-between">
-                <Text style={{ fontFamily: 'PlusJakartaSans-Bold', }} className=" text-sm ">
-                  {comment.username}
-                </Text>
-                <Text style={{ fontFamily: 'PlusJakartaSans-Bold', }} className=" text-[12px]">
-                  6/8/2024
-                </Text>
-              </View>
-              <View className="bg-gray-200 p-2 rounded-xl">
-                <Text>{comment.text}</Text>
-              </View>
-            </View>
+    <View className="flex-row bg-[#f9f9f9] rounded-lg items-center space-x-2 py-5 px-4 border-[1px] border-gray-200/10 shadow-sm shadow-black">
+      <View className="h-full">
+        <Image source={{ uri: data.author.global_user.profile_img_url }} className="w-16 h-16 rounded-full" />
+      </View>
+      <View className="flex-1 space-y-4">
+        <View className="flex-row justify-between">
+          <Text style={{ fontFamily: 'PlusJakartaSans-Bold' }} className="text-sm">
+            {data.author.global_user.first_name} {data.author.global_user.last_name}
+          </Text>
+          <View className="items-end">
+            <Text style={{ fontFamily: 'PlusJakartaSans-Bold' }} className="text-[12px]">
+              {`${new Date(data.createdAt).toLocaleDateString()}`}
+            </Text>
+            <Text style={{ fontFamily: 'PlusJakartaSans-Bold' }} className="text-[10px]">
+              {formatTime(data.createdAt)}
+            </Text>
           </View>
+        </View>
+        <View className="bg-gray-200 p-2 rounded-xl">
+          <Text className="text-[15px]">
+            {showMore ? data.content : `${data.content.slice(0, 120)}...`}
+          </Text>
+          <TouchableOpacity onPress={toggleShowMore}>
+            <View>
+              <Text className="text-blue-800">
+                {showMore ? 'Leer menos' : 'Leer más'}
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </View>
+  );
+};
+
+const Commet_C = ({ blogId }) => {
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    fetchData();
+
+    socket.on('newComment', handleCommentsUpdated);
+
+    return () => {
+      socket.off('newComment', handleCommentsUpdated);
+    };
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/blogs/${blogId}/comments?page=1&limit=10`);
+      setData(response.data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  const handleCommentsUpdated = (newComment) => {
+    console.log('Nuevo comentario recibido:', newComment);
+    setData(prevData => [newComment, ...prevData]);
+  };
+
+  return (
+    <View className="flex-1 px-4 bg-gray-200 py-2">
+      <ScrollView className="space-y-2">
+        {data.map((data, index) => (
+          <View  key={index}><Comment data={data} /></View>
         ))}
       </ScrollView>
     </View>
-  )
-}
+  );
+};
 
-
-export default Commet_C
+export default Commet_C;

@@ -5,7 +5,7 @@ import MyIcon from '../icons/MyIcon';
 
 const CommentHeader_C = ({onClose}) => {
     return (
-        <View style={modalStyles.modalHeader} className=" py-6 px-4 bg-[#fff]   rounded-t-lg border-b-[1px] border-black/10 ">
+        <View style={modalStyles.modalHeader} className=" py-6 px-4 bg-[#fff]  mx-2 mt-2  rounded-lg border-b-[1px] border-black/10 ">
             <Text style={modalStyles.modalTitle}>Comentarios</Text>
             <TouchableOpacity onPress={onClose} >
                 <View style={modalStyles.closeButton} className=" bg-gray-50/30 border-2 border-black/10 border-dotted p-1">

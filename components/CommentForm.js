@@ -33,7 +33,7 @@ const CommentForm = () => {
     };
 
     return (
-        <View style={styles.shadowView} className=" rounded-t-2xl">
+        <View style={styles.shadowView} className=" rounded-t-2xl mx-2 mb-2">
                 <View className="flex-row items-center space-x-2">
                     <View className="h-full items-center">
                         <Image source={{ uri: user.global_user.profile_img_url }} className="w-16 h-16 rounded-full bg-gray-100" />

@@ -74,7 +74,6 @@ const BlogCard = ({ image_url, blog_title, blog_tag, blog_description, author_na
         const originalLikes = likes;
         const originalLikeSubcribe = likeSubcribe;
         
-        // Optimistically update the UI
         setLikes(prevLikes => likeSubcribe ? prevLikes - 1 : prevLikes + 1);
         setLikeSubcribe(!likeSubcribe);
 
@@ -210,6 +209,8 @@ const BlogCard = ({ image_url, blog_title, blog_tag, blog_description, author_na
             <CommentsModal_C
                 visible={modalVisible}
                 onClose={() => setModalVisible(false)}
+                blogId={blogId}
+                time={time}
 
             />
         </View>
