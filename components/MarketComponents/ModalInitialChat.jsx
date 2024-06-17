@@ -7,13 +7,13 @@ import { TouchableOpacity } from "react-native";
 const ModalInitialChat = () => {
   return (
     <View style={styles.modalInitialChatContainer}>
-      <View style={styles.secondChatContainer}>
+      <View style={styles.secondChatContainer} className="d-flex flex-row">
         <ContactIcon width={35} height={35} color="#2b00b6" />
         <Text style={styles.chatTitleContainer}>
           Envia un mensaje al vendedor
         </Text>
       </View>
-      <View style={styles.ThirdChatContainer}>
+      <View style={styles.ThirdChatContainer} className="d-flex flex-row">
         <TextInput style={styles.inputContainer} multiline={true}>
           Hola, ¿Sigue disponible?
         </TextInput>
@@ -37,12 +37,16 @@ const styles = StyleSheet.create({
     paddingTop: 5,
   },
   secondChatContainer: {
-    display: "flex",
-    flexDirection: "row",
     paddingLeft: 10,
     alignItems: "center",
   },
-  chatTitleContainer: { marginLeft: 10, fontWeight: "600", fontSize: 16 },
+  chatTitleContainer: {
+    marginLeft: 10,
+    fontWeight: "600",
+    fontSize: 16,
+    fontFamily: "PlusJakartaSans-Bold",
+    marginBottom: 7,
+  },
   ThirdChatContainer: {
     height: 50,
     width: "96%",
@@ -50,8 +54,6 @@ const styles = StyleSheet.create({
     marginHorizontal: "2%",
     borderRadius: 5,
     paddingHorizontal: 10,
-    display: "flex",
-    flexDirection: "row",
     alignItems: "center",
   },
   inputContainer: {
@@ -59,6 +61,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     width: "90%",
     paddingHorizontal: 10,
+    fontFamily: "PlusJakartaSans-Regular",
   },
 });
 

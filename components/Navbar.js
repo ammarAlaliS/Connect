@@ -131,7 +131,10 @@ const Navbar = () => {
                   </View>
                 </TouchableOpacity>
 
-                <TouchableOpacity className="  px-6 bg-white mt-2  border-2 border-gray-200/20 shadow-lg shadow-black ">
+                <TouchableOpacity
+                  className="  px-6 bg-white mt-2  border-2 border-gray-200/20 shadow-lg shadow-black "
+                  onPress={() => handleNavigation("Blog")}
+                >
                   <View className=" flex-row items-center space-x-2 ">
                     <View className=" flex-row items-center space-x-3 flex-1">
                       <BlogIcon width={35} height={35} color="#1E293B" />
