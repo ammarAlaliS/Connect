@@ -12,20 +12,22 @@ const BlogScreen = () => {
     const authorsById = useSelector((state) => state.blogs.authorsById);
     const status = useSelector((state) => state.blogs.status);
     const error = useSelector((state) => state.blogs.error);
+    const globalUser = useSelector((state) => state.user.global_user);
 
     useEffect(() => {
-        if (status === 'idle') {
+        if (globalUser && globalUser.profile_img_url && status === 'idle') {
             dispatch(fetchBlogsAndAuthors());
         }
-    }, [dispatch, status]);
-
+    }, [dispatch, globalUser, status]);
 
     const listClassifications = [
         { id: 1, name: "Todos" },
-        { id: 2, name: "Artículos de carros" },
-        { id: 3, name: "Artículos de Motocicletas" },
-        { id: 4, name: "Artículos variados" },
+        { id: 2, name: "Coches" },
+        { id: 3, name: "Motocicletas" },
+        { id: 4, name: "Variados" },
+        { id: 5, name: "Noticias" },
     ];
+
 
     return (
         <View style={styles.container}>
@@ -34,6 +36,7 @@ const BlogScreen = () => {
                 scrollEventThrottle={16}
                 stickyHeaderIndices={[1]}
             >
+            
                 <View style={styles.headerContainer}>
                     <View style={styles.headerContent}>
                         <View style={styles.headerTitle}>
@@ -81,6 +84,7 @@ const BlogScreen = () => {
                                         time={new Date(blog.createdAt).toLocaleDateString()}
                                         blogId={blog._id}
                                         totalLikes={blog.likes}
+                                        sections={blog.sections}
                                     />
                                 </View>
                             ))}
@@ -91,7 +95,6 @@ const BlogScreen = () => {
         </View>
     );
 };
-
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -163,5 +166,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#F9F6FE',
     },
 });
+
 
 export default BlogScreen;

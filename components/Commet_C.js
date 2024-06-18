@@ -34,22 +34,30 @@ const Comment = ({ data }) => {
             <Text style={{ fontFamily: 'PlusJakartaSans-Bold' }} className="text-[12px]">
               {`${new Date(data.createdAt).toLocaleDateString()}`}
             </Text>
-            <Text style={{ fontFamily: 'PlusJakartaSans-Bold' }} className="text-[10px]">
-              {formatTime(data.createdAt)}
-            </Text>
+
           </View>
         </View>
         <View className="bg-gray-200 p-2 rounded-xl">
           <Text className="text-[15px]">
-            {showMore ? data.content : `${data.content.slice(0, 120)}...`}
+            {showMore ? data.content : `${data.content.slice(0, 120)}`}
           </Text>
-          <TouchableOpacity onPress={toggleShowMore}>
-            <View>
-              <Text className="text-blue-800">
-                {showMore ? 'Leer menos' : 'Leer más'}
+
+          <View className="flex-row items-center justify-between">
+            {data.content.length > 120 &&
+              <TouchableOpacity onPress={toggleShowMore}>
+                <Text className=" text-blue-700">
+                  {showMore ? 'Leer menos' : 'Leer más'}
+                </Text>
+              </TouchableOpacity>
+
+            }
+            <View className="  flex-1 justify-end items-end">
+              <Text style={{ fontFamily: 'PlusJakartaSans-Bold' }} className="text-[10px] w-[30px]  ">
+                {formatTime(data.createdAt)}
               </Text>
             </View>
-          </TouchableOpacity>
+
+          </View>
         </View>
       </View>
     </View>
@@ -71,7 +79,7 @@ const Commet_C = ({ blogId }) => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/blogs/${blogId}/comments?page=1&limit=10`);
+      const response = await axios.get(`${API_BASE_URL}/blogs/${blogId}/comments?page=1&limit=20`);
       setData(response.data);
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -87,7 +95,7 @@ const Commet_C = ({ blogId }) => {
     <View className="flex-1 px-4 bg-gray-200 py-2">
       <ScrollView className="space-y-2">
         {data.map((data, index) => (
-          <View  key={index}><Comment data={data} /></View>
+          <View key={index}><Comment data={data} /></View>
         ))}
       </ScrollView>
     </View>

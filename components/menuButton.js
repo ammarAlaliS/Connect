@@ -3,7 +3,6 @@ import { View, ScrollView, StyleSheet, Animated, Easing, TouchableOpacity } from
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleMenuVisibility } from '../globalState/menuSlice';
 import MenuItem from '../components/MenuItem';
-import { toggleHeaderVisibility } from '../globalState/headerSlice';
 
 const MenuButton = ({ activeScreen, handlePress }) => {
     const dispatch = useDispatch();
@@ -22,7 +21,7 @@ const MenuButton = ({ activeScreen, handlePress }) => {
             useNativeDriver: false,
         }).start();
 
-       
+
     };
 
     const menuStyle = {
@@ -34,8 +33,8 @@ const MenuButton = ({ activeScreen, handlePress }) => {
     };
 
     return (
-        <View  className=" bg-[#F9F6FE]">
-            <View style={{borderTopLeftRadius: 40, borderTopRightRadius: 40 }} className=" bg-[#ffffff]">
+        <View className=" bg-[#F9F6FE]">
+            <View style={{ borderTopLeftRadius: 40, borderTopRightRadius: 40 }} className=" bg-[#ffffff]">
                 <TouchableOpacity onPress={toggleMenu} className=" bg- z-50  m-auto ">
                     <View className="w-36 item-center justify-center bg-white rounded-full my-2 border-b-[1px] border-gray-400/40 shadow-lg shadow-black">
                         <View className="w-20 h-[4px] bg-black rounded-full m-auto my-2"></View>
@@ -49,63 +48,63 @@ const MenuButton = ({ activeScreen, handlePress }) => {
                     showsHorizontalScrollIndicator={false}
                     contentContainerStyle={{ flexGrow: 1 }}
                 >
-                <View className="flex-row items-center w-full bg-[#080099] px-4 py-2 border-t-[1px] shadow-2xl shadow-black/40 justify-between">
-                <View style={activeScreen === 'Card' ? styles.activeMenuItem : styles.menuItem}>
-                    <MenuItem
-                        iconName="HomeIcon"
-                        iconWidth={32}
-                        iconHeight={28}
-                        iconColor={activeScreen === 'Card' ? '#FFCD57' : '#fff'}
-                        titleColor={activeScreen === 'Card' ? '#FFCD57' : '#fff'}
-                        iconTitle="Inicio"
-                        onPress={() => { handlePress('Card'); setTimeout(toggleMenu, 1000);  }}
-                    />
-                </View>
-                <View style={activeScreen === 'Profile' ? styles.activeMenuItem : styles.menuItem}>
-                    <MenuItem
-                        iconName="UserIcon"
-                        iconWidth={32}
-                        iconHeight={28}
-                        iconColor={activeScreen === 'Profile' ? '#FFCD57' : '#fff'}
-                        titleColor={activeScreen === 'Profile' ? '#FFCD57' : '#fff'}
-                        iconTitle="Perfil"
-                        onPress={() => { handlePress('Profile'); setTimeout(toggleMenu, 1000); }}
-                    />
-                </View>
-                <View style={activeScreen === 'Store' ? styles.activeMenuItem : styles.menuItem}>
-                    <MenuItem
-                        iconName="StoreIcon"
-                        iconWidth={32}
-                        iconHeight={28}
-                        iconColor={activeScreen === 'Store' ? '#FFCD57' : '#fff'}
-                        titleColor={activeScreen === 'Store' ? '#FFCD57' : '#fff'}
-                        iconTitle="Tienda"
-                        onPress={() => { handlePress('Store'); setTimeout(toggleMenu, 1000); }}
-                    />
-                </View>
-                <View style={activeScreen === 'Blog' ? styles.activeMenuItem : styles.menuItem}>
-                    <MenuItem
-                        iconName="BlogIcon"
-                        iconWidth={32}
-                        iconHeight={28}
-                        iconColor={activeScreen === 'Blog' ? '#FFCD57' : '#fff'}
-                        titleColor={activeScreen === 'Blog' ? '#FFCD57' : '#fff'}
-                        iconTitle="Blog"
-                        onPress={() => { handlePress('Blog'); setTimeout(toggleMenu, 1000);  }}
-                    />
-                </View>
-                <View style={activeScreen === 'Contact' ? styles.activeMenuItem : styles.menuItem}>
-                    <MenuItem
-                        iconName="ContactIcon"
-                        iconWidth={32}
-                        iconHeight={28}
-                        iconColor={activeScreen === 'Contact' ? '#FFCD57' : '#fff'}
-                        titleColor={activeScreen === 'Contact' ? '#FFCD57' : '#fff'}
-                        iconTitle="Chat"
-                        onPress={() => { handlePress('Contact'); setTimeout(toggleMenu, 1000); }}
-                    />
-                </View>
-            </View>
+                    <View className="flex-row items-center w-full bg-[#080099] px-4 py-2 border-t-[1px] shadow-2xl shadow-black/40 justify-between">
+                        <View style={activeScreen === 'Card' ? styles.activeMenuItem : styles.menuItem}>
+                            <MenuItem
+                                iconName="HomeIcon"
+                                iconWidth={32}
+                                iconHeight={28}
+                                iconColor={activeScreen === 'Card' ? '#FFCD57' : '#fff'}
+                                titleColor={activeScreen === 'Card' ? '#FFCD57' : '#fff'}
+                                iconTitle="Inicio"
+                                onPress={() => { handlePress('Card'); setTimeout(toggleMenu, 1000); }}
+                            />
+                        </View>
+                        <View style={activeScreen === 'Profile' ? styles.activeMenuItem : styles.menuItem}>
+                            <MenuItem
+                                iconName="UserIcon"
+                                iconWidth={32}
+                                iconHeight={28}
+                                iconColor={activeScreen === 'Profile' ? '#FFCD57' : '#fff'}
+                                titleColor={activeScreen === 'Profile' ? '#FFCD57' : '#fff'}
+                                iconTitle="Perfil"
+                                onPress={() => { handlePress('Profile'); setTimeout(toggleMenu, 1000); }}
+                            />
+                        </View>
+                        <View style={activeScreen === 'Store' ? styles.activeMenuItem : styles.menuItem}>
+                            <MenuItem
+                                iconName="StoreIcon"
+                                iconWidth={32}
+                                iconHeight={28}
+                                iconColor={activeScreen === 'Store' ? '#FFCD57' : '#fff'}
+                                titleColor={activeScreen === 'Store' ? '#FFCD57' : '#fff'}
+                                iconTitle="Tienda"
+                                onPress={() => { handlePress('Store'); setTimeout(toggleMenu, 1000); }}
+                            />
+                        </View>
+                        <View style={activeScreen === 'Blog' ? styles.activeMenuItem : styles.menuItem}>
+                            <MenuItem
+                                iconName="BlogIcon"
+                                iconWidth={32}
+                                iconHeight={28}
+                                iconColor={activeScreen === 'Blog' ? '#FFCD57' : '#fff'}
+                                titleColor={activeScreen === 'Blog' ? '#FFCD57' : '#fff'}
+                                iconTitle="Blog"
+                                onPress={() => { handlePress('Blog'); setTimeout(toggleMenu, 1000); }}
+                            />
+                        </View>
+                        <View style={activeScreen === 'Contact' ? styles.activeMenuItem : styles.menuItem}>
+                            <MenuItem
+                                iconName="ContactIcon"
+                                iconWidth={32}
+                                iconHeight={28}
+                                iconColor={activeScreen === 'Contact' ? '#FFCD57' : '#fff'}
+                                titleColor={activeScreen === 'Contact' ? '#FFCD57' : '#fff'}
+                                iconTitle="Chat"
+                                onPress={() => { handlePress('Contact'); setTimeout(toggleMenu, 1000); }}
+                            />
+                        </View>
+                    </View>
                 </ScrollView>
             </Animated.View>
         </View>

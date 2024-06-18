@@ -12,31 +12,49 @@ const Card = () => {
     if (!fontsLoaded) {
         return null;
     }
+
     return (
         <View className="bg-white px-6 py-2 border-2 border-gray-400/40 shadow-lg shadow-black" style={{ width: '100%' }}>
             <View className="flex-row space-x-2 items-center">
                 <View className="flex items-center">
-                    <Animatable.Image
-                        source={{
-                            uri:  user.global_user.profile_img_url
-                        }}
-                        style={{
+                    {user && user.global_user && user.global_user.profile_img_url ? (
+                        <Animatable.Image
+                            source={{
+                                uri: user.global_user.profile_img_url
+                            }}
+                            style={{
+                                width: 70,
+                                height: 70,
+                                borderRadius: 9999,
+                                borderWidth: 2,
+                                borderColor: 'rgba(255, 205, 87, 0.6)',
+                            }}
+                            resizeMode="cover"
+                        />
+                    ) : (
+                        <View style={{
                             width: 70,
                             height: 70,
-                            borderRadius: 9999, 
+                            borderRadius: 9999,
                             borderWidth: 2,
                             borderColor: 'rgba(255, 205, 87, 0.6)',
-                        }}
-                        resizeMode="cover"
-                    />
+                            backgroundColor: 'gray', // Opcional: puede ser un color de fondo temporal
+                            justifyContent: 'center',
+                            alignItems: 'center'
+                        }}>
+                            <Text style={{ fontFamily: 'PlusJakartaSans-SemiBold' }}>Usuario</Text>
+                        </View>
+                    )}
                     <Text style={{ fontFamily: 'PlusJakartaSans-SemiBold' }} className="text-sm">Usuario</Text>
                 </View> 
                 <View className="p-2 space-y-2 " style={{ flex: 1 }}>
                     <View>
-                        <Text style={{ fontFamily: 'PlusJakartaSans-SemiBold' }} className="text-base">
-                            ¡Hola de nuevo!
-                            <Text style={{ fontFamily: 'PlusJakartaSans-Bold' }} className="text-lg"> {user.global_user.first_name} {user.global_user.last_name} </Text>
-                        </Text>
+                        {user && user.global_user && (
+                            <Text style={{ fontFamily: 'PlusJakartaSans-SemiBold' }} className="text-base">
+                                ¡Hola de nuevo!
+                                <Text style={{ fontFamily: 'PlusJakartaSans-Bold' }} className="text-lg"> {user.global_user.first_name} {user.global_user.last_name} </Text>
+                            </Text>
+                        )}
                     </View>
                     <Animatable.View
                         animation="fadeIn"

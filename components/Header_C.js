@@ -1,15 +1,21 @@
 import React, { useEffect, useRef } from 'react';
+import { useNavigation } from '@react-navigation/native';
 import { View, Text, StatusBar, TouchableOpacity, Animated, StyleSheet } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import { Ionicons } from '@expo/vector-icons';
+import { AntDesign } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSelector, useDispatch } from 'react-redux';
-import { toggleHeaderVisibility } from '../globalState/headerSlice';
+import { CommonActions } from '@react-navigation/native'; 
+import { clearUser } from '../globalState/userSlice'; 
+import { clearBlogs } from '../globalState/blogsSlice';
 
 const HeaderC = () => {
+    const navigation = useNavigation()
     const dispatch = useDispatch();
     const headerVisible = useSelector(state => state.header.headerVisible);
     const animation = useRef(new Animated.Value(0)).current;
-    const containerHeight = headerVisible ? 80 : 0; 
+    const containerHeight = headerVisible ? 80 : 0;
 
     useEffect(() => {
         Animated.timing(animation, {
@@ -24,6 +30,21 @@ const HeaderC = () => {
         outputRange: [-80, 0],
     });
 
+    const handleLogout = async () => {
+        try {
+            await AsyncStorage.removeItem('userData');
+            dispatch(clearUser());
+            dispatch(clearBlogs());
+            navigation.dispatch(
+                CommonActions.reset({
+                    index: 0,
+                    routes: [{ name: 'Home' }],
+                })
+            );
+        } catch (error) {
+            console.error('Error al cerrar sesión:', error);
+        }
+    };
     return (
         <Animated.View style={{ height: containerHeight }}>
             <StatusBar
@@ -47,15 +68,26 @@ const HeaderC = () => {
                         <Text style={styles.title}>QuickCar</Text>
                     </View>
                 </TouchableOpacity>
-                <Animatable.View
-                    animation="tada"
-                    easing="ease-out"
-                    iterationCount="infinite"
-                    iterationDelay={500}
-                    style={styles.notificationIcon}
-                >
-                    <Ionicons name="notifications-circle-outline" size={40} color="#FFCD57" />
-                </Animatable.View>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Animatable.View
+                        animation=""
+                        easing="ease-out"
+                        iterationCount="infinite"
+                        iterationDelay={500}
+                    >
+                        <Ionicons name="notifications-circle-outline" size={40} color="#FFF" />
+                    </Animatable.View>
+                    <TouchableOpacity onPress={handleLogout}>
+                        <Animatable.View
+                            animation=""
+                            easing="ease-out"
+                            iterationCount="infinite"
+                            iterationDelay={500}
+                        >
+                            <AntDesign name="logout" size={30} color="#FF2121" />
+                        </Animatable.View>
+                    </TouchableOpacity>
+                </View>
             </Animated.View>
         </Animated.View>
     );
@@ -87,10 +119,6 @@ const styles = StyleSheet.create({
         fontSize: 30,
         color: '#fff',
         marginTop: 4,
-    },
-    notificationIcon: {
-        transform: [{ rotate: '-10deg' }],
-        borderRadius: 9999,
     },
 });
 

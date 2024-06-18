@@ -10,6 +10,7 @@ import BlogScreen from './screens/BlogScreen';
 import DriversScreen from './screens/DriversScreen';
 import SignInForm from './screens/SignInForm';
 import HomeAppScreen from './screens/HomeAppScreen';
+import ArticleScreen from './screens/ArticleScreen';
 
 
 const Stack = createNativeStackNavigator();
@@ -52,6 +53,8 @@ export default function MainNavigator() {
       <Stack.Screen name="Driver" component={DriversScreen} options={{ headerShown: false }} />
       <Stack.Screen name="SignInForm" component={SignInForm} options={{ headerShown: false }} />
       <Stack.Screen name="MainScreen" component={HomeAppScreen} />
+      <Stack.Screen name="ArticleScreen" component={ArticleScreen} options={{ headerShown: false }} />
+
 
     </Stack.Navigator>
 

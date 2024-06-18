@@ -118,10 +118,8 @@ const SignInForm = () => {
                                             dispatch(setUser({
                                                 global_user: {
                                                     _id: data._id,
-                                                    email: data.email,
                                                     first_name: data.first_name,
                                                     last_name: data.last_name,
-                                                    role: data.role,
                                                     profile_img_url: data.profile_img_url,
                                                     token: data.token
                                                 },

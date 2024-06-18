@@ -18,10 +18,7 @@ export const fetchBlogsAndAuthors = createAsyncThunk(
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/ObbaraMarket/blogs`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+      const response = await fetch(`${API_BASE_URL}/api/ObbaraMarket/blogs`, {   
       });
 
       if (!response.ok) {
@@ -98,6 +95,13 @@ const blogsSlice = createSlice({
       state.status = 'idle';
       state.error = null;
     },
+    clearBlogs: (state) => {
+      state.blogs = [];
+      state.authorsById = {};
+      state.status = 'idle';
+      state.error = null;
+      state.lastFetched = null;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -117,7 +121,7 @@ const blogsSlice = createSlice({
   },
 });
 
-export const { setBlogsAndAuthors, setLastFetched, setError, resetStatus } = blogsSlice.actions;
+export const { setBlogsAndAuthors, setLastFetched, setError, resetStatus, clearBlogs } = blogsSlice.actions;
 
 export default blogsSlice.reducer;
 

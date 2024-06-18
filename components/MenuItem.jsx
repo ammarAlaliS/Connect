@@ -5,13 +5,15 @@ import StoreIcon from '../icons/StoreIcon';
 import BlogIcon from '../icons/BlogIcon';
 import ContactIcon from '../icons/ContactIcon';
 import HomeIcon from '../icons/HomeIcon';
+import LogginIcon from '../icons/LogginIcon'
 
 const iconComponents = {
     UserIcon,
     StoreIcon,
     BlogIcon,
     ContactIcon,
-    HomeIcon
+    HomeIcon,
+    LogginIcon
 };
 
 const MenuItem = ({ iconName, iconWidth, iconHeight, iconColor, iconTitle, onPress, titleColor }) => {

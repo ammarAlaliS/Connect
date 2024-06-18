@@ -1,11 +1,6 @@
 import React from 'react';
-import { View, Text, StatusBar, Platform, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import { View,  StatusBar} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useSelector } from 'react-redux';
-import { LinearGradient } from 'expo-linear-gradient';
-import * as Animatable from 'react-native-animatable';
-import { Ionicons } from '@expo/vector-icons';
-import useCustomFonts from '../fonts/useCustomFonts';
 import Card from '../components/Card';
 import MarketScreen from './MarketScreen';
 import BlogScreen from './BlogScreen';

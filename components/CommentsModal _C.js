@@ -1,10 +1,12 @@
-import { View, Text, StyleSheet, Modal, ScrollView, KeyboardAvoidingView, Platform, Animated } from 'react-native';
+import { View, Text, StyleSheet, Modal, ScrollView, KeyboardAvoidingView, Platform, Animated, StatusBar } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import Commet_C from './Commet_C';
 import CommentHeader_C from './CommentHeader_C';
 import CommentForm from './CommentForm';
 
-const CommentsModal_C = ({ visible, onClose, blogId, time }) => {
+const statusBarHeight = StatusBar.currentHeight || 0;
+
+const CommentsModal_C = ({ visible, onClose, blogId, time, token}) => {
     const [fadeAnim] = useState(new Animated.Value(0));
 
     useEffect(() => {
@@ -59,7 +61,10 @@ const CommentsModal_C = ({ visible, onClose, blogId, time }) => {
                                 time={time}
                             />
                         </ScrollView>
-                        <CommentForm />
+                        <CommentForm
+                            blogId={blogId}
+                            token={token}
+                        />
                     </View>
                 </Animated.View>
             </KeyboardAvoidingView>
@@ -72,8 +77,8 @@ const modalStyles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        paddingHorizontal: 16,
         backgroundColor: 'rgba(0, 0, 0, 0.6)',
+        paddingTop: statusBarHeight
     },
     fullWidth: {
         flex: 1,
@@ -84,7 +89,7 @@ const modalStyles = StyleSheet.create({
         flex: 1,
         width: '100%',
         borderRadius: 10,
-        maxHeight: '90%',
+        maxHeight: '100%',
         overflow: 'hidden',
     },
     scrollView: {

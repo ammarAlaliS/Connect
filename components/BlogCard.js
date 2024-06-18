@@ -3,6 +3,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState, useEffect } from 'react';
 import io from 'socket.io-client';
 import { useSelector } from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import EvilIcons from '@expo/vector-icons/EvilIcons';
 import { AntDesign } from '@expo/vector-icons';
@@ -14,13 +15,18 @@ const socket = io(API_BASE_URL, {
     transports: ['websocket'],
 });
 
-const BlogCard = ({ image_url, blog_title, blog_tag, blog_description, author_name, author_last_name, time, blogId }) => {
+
+
+const BlogCard = ({ image_url, blog_title, blog_tag, blog_description, author_name, author_last_name, author_profile_img_url, time, blogId , sections}) => {
+    const navigation = useNavigation()
     const [likes, setLikes] = useState();
+    const [totalComment, setTotalComment] = useState();
     const [showMore, setShowMore] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const [likeSubcribe, setLikeSubcribe] = useState()
     const global_user = useSelector((state) => state.user.global_user);
     const token = global_user?.token;
+    
 
     const toggleShowMore = () => {
         setShowMore(!showMore);
@@ -39,7 +45,7 @@ const BlogCard = ({ image_url, blog_title, blog_tag, blog_description, author_na
             );
             setLikeSubcribe(response.data.hasLiked);
         } catch (error) {
-            console.error('Error al realizar la solicitud GET:', error);
+           return error;
         }
     };
 
@@ -70,10 +76,11 @@ const BlogCard = ({ image_url, blog_title, blog_tag, blog_description, author_na
         };
     }, [blogId]);
 
+
     const handleLikePost = async () => {
         const originalLikes = likes;
         const originalLikeSubcribe = likeSubcribe;
-        
+
         setLikes(prevLikes => likeSubcribe ? prevLikes - 1 : prevLikes + 1);
         setLikeSubcribe(!likeSubcribe);
 
@@ -96,6 +103,16 @@ const BlogCard = ({ image_url, blog_title, blog_tag, blog_description, author_na
             setLikeSubcribe(originalLikeSubcribe);
         }
     };
+    const getTotalComment = async () => {
+        try {
+            const response = await axios.get(`${API_BASE_URL}/blogs/${blogId}/totalComment`);
+            setTotalComment(response.data.totalComment);
+        } catch (error) {
+            console.error('Error fetching likes:', error);
+        }
+    };
+
+    getTotalComment();
     return (
         <View style={styles.card} className="px-4 pt-4 border-2 border-gray-400/10 z-50">
             <Image source={{ uri: image_url }} style={styles.image} resizeMode="cover" />
@@ -127,13 +144,15 @@ const BlogCard = ({ image_url, blog_title, blog_tag, blog_description, author_na
                         </Text>
                     </View>
                 </View>
-                <View className=" w-full flex-row justify-between py-2 ">
+                <View className=" w-full flex-row justify-between py-2 items-center ">
                     <View className="flex-row  space-x-[4px]">
                         <View className=" bg-[#080099] h-[28px] w-[28px] items-center justify-center rounded-full">
                             <EvilIcons name="comment" size={24} color="white" style={styles.iconMessageContent} />
                         </View>
-                        <Text style={{ fontFamily: 'PlusJakartaSans-Bold', }} className=" mt-[3px]">0</Text>
+                        <Text style={{ fontFamily: 'PlusJakartaSans-Bold', }} className=" mt-[3px]">{totalComment}</Text>
                     </View>
+
+
                     <View className=" flex-row space-x-[4px]" >
                         <View
                             style={[likes === 0 ? styles.likeContentDisable : styles.likeContentActive]}
@@ -188,7 +207,21 @@ const BlogCard = ({ image_url, blog_title, blog_tag, blog_description, author_na
                         </TouchableOpacity>
                     </View>
                     <View>
-                        <TouchableOpacity >
+                        <TouchableOpacity
+                            onPress={() => navigation.navigate("ArticleScreen", {
+                                image_url,
+                                blog_title,
+                                blog_tag,
+                                blog_description,
+                                author_name,
+                                author_last_name,
+                                author_profile_img_url,
+                                time,
+                                blogId,
+                                sections
+                            })}
+
+                        >
                             <LinearGradient
                                 colors={['#060097', '#8204ff', '#c10fff']}
                                 start={{ x: 0.2, y: 0.6 }}
@@ -210,7 +243,8 @@ const BlogCard = ({ image_url, blog_title, blog_tag, blog_description, author_na
                 visible={modalVisible}
                 onClose={() => setModalVisible(false)}
                 blogId={blogId}
-                time={time}
+                token={token}
+
 
             />
         </View>
@@ -229,7 +263,7 @@ const styles = StyleSheet.create({
     image: {
         width: '100%',
         height: 200,
-        borderRadius: 8,
+        borderRadius: 2,
     },
     title: {
         fontSize: 20,
