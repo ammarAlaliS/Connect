@@ -2,7 +2,7 @@ import { Image, StyleSheet, Text, View } from "react-native";
 import { TouchableOpacity } from "react-native";
 import ContactIcon from "../../icons/ContactIcon";
 
-const ArticleCard = ({ urlImage, setShowModal }) => {
+const ArticleCard = ({ urlImage, setShowModal, price, category, stock }) => {
   return (
     <View style={styles.container}>
       <View
@@ -27,9 +27,9 @@ const ArticleCard = ({ urlImage, setShowModal }) => {
         </TouchableOpacity>
       </View>
       <View style={styles.descriptionContainer}>
-        <Text style={styles.detailTextStyle}>$1,500</Text>
-        <Text style={styles.detailTextStyle}>Auto</Text>
-        <Text style={styles.detailTextStyle}>2 disponibles</Text>
+        <Text style={styles.detailTextStyle}>€ {price}</Text>
+        <Text style={styles.detailTextStyle}>{category}</Text>
+        <Text style={styles.detailTextStyle}>{stock} disponibles</Text>
       </View>
     </View>
   );

@@ -5,6 +5,8 @@ import XMarkIcon from "../../icons/XMarkIcon.js";
 import AddFileIcon from "../../icons/AddFileIcon.js";
 import InputSelectBox from "./InputSelectBox.jsx";
 import { ScrollView } from "react-native";
+import { useState } from "react";
+import * as ImagePicker from "expo-image-picker";
 
 const NewProductForm = ({ setShowModal }) => {
   const idProduct = useSelector((state) => state.market?.idProduct);
@@ -18,6 +20,46 @@ const NewProductForm = ({ setShowModal }) => {
     "Usado-Buen estado",
     "Usado-Aceptable",
   ];
+
+  const [imageList, setImageList] = useState([]);
+
+  const [title, setTitle] = useState("");
+
+  const pickImage = async () => {
+    // Solicitar permisos para acceder a la galería
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== "granted") {
+      alert("Lo sentimos, necesitamos permisos para acceder a tu galería.");
+      return;
+    }
+
+    // Seleccionar una imagen
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setImageList([...imageList, result.assets[0]]);
+      // imageList.push(result.assets[0]);
+      console.log("El numero de imagenes es: " + imageList.length);
+    }
+  };
+
+  const crearProducto = async () => {
+    const response = await fetch("https://api.chucknorris.io/jokes/random", {
+      method: "Post",
+      body: {},
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }).then((res) => {});
+  };
+
+  const onTextInputChange = (setValue, text) => {
+    setValue(text);
+  };
 
   return (
     <View style={styles.container}>
@@ -75,6 +117,10 @@ const NewProductForm = ({ setShowModal }) => {
               <View style={styles.titleInputContainer}>
                 <TextInput
                   style={styles.titleInput}
+                  value={title}
+                  onChange={(text) => {
+                    onTextInputChange(setTitle, text);
+                  }}
                   placeholder="Ingresa el titulo"
                 ></TextInput>
               </View>
@@ -103,14 +149,108 @@ const NewProductForm = ({ setShowModal }) => {
               <View style={styles.principalFotoContainer}>
                 <Text style={styles.addFotoLabel}>Agrega una foto</Text>
                 <Text style={styles.addFotoSubLable}>Puedes subir 5 fotos</Text>
-                <View style={styles.fotoContainer}>
-                  <AddFileIcon
-                    color={"#2b00b6"}
-                    width={40}
-                    height={40}
-                  ></AddFileIcon>
-                  <Text style={styles.fotoLabel}>Sube una foto</Text>
-                </View>
+                {imageList.length == 0 && (
+                  <View style={styles.fotoContainer}>
+                    <View
+                      style={{
+                        height: 200,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        marginHorizontal: 10,
+                      }}
+                    >
+                      <TouchableOpacity
+                        style={{
+                          borderWidth: 1.5,
+                          borderColor: "#000",
+                          borderStyle: "solid",
+                          borderRadius: 10,
+                          padding: 0.8,
+                          width: 45,
+                        }}
+                        onPress={pickImage}
+                      >
+                        <AddFileIcon
+                          color={"#2b00b6"}
+                          width={40}
+                          height={40}
+                        ></AddFileIcon>
+                        <Text
+                          style={{
+                            fontSize: 20,
+                            fontWeight: "600",
+                            position: "absolute",
+                            top: 15,
+                            left: 10,
+                            color: "#2b00b6",
+                          }}
+                        >
+                          +
+                        </Text>
+                      </TouchableOpacity>
+                      <Text style={styles.fotoLabel}>Sube una foto</Text>
+                    </View>
+                  </View>
+                )}
+                {imageList.length > 0 && (
+                  <ScrollView style={styles.fotoContainer} horizontal={true}>
+                    {imageList.map((item) => {
+                      return (
+                        <View>
+                          <Image
+                            source={{ uri: item.uri }}
+                            style={{
+                              height: 150,
+                              width: 150,
+                              marginTop: 25,
+                              marginLeft: 10,
+                            }}
+                          ></Image>
+                        </View>
+                      );
+                    })}
+
+                    <View
+                      style={{
+                        height: 200,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        marginHorizontal: 10,
+                      }}
+                    >
+                      <TouchableOpacity
+                        style={{
+                          borderWidth: 1.5,
+                          borderColor: "#000",
+                          borderStyle: "solid",
+                          borderRadius: 10,
+                          padding: 0.8,
+                          width: 45,
+                        }}
+                        onPress={pickImage}
+                      >
+                        <AddFileIcon
+                          color={"#2b00b6"}
+                          width={40}
+                          height={40}
+                        ></AddFileIcon>
+                        <Text
+                          style={{
+                            fontSize: 20,
+                            fontWeight: "600",
+                            position: "absolute",
+                            top: 15,
+                            left: 10,
+                            color: "#2b00b6",
+                          }}
+                        >
+                          +
+                        </Text>
+                      </TouchableOpacity>
+                      <Text style={styles.fotoLabel}>Sube una foto</Text>
+                    </View>
+                  </ScrollView>
+                )}
                 <Text style={styles.articleLabel}>
                   Informacion del Articulo
                 </Text>
@@ -339,8 +479,8 @@ const styles = StyleSheet.create({
     width: "90%",
     height: 200,
     backgroundColor: "#f1f1f1",
-    justifyContent: "center",
-    alignItems: "center",
+    // justifyContent: "center",
+    // alignItems: "center",
     borderColor: "#c3c3c3",
     borderWidth: 1,
     borderStyle: "solid",
