@@ -2,9 +2,14 @@ import { Image, StyleSheet, Text, View } from "react-native";
 import { TouchableOpacity } from "react-native";
 import ContactIcon from "../../icons/ContactIcon";
 
-const ArticleCard = ({ urlImage, setShowModal, price, category, stock }) => {
+const ArticleCard = ({ setShowModal, setSelectedProduct, item }) => {
   return (
-    <View style={styles.container}>
+    <View
+      style={styles.container}
+      onTouchEnd={() => {
+        setSelectedProduct(item);
+      }}
+    >
       <View
         style={styles.secondContainer}
         onTouchEnd={() => {
@@ -13,7 +18,9 @@ const ArticleCard = ({ urlImage, setShowModal, price, category, stock }) => {
       >
         <Image
           source={{
-            uri: urlImage,
+            uri: item.image[0]
+              ? item.image[0]
+              : "https://noticias.coches.com/wp-content/uploads/2019/12/Recirculacion-de-Aire-2-859x483.jpg",
           }}
           style={styles.imageContainer}
           resizeMode="cover"
@@ -27,9 +34,18 @@ const ArticleCard = ({ urlImage, setShowModal, price, category, stock }) => {
         </TouchableOpacity>
       </View>
       <View style={styles.descriptionContainer}>
-        <Text style={styles.detailTextStyle}>€ {price}</Text>
-        <Text style={styles.detailTextStyle}>{category}</Text>
-        <Text style={styles.detailTextStyle}>{stock} disponibles</Text>
+        <Text
+          style={{
+            fontSize: 19,
+            paddingLeft: 5,
+            fontFamily: "PlusJakartaSans-Bold",
+          }}
+        >
+          {item.productName}
+        </Text>
+        <Text style={styles.detailTextStyle}>€ {item.price}</Text>
+        <Text style={styles.detailTextStyle}>{item.stock} disponibles</Text>
+        <Text style={styles.location}>{item.productLocation.state}</Text>
       </View>
     </View>
   );
@@ -78,6 +94,14 @@ const styles = StyleSheet.create({
     fontFamily: "PlusJakartaSans-SemiBold",
     fontSize: 14,
     paddingLeft: 10,
+  },
+  location: {
+    color: "#000",
+    fontFamily: "PlusJakartaSans-SemiBold",
+    fontSize: 12,
+    paddingLeft: 10,
+    fontWeight: "700",
+    paddingBottom: 10,
   },
 });
 export default ArticleCard;

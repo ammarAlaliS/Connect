@@ -28,569 +28,66 @@ const MarketScreen = () => {
   const [lastPage, setLastPage] = useState(1);
   const scrollViewRef = useRef(null);
 
-  const API_BASE_URL = "http://localhost:5000/api/ObbaraMarket";
+  const API_BASE_URL =
+    "https://obbaramarket-backend-1.onrender.com/api/ObbaraMarket";
   const global_user = useSelector((state) => state.user.global_user);
-  const token =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NzIxYmI5YzhiNGI0ODNiZDVlNWRlZiIsImlhdCI6MTcxODkxNzA0NywiZXhwIjoxNzE5MTc2MjQ3fQ.LzF937pkkC52CrqUE5fNbxfQhh36P39tU60xd2uc_8E"; //global_user?.token;
+  const token = global_user?.token;
 
-  const getProducts = async () => {
+  const listClasifications = [
+    { id: 1, name: "Todos" },
+    { id: 2, name: "Coche" },
+    { id: 3, name: "Moto" },
+    { id: 4, name: "Motocarro" },
+    { id: 5, name: "Articulos" },
+  ];
+
+  const getProducts = async (isNewRequest) => {
     setLoadingProducts(true);
 
-    const response = await fetch(
-      // `${API_BASE_URL}/get/products?limit=5&page=${currentPage}` //URL VERDADERA
-      "https://api.chucknorris.io/jokes/random",
-      {
-        method: "Get",
+    if (isNewRequest) {
+      setProducts([]);
+      if (currentPage != 1) {
+        setCurrentPage(1);
+        return;
+      }
+    }
+
+    try {
+      const url = `${API_BASE_URL}/get/products?${
+        selectedclassification > 1
+          ? "productCategory=" +
+            listClasifications[selectedclassification - 1].name +
+            "&"
+          : ""
+      }limit=10&page=${currentPage}`;
+
+      const response = await fetch(url, {
+        method: "get",
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      }
-    )
-      .then((res) => {
-        console.log("Entro aqui sin problemas");
-        const data = {
-          docs: [
-            {
-              productLocation: {
-                state: "Barselona",
-                latitude: 12.11212,
-                longitude: -86.23,
-              },
-              _id: "66721c09c8b4b483bd5e5dfd",
-              productName: "Mercedes",
-              productCategory: "Coche",
-              productStatus: "Nuevo",
-              description:
-                "Auto con 3000 km de uso, papeles en regla, con un pequeño golpe lateral Auto con 3000 km de uso, papeles en regla, con un pequeño golpe lateral Auto con 3000 km de uso, papeles en regla",
-              price: 1500,
-              image: [
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-              ],
-              stock: 2,
-              user: {
-                global_user: {
-                  first_name: "Nestor",
-                  last_name: "Gonzalez",
-                  email: "nestorgt37@gmail.com",
-                  password:
-                    "$2b$10$5RbZD9E8oRb6nbvrwacaauftELAFZtqV8BIhg8uZnQsNfntfhT1Vy",
-                  profile_img_url:
-                    "https://storage.googleapis.com/quickcar/1718754231723_T02DAANQAKS-U057Z4VB1FB-c016900e2dfe-512.jpg",
-                  role: "user",
-                },
-                _id: "66721bb9c8b4b483bd5e5def",
-                Blog: [],
-                likes: [],
-                __v: 0,
-              },
-              createdAt: "2024-06-18T23:45:13.873Z",
-              updatedAt: "2024-06-19T02:28:37.030Z",
-              __v: 0,
-            },
-            {
-              productLocation: {
-                state: "Barselona",
-                latitude: 12.11212,
-                longitude: -86.23,
-              },
-              _id: "66749890b58fa75a3f422be2",
-              productName: "Ferrary",
-              productCategory: "Coche",
-              productStatus: "Nuevo",
-              description:
-                "Auto con 3000 km de uso, papeles en regla, con un pequeño golpe lateral Auto con 3000 km de uso, papeles en regla, con un pequeño golpe lateral Auto con 3000 km de uso, papeles en regla",
-              price: 1500,
-              image: [
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-              ],
-              stock: 2,
-              user: {
-                global_user: {
-                  first_name: "Nestor",
-                  last_name: "Gonzalez",
-                  email: "nestorgt37@gmail.com",
-                  password:
-                    "$2b$10$5RbZD9E8oRb6nbvrwacaauftELAFZtqV8BIhg8uZnQsNfntfhT1Vy",
-                  profile_img_url:
-                    "https://storage.googleapis.com/quickcar/1718754231723_T02DAANQAKS-U057Z4VB1FB-c016900e2dfe-512.jpg",
-                  role: "user",
-                },
-                _id: "66721bb9c8b4b483bd5e5def",
-                Blog: [],
-                likes: [],
-                __v: 0,
-              },
-              createdAt: "2024-06-20T21:01:04.076Z",
-              updatedAt: "2024-06-20T21:01:04.076Z",
-              __v: 0,
-            },
-            {
-              productLocation: {
-                state: "Barselona",
-                latitude: 12.11212,
-                longitude: -86.23,
-              },
-              _id: "66749899b58fa75a3f422be5",
-              productName: "Toyota",
-              productCategory: "Coche",
-              productStatus: "Nuevo",
-              description:
-                "Auto con 3000 km de uso, papeles en regla, con un pequeño golpe lateral Auto con 3000 km de uso, papeles en regla, con un pequeño golpe lateral Auto con 3000 km de uso, papeles en regla",
-              price: 1500,
-              image: [
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-              ],
-              stock: 2,
-              user: {
-                global_user: {
-                  first_name: "Nestor",
-                  last_name: "Gonzalez",
-                  email: "nestorgt37@gmail.com",
-                  password:
-                    "$2b$10$5RbZD9E8oRb6nbvrwacaauftELAFZtqV8BIhg8uZnQsNfntfhT1Vy",
-                  profile_img_url:
-                    "https://storage.googleapis.com/quickcar/1718754231723_T02DAANQAKS-U057Z4VB1FB-c016900e2dfe-512.jpg",
-                  role: "user",
-                },
-                _id: "66721bb9c8b4b483bd5e5def",
-                Blog: [],
-                likes: [],
-                __v: 0,
-              },
-              createdAt: "2024-06-20T21:01:13.825Z",
-              updatedAt: "2024-06-20T21:01:13.825Z",
-              __v: 0,
-            },
-            {
-              productLocation: {
-                state: "Barselona",
-                latitude: 12.11212,
-                longitude: -86.23,
-              },
-              _id: "667498a3b58fa75a3f422be8",
-              productName: "Lamborgini",
-              productCategory: "Coche",
-              productStatus: "Nuevo",
-              description:
-                "Auto con 3000 km de uso, papeles en regla, con un pequeño golpe lateral Auto con 3000 km de uso, papeles en regla, con un pequeño golpe lateral Auto con 3000 km de uso, papeles en regla",
-              price: 1500,
-              image: [
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-              ],
-              stock: 2,
-              user: {
-                global_user: {
-                  first_name: "Nestor",
-                  last_name: "Gonzalez",
-                  email: "nestorgt37@gmail.com",
-                  password:
-                    "$2b$10$5RbZD9E8oRb6nbvrwacaauftELAFZtqV8BIhg8uZnQsNfntfhT1Vy",
-                  profile_img_url:
-                    "https://storage.googleapis.com/quickcar/1718754231723_T02DAANQAKS-U057Z4VB1FB-c016900e2dfe-512.jpg",
-                  role: "user",
-                },
-                _id: "66721bb9c8b4b483bd5e5def",
-                Blog: [],
-                likes: [],
-                __v: 0,
-              },
-              createdAt: "2024-06-20T21:01:23.602Z",
-              updatedAt: "2024-06-20T21:01:23.602Z",
-              __v: 0,
-            },
-            {
-              productLocation: {
-                state: "Barselona",
-                latitude: 12.11212,
-                longitude: -86.23,
-              },
-              _id: "667498aab58fa75a3f422beb",
-              productName: "Supra",
-              productCategory: "Coche",
-              productStatus: "Nuevo",
-              description:
-                "Auto con 3000 km de uso, papeles en regla, con un pequeño golpe lateral Auto con 3000 km de uso, papeles en regla, con un pequeño golpe lateral Auto con 3000 km de uso, papeles en regla",
-              price: 1500,
-              image: [
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-              ],
-              stock: 2,
-              user: {
-                global_user: {
-                  first_name: "Nestor",
-                  last_name: "Gonzalez",
-                  email: "nestorgt37@gmail.com",
-                  password:
-                    "$2b$10$5RbZD9E8oRb6nbvrwacaauftELAFZtqV8BIhg8uZnQsNfntfhT1Vy",
-                  profile_img_url:
-                    "https://storage.googleapis.com/quickcar/1718754231723_T02DAANQAKS-U057Z4VB1FB-c016900e2dfe-512.jpg",
-                  role: "user",
-                },
-                _id: "66721bb9c8b4b483bd5e5def",
-                Blog: [],
-                likes: [],
-                __v: 0,
-              },
-              createdAt: "2024-06-20T21:01:30.834Z",
-              updatedAt: "2024-06-20T21:01:30.834Z",
-              __v: 0,
-            },
-            {
-              productLocation: {
-                state: "Barselona",
-                latitude: 12.11212,
-                longitude: -86.23,
-              },
-              _id: "6674992fb58fa75a3f422bfd",
-              productName: "Porche",
-              productCategory: "Coche",
-              productStatus: "Nuevo",
-              description:
-                "Auto con 3000 km de uso, papeles en regla, con un pequeño golpe lateral Auto con 3000 km de uso, papeles en regla, con un pequeño golpe lateral Auto con 3000 km de uso, papeles en regla",
-              price: 1500,
-              image: [
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-              ],
-              stock: 2,
-              user: {
-                global_user: {
-                  first_name: "Nestor",
-                  last_name: "Gonzalez",
-                  email: "nestorgt37@gmail.com",
-                  password:
-                    "$2b$10$5RbZD9E8oRb6nbvrwacaauftELAFZtqV8BIhg8uZnQsNfntfhT1Vy",
-                  profile_img_url:
-                    "https://storage.googleapis.com/quickcar/1718754231723_T02DAANQAKS-U057Z4VB1FB-c016900e2dfe-512.jpg",
-                  role: "user",
-                },
-                _id: "66721bb9c8b4b483bd5e5def",
-                Blog: [],
-                likes: [],
-                __v: 0,
-              },
-              createdAt: "2024-06-20T21:03:43.436Z",
-              updatedAt: "2024-06-20T21:03:43.436Z",
-              __v: 0,
-            },
-            {
-              productLocation: {
-                state: "Barselona",
-                latitude: 12.11212,
-                longitude: -86.23,
-              },
-              _id: "66749947b58fa75a3f422c00",
-              productName: "Nissan GT-R",
-              productCategory: "Coche",
-              productStatus: "Nuevo",
-              description:
-                "Auto con 3000 km de uso, papeles en regla, con un pequeño golpe lateral Auto con 3000 km de uso, papeles en regla, con un pequeño golpe lateral Auto con 3000 km de uso, papeles en regla",
-              price: 1500,
-              image: [
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-              ],
-              stock: 2,
-              user: {
-                global_user: {
-                  first_name: "Nestor",
-                  last_name: "Gonzalez",
-                  email: "nestorgt37@gmail.com",
-                  password:
-                    "$2b$10$5RbZD9E8oRb6nbvrwacaauftELAFZtqV8BIhg8uZnQsNfntfhT1Vy",
-                  profile_img_url:
-                    "https://storage.googleapis.com/quickcar/1718754231723_T02DAANQAKS-U057Z4VB1FB-c016900e2dfe-512.jpg",
-                  role: "user",
-                },
-                _id: "66721bb9c8b4b483bd5e5def",
-                Blog: [],
-                likes: [],
-                __v: 0,
-              },
-              createdAt: "2024-06-20T21:04:08.003Z",
-              updatedAt: "2024-06-20T21:04:08.003Z",
-              __v: 0,
-            },
-            {
-              productLocation: {
-                state: "Barselona",
-                latitude: 12.11212,
-                longitude: -86.23,
-              },
-              _id: "6674996bb58fa75a3f422c07",
-              productName: "McLaren",
-              productCategory: "Coche",
-              productStatus: "Nuevo",
-              description:
-                "Auto con 3000 km de uso, papeles en regla, con un pequeño golpe lateral Auto con 3000 km de uso, papeles en regla, con un pequeño golpe lateral Auto con 3000 km de uso, papeles en regla",
-              price: 1500,
-              image: [
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-              ],
-              stock: 2,
-              user: {
-                global_user: {
-                  first_name: "Nestor",
-                  last_name: "Gonzalez",
-                  email: "nestorgt37@gmail.com",
-                  password:
-                    "$2b$10$5RbZD9E8oRb6nbvrwacaauftELAFZtqV8BIhg8uZnQsNfntfhT1Vy",
-                  profile_img_url:
-                    "https://storage.googleapis.com/quickcar/1718754231723_T02DAANQAKS-U057Z4VB1FB-c016900e2dfe-512.jpg",
-                  role: "user",
-                },
-                _id: "66721bb9c8b4b483bd5e5def",
-                Blog: [],
-                likes: [],
-                __v: 0,
-              },
-              createdAt: "2024-06-20T21:04:43.029Z",
-              updatedAt: "2024-06-20T21:04:43.029Z",
-              __v: 0,
-            },
-          ],
-          totalDocs: 13,
-          limit: 5,
-          totalPages: 2,
-          page: 1,
-          pagingCounter: 1,
-          hasPrevPage: false,
-          hasNextPage: true,
-          prevPage: null,
-          nextPage: 2,
-        };
-        const data1 = {
-          docs: [
-            {
-              productLocation: {
-                state: "Barselona",
-                latitude: 12.11212,
-                longitude: -86.23,
-              },
-              _id: "667498b2b58fa75a3f422bee",
-              productName: "Onda",
-              productCategory: "Coche",
-              productStatus: "Nuevo",
-              description:
-                "Auto con 3000 km de uso, papeles en regla, con un pequeño golpe lateral Auto con 3000 km de uso, papeles en regla, con un pequeño golpe lateral Auto con 3000 km de uso, papeles en regla",
-              price: 1500,
-              image: [
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-              ],
-              stock: 2,
-              user: {
-                global_user: {
-                  first_name: "Nestor",
-                  last_name: "Gonzalez",
-                  email: "nestorgt37@gmail.com",
-                  password:
-                    "$2b$10$5RbZD9E8oRb6nbvrwacaauftELAFZtqV8BIhg8uZnQsNfntfhT1Vy",
-                  profile_img_url:
-                    "https://storage.googleapis.com/quickcar/1718754231723_T02DAANQAKS-U057Z4VB1FB-c016900e2dfe-512.jpg",
-                  role: "user",
-                },
-                _id: "66721bb9c8b4b483bd5e5def",
-                Blog: [],
-                likes: [],
-                __v: 0,
-              },
-              createdAt: "2024-06-20T21:01:38.711Z",
-              updatedAt: "2024-06-20T21:01:38.711Z",
-              __v: 0,
-            },
-            {
-              productLocation: {
-                state: "Barselona",
-                latitude: 12.11212,
-                longitude: -86.23,
-              },
-              _id: "667498c5b58fa75a3f422bf1",
-              productName: "Bugati",
-              productCategory: "Coche",
-              productStatus: "Nuevo",
-              description:
-                "Auto con 3000 km de uso, papeles en regla, con un pequeño golpe lateral Auto con 3000 km de uso, papeles en regla, con un pequeño golpe lateral Auto con 3000 km de uso, papeles en regla",
-              price: 1500,
-              image: [
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-              ],
-              stock: 2,
-              user: {
-                global_user: {
-                  first_name: "Nestor",
-                  last_name: "Gonzalez",
-                  email: "nestorgt37@gmail.com",
-                  password:
-                    "$2b$10$5RbZD9E8oRb6nbvrwacaauftELAFZtqV8BIhg8uZnQsNfntfhT1Vy",
-                  profile_img_url:
-                    "https://storage.googleapis.com/quickcar/1718754231723_T02DAANQAKS-U057Z4VB1FB-c016900e2dfe-512.jpg",
-                  role: "user",
-                },
-                _id: "66721bb9c8b4b483bd5e5def",
-                Blog: [],
-                likes: [],
-                __v: 0,
-              },
-              createdAt: "2024-06-20T21:01:57.086Z",
-              updatedAt: "2024-06-20T21:01:57.086Z",
-              __v: 0,
-            },
-            {
-              productLocation: {
-                state: "Barselona",
-                latitude: 12.11212,
-                longitude: -86.23,
-              },
-              _id: "667498fab58fa75a3f422bf4",
-              productName: "Chevrolet",
-              productCategory: "Coche",
-              productStatus: "Nuevo",
-              description:
-                "Auto con 3000 km de uso, papeles en regla, con un pequeño golpe lateral Auto con 3000 km de uso, papeles en regla, con un pequeño golpe lateral Auto con 3000 km de uso, papeles en regla",
-              price: 1500,
-              image: [
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-              ],
-              stock: 2,
-              user: {
-                global_user: {
-                  first_name: "Nestor",
-                  last_name: "Gonzalez",
-                  email: "nestorgt37@gmail.com",
-                  password:
-                    "$2b$10$5RbZD9E8oRb6nbvrwacaauftELAFZtqV8BIhg8uZnQsNfntfhT1Vy",
-                  profile_img_url:
-                    "https://storage.googleapis.com/quickcar/1718754231723_T02DAANQAKS-U057Z4VB1FB-c016900e2dfe-512.jpg",
-                  role: "user",
-                },
-                _id: "66721bb9c8b4b483bd5e5def",
-                Blog: [],
-                likes: [],
-                __v: 0,
-              },
-              createdAt: "2024-06-20T21:02:50.192Z",
-              updatedAt: "2024-06-20T21:02:50.192Z",
-              __v: 0,
-            },
-            {
-              productLocation: {
-                state: "Barselona",
-                latitude: 12.11212,
-                longitude: -86.23,
-              },
-              _id: "66749903b58fa75a3f422bf7",
-              productName: "Tupson",
-              productCategory: "Coche",
-              productStatus: "Nuevo",
-              description:
-                "Auto con 3000 km de uso, papeles en regla, con un pequeño golpe lateral Auto con 3000 km de uso, papeles en regla, con un pequeño golpe lateral Auto con 3000 km de uso, papeles en regla",
-              price: 1500,
-              image: [
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-              ],
-              stock: 2,
-              user: {
-                global_user: {
-                  first_name: "Nestor",
-                  last_name: "Gonzalez",
-                  email: "nestorgt37@gmail.com",
-                  password:
-                    "$2b$10$5RbZD9E8oRb6nbvrwacaauftELAFZtqV8BIhg8uZnQsNfntfhT1Vy",
-                  profile_img_url:
-                    "https://storage.googleapis.com/quickcar/1718754231723_T02DAANQAKS-U057Z4VB1FB-c016900e2dfe-512.jpg",
-                  role: "user",
-                },
-                _id: "66721bb9c8b4b483bd5e5def",
-                Blog: [],
-                likes: [],
-                __v: 0,
-              },
-              createdAt: "2024-06-20T21:02:59.390Z",
-              updatedAt: "2024-06-20T21:02:59.390Z",
-              __v: 0,
-            },
-            {
-              productLocation: {
-                state: "Barselona",
-                latitude: 12.11212,
-                longitude: -86.23,
-              },
-              _id: "66749922b58fa75a3f422bfa",
-              productName: "BMW M2",
-              productCategory: "Coche",
-              productStatus: "Nuevo",
-              description:
-                "Auto con 3000 km de uso, papeles en regla, con un pequeño golpe lateral Auto con 3000 km de uso, papeles en regla, con un pequeño golpe lateral Auto con 3000 km de uso, papeles en regla",
-              price: 1500,
-              image: [
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-              ],
-              stock: 2,
-              user: {
-                global_user: {
-                  first_name: "Nestor",
-                  last_name: "Gonzalez",
-                  email: "nestorgt37@gmail.com",
-                  password:
-                    "$2b$10$5RbZD9E8oRb6nbvrwacaauftELAFZtqV8BIhg8uZnQsNfntfhT1Vy",
-                  profile_img_url:
-                    "https://storage.googleapis.com/quickcar/1718754231723_T02DAANQAKS-U057Z4VB1FB-c016900e2dfe-512.jpg",
-                  role: "user",
-                },
-                _id: "66721bb9c8b4b483bd5e5def",
-                Blog: [],
-                likes: [],
-                __v: 0,
-              },
-              createdAt: "2024-06-20T21:03:30.106Z",
-              updatedAt: "2024-06-20T21:03:30.106Z",
-              __v: 0,
-            },
-          ],
-          totalDocs: 13,
-          limit: 5,
-          totalPages: 3,
-          page: 2,
-          pagingCounter: 6,
-          hasPrevPage: true,
-          hasNextPage: true,
-          prevPage: 1,
-          nextPage: 3,
-        };
-
-        if (currentPage == 1) {
-          console.log("Todo bien hasta aqui 1");
-          products.push(...data.docs);
-          console.log("Todo bien hasta aqui 2");
-          setLastPage(data.totalPages);
-          console.log("Todo bien hasta aqui 3");
-        } else if (currentPage == 2) {
-          products.push(...data1.docs);
-          setLastPage(data1.totalPages);
-        }
-        setLoadingProducts(false);
-      })
-      .catch((error) => {
-        console.log(error);
-        Alert.alert("No se encontraron productos");
-        setLoadingProducts(false);
       });
+
+      if (response.ok) {
+        const res = await response.text();
+        const data = JSON.parse(res);
+
+        if (!isNewRequest) {
+          products.push(...data.docs);
+        } else {
+          setProducts(data.docs);
+        }
+
+        setLastPage(data.totalPages);
+        setLoadingProducts(false);
+      }
+    } catch (error) {
+      Alert.alert("No se encontraron productos");
+      setLoadingProducts(false);
+    }
   };
 
   const ifScrollIsInTheEnd = (event) => {
-    console.log("Estan entrando al scroll");
-
     if (
       event.layoutMeasurement.height + event.contentOffset.y >=
       event.contentSize.height - 5
@@ -608,28 +105,19 @@ const MarketScreen = () => {
   };
 
   useEffect(() => {
-    // fetch("https://jsonplaceholder.typicode.com/users/1")
-    //   .then((response) => response.json())
-    //   .then((data) => dispatch(addUser(data)));
-    getProducts();
+    getProducts(currentPage == 1 ? true : false);
   }, [currentPage]);
 
   const [search, setSearch] = useState("");
   const [selectedclassification, setSelectedclassification] = useState(1);
-  const [carroDeCompras, setCarroDeCompras] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [showNewProductModal, setShowNewProductModal] = useState(false);
   const [showFilterModal, setShowFilterModal] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
-  const listClasifications = [
-    { id: 1, name: "Todos" },
-    { id: 2, name: "Vehiculos de Traccion" },
-    { id: 3, name: "Motocicletas" },
-    { id: 4, name: "Motocarro" },
-    { id: 5, name: "Ciclomotor" },
-    { id: 6, name: "Ciclomotor" },
-    { id: 7, name: "Ciclomotor" },
-  ];
+  useEffect(() => {
+    getProducts(true);
+  }, [selectedclassification]);
 
   return (
     <View style={styles.principalContainer}>
@@ -638,7 +126,6 @@ const MarketScreen = () => {
         scrollEventThrottle={16}
         stickyHeaderIndices={[1]}
         onScroll={(e) => {
-          console.log("QUE ESTA PASANDO");
           ifScrollIsInTheEnd(e.nativeEvent);
         }}
         ref={scrollViewRef}
@@ -691,31 +178,28 @@ const MarketScreen = () => {
             className="d-flex flex-row"
           >
             {listClasifications.map((item, index) => {
-              if (item.id == selectedclassification) {
-                return (
-                  <TouchableOpacity
-                    key={index}
-                    style={styles.selectedItem}
-                    onPress={() => {
-                      setSelectedclassification(item.id);
+              return (
+                <TouchableOpacity
+                  key={index}
+                  style={
+                    item.id == selectedclassification
+                      ? styles.selectedItem
+                      : styles.item
+                  }
+                  onPress={() => {
+                    setSelectedclassification(item.id);
+                  }}
+                >
+                  <Text
+                    style={{
+                      color:
+                        item.id == selectedclassification ? "#fff" : "#000",
                     }}
                   >
-                    <Text style={{ color: "#fff" }}>{item.name}</Text>
-                  </TouchableOpacity>
-                );
-              } else {
-                return (
-                  <TouchableOpacity
-                    key={index}
-                    style={styles.item}
-                    onPress={() => {
-                      setSelectedclassification(item.id);
-                    }}
-                  >
-                    <Text>{item.name}</Text>
-                  </TouchableOpacity>
-                );
-              }
+                    {item.name}
+                  </Text>
+                </TouchableOpacity>
+              );
             })}
           </ScrollView>
         </View>
@@ -735,18 +219,11 @@ const MarketScreen = () => {
               products.map((item, index) => {
                 return (
                   <ArticleCard
-                    carroDeCompras={carroDeCompras}
-                    setCarroDeCompras={setCarroDeCompras}
-                    urlImage={
-                      item.image[0]
-                        ? item.image[0]
-                        : "https://noticias.coches.com/wp-content/uploads/2019/12/Recirculacion-de-Aire-2-859x483.jpg"
-                    }
                     key={index}
                     setShowModal={setShowModal}
-                    price={item.price}
-                    stock={item.stock}
-                    category={item.productCategory}
+                    productLocation={item.productLocation.state}
+                    setSelectedProduct={setSelectedProduct}
+                    item={item}
                   ></ArticleCard>
                 );
               })}
@@ -767,7 +244,10 @@ const MarketScreen = () => {
         style={styles.modalContainer}
         transparent={true}
       >
-        <ArticleModal setShowModal={setShowModal}></ArticleModal>
+        <ArticleModal
+          setShowModal={setShowModal}
+          selectedProduct={selectedProduct}
+        ></ArticleModal>
       </Modal>
       <BottomSellModal
         setShowNewProductModal={setShowNewProductModal}

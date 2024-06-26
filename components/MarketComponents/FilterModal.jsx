@@ -45,7 +45,7 @@ const FilterModal = ({ setShowFilterModal }) => {
       let index = text.indexOf(".");
       let secondIndex = text.indexOf(".", index + 1);
       if (secondIndex >= 0) {
-        numericValue = numericValue.substring(0, numericValue.length - 1.32);
+        numericValue = numericValue.substring(0, numericValue.length - 1);
       }
     }
     setValue(numericValue);

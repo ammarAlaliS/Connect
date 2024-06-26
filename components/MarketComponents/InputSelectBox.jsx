@@ -6,7 +6,7 @@ import { View } from "react-native";
 import CheckIcon from "../../icons/CheckIcon";
 import { ScrollView } from "react-native";
 
-const InputSelectBox = ({ listItems, placeHolder }) => {
+const InputSelectBox = ({ listItems, placeHolder, setSelectedItemIdex }) => {
   const [itemSelected, setItemSelect] = useState(false);
   const [showSelectItem, setShowSelectItem] = useState(false);
   const [itemIndex, setItemIndex] = useState(-1);
@@ -97,6 +97,7 @@ const InputSelectBox = ({ listItems, placeHolder }) => {
                     setSelectedItem(index);
                     setItemSelect(!itemSelected);
                     setShowSelectItem(!showSelectItem);
+                    setSelectedItemIdex(index);
                   }}
                 >
                   <View

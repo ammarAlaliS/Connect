@@ -6,51 +6,13 @@ import XMarkIcon from "../../icons/XMarkIcon";
 import ArrowLeftIcon from "../../icons/ArrowLeftIcon";
 import ArrowRightHeroIcon from "../../icons/ArrowRightHeroICon";
 
-const ArticleCarousel = () => {
+const ArticleCarousel = ({ images }) => {
   const [scrollPosition, setScrollPosition] = useState({ x: 0, y: 0 });
   const [imageActive, setIamgeActive] = useState(0);
 
   const [modal, showModal] = useState(false);
 
   const scrollViewRef = useRef(null);
-
-  const imageList = [
-    {
-      idImage: 1,
-      urlImage:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-    },
-    {
-      idImage: 2,
-      urlImage:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-    },
-    {
-      idImage: 3,
-      urlImage:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-    },
-    {
-      idImage: 4,
-      urlImage:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-    },
-    {
-      idImage: 5,
-      urlImage:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-    },
-    {
-      idImage: 6,
-      urlImage:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-    },
-    {
-      idImage: 7,
-      urlImage:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-    },
-  ];
 
   const handleScroll = (event) => {
     const xOffset = event.nativeEvent.contentOffset.x;
@@ -70,7 +32,7 @@ const ArticleCarousel = () => {
   };
 
   const NextImage = () => {
-    if (imageActive < imageList.length - 1) {
+    if (imageActive < images.length - 1) {
       setScrollPosition((imageActive + 1) * 300);
       scrollToPosition((imageActive + 1) * 300);
       setIamgeActive(imageActive + 1);
@@ -87,9 +49,9 @@ const ArticleCarousel = () => {
       scrollToPosition((imageActive - 1) * 300);
       setIamgeActive(imageActive - 1);
     } else {
-      setScrollPosition((imageList.length - 1) * 300);
-      scrollToPosition((imageList.length - 1) * 300);
-      setIamgeActive(imageList.length - 1);
+      setScrollPosition((images.length - 1) * 300);
+      scrollToPosition((images.length - 1) * 300);
+      setIamgeActive(images.length - 1);
     }
   };
 
@@ -131,7 +93,7 @@ const ArticleCarousel = () => {
             setIamgeActive(numberElement);
           }}
         >
-          {imageList.map((item, index) => {
+          {images.map((item, index) => {
             return (
               <View
                 key={index}
@@ -142,7 +104,7 @@ const ArticleCarousel = () => {
               >
                 <Image
                   source={{
-                    uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
+                    uri: item,
                   }}
                   style={[styles.imageContainer, { opacity: modal ? 0.1 : 1 }]}
                   resizeMode="cover"
@@ -184,7 +146,7 @@ const ArticleCarousel = () => {
         style={styles.itemScrollCarrucelContainer}
         className="d-flex flex-row"
       >
-        {imageList.map((item, index) => {
+        {images.map((item, index) => {
           return (
             <View
               key={index}
