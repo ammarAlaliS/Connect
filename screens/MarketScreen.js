@@ -18,6 +18,8 @@ import BottomSellModal from "../components/MarketComponents/BottomSellModal.jsx"
 import NewProductForm from "../components/MarketComponents/NewProductForm.jsx";
 import FilterModal from "../components/MarketComponents/FilterModal.jsx";
 import axios from "axios";
+import AlertMessage from "../components/MarketComponents/AlertMessage.jsx";
+import XMarkIcon from "../icons/XMarkIcon.js";
 
 const MarketScreen = () => {
   const dispatch = useDispatch();
@@ -27,6 +29,24 @@ const MarketScreen = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [lastPage, setLastPage] = useState(1);
   const scrollViewRef = useRef(null);
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+
+  const [search, setSearch] = useState("");
+  const [selectedclassification, setSelectedclassification] = useState(1);
+  const [showModal, setShowModal] = useState(false);
+  const [showNewProductModal, setShowNewProductModal] = useState(false);
+  const [showFilterModal, setShowFilterModal] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [firstStoreLoading, setFirstStoreLoading] = useState(true);
+  const [filterData, setFilterData] = useState({
+    minPrice: -1,
+    maxPrice: -1,
+    minDate: new Date(1, 1, 1),
+    maxDate: new Date(1, 1, 1),
+  });
+
+  const [filterUrl, setFilterUrl] = useState("");
 
   const API_BASE_URL =
     "https://obbaramarket-backend-1.onrender.com/api/ObbaraMarket";
@@ -43,6 +63,7 @@ const MarketScreen = () => {
 
   const getProducts = async (isNewRequest) => {
     setLoadingProducts(true);
+    setFirstStoreLoading(false);
 
     if (isNewRequest) {
       setProducts([]);
@@ -53,13 +74,14 @@ const MarketScreen = () => {
     }
 
     try {
-      const url = `${API_BASE_URL}/get/products?${
-        selectedclassification > 1
-          ? "productCategory=" +
-            listClasifications[selectedclassification - 1].name +
-            "&"
-          : ""
-      }limit=10&page=${currentPage}`;
+      const url =
+        `${API_BASE_URL}/get/products?${
+          (selectedclassification > 1
+            ? "productCategory=" +
+              listClasifications[selectedclassification - 1].name +
+              "&"
+            : "") + (search.length > 0 ? "search=" + search + "&" : "")
+        }limit=10&page=${currentPage}` + filterUrl;
 
       const response = await fetch(url, {
         method: "get",
@@ -80,9 +102,13 @@ const MarketScreen = () => {
 
         setLastPage(data.totalPages);
         setLoadingProducts(false);
+      } else {
+        console.log("ocurrio un error en la peticion");
+        console.log(response);
       }
     } catch (error) {
-      Alert.alert("No se encontraron productos");
+      setAlertMessage("No se encontraron productos");
+      setShowAlert(true);
       setLoadingProducts(false);
     }
   };
@@ -105,22 +131,28 @@ const MarketScreen = () => {
   };
 
   useEffect(() => {
+    if (!firstStoreLoading) {
+      getProducts(true);
+    }
+  }, [filterUrl]);
+
+  useEffect(() => {
     getProducts(currentPage == 1 ? true : false);
   }, [currentPage]);
 
-  const [search, setSearch] = useState("");
-  const [selectedclassification, setSelectedclassification] = useState(1);
-  const [showModal, setShowModal] = useState(false);
-  const [showNewProductModal, setShowNewProductModal] = useState(false);
-  const [showFilterModal, setShowFilterModal] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState(null);
-
   useEffect(() => {
-    getProducts(true);
+    if (!firstStoreLoading) {
+      getProducts(true);
+    }
   }, [selectedclassification]);
 
   return (
     <View style={styles.principalContainer}>
+      <AlertMessage
+        message={alertMessage}
+        seeModal={showAlert}
+        setShowAlert={setShowAlert}
+      ></AlertMessage>
       <ScrollView
         showsVerticalScrollIndicator={false}
         scrollEventThrottle={16}
@@ -138,6 +170,9 @@ const MarketScreen = () => {
                 name="search"
                 size={20}
                 color={search ? "#000000" : "#00000099"}
+                onPress={() => {
+                  getProducts(true);
+                }}
               />
               <TextInput
                 style={styles.input}
@@ -146,6 +181,16 @@ const MarketScreen = () => {
                 value={search}
                 underlineColorAndroid="transparent"
               />
+              {search.length > 0 && (
+                <TouchableOpacity
+                  style={{ paddingRight: 10 }}
+                  onPress={() => {
+                    setSearch("");
+                  }}
+                >
+                  <XMarkIcon color={"#000"} height={25} width={25}></XMarkIcon>
+                </TouchableOpacity>
+              )}
             </View>
           </View>
 
@@ -266,7 +311,12 @@ const MarketScreen = () => {
         style={styles.thirdModalContainer}
         transparent={true}
       >
-        <FilterModal setShowFilterModal={setShowFilterModal}></FilterModal>
+        <FilterModal
+          setShowFilterModal={setShowFilterModal}
+          setFilterUrl={setFilterUrl}
+          filterData={filterData}
+          setFilterData={setFilterData}
+        ></FilterModal>
       </Modal>
     </View>
   );

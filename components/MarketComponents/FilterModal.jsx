@@ -1,15 +1,19 @@
-import { Alert, StyleSheet, TextInput, TouchableOpacity } from "react-native";
+import { StyleSheet, TextInput, TouchableOpacity } from "react-native";
 import { Text } from "react-native";
 import { View } from "react-native";
-import InputSelectBox from "./InputSelectBox";
 import { ScrollView } from "react-native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import XMarkIcon from "../../icons/XMarkIcon";
 
-const FilterModal = ({ setShowFilterModal }) => {
-  const [minPrice, setMinPrice] = useState(0);
-  const [maxPrice, setMaxPrice] = useState(0);
+const FilterModal = ({
+  setShowFilterModal,
+  setFilterUrl,
+  filterData,
+  setFilterData,
+}) => {
+  const [minPrice, setMinPrice] = useState(-1);
+  const [maxPrice, setMaxPrice] = useState(-1);
 
   const [show, setShow] = useState(0);
 
@@ -37,8 +41,6 @@ const FilterModal = ({ setShowFilterModal }) => {
     setShow(0);
   };
 
-  const listCategories = ["Todos", "Moto", "Carro", "Articulo", "Camioneta"];
-
   const handleChange = (setValue, text) => {
     let numericValue = text.replace(/[^0-9.]/g, "");
     if (text.indexOf(".") >= 0) {
@@ -50,6 +52,49 @@ const FilterModal = ({ setShowFilterModal }) => {
     }
     setValue(numericValue);
   };
+
+  const mostrarDatosSeleccionados = () => {
+    let url = "";
+    if (minPrice > 0) {
+      url = url + "&minPrice=" + minPrice;
+    }
+
+    if (maxPrice > 0) {
+      url = url + "&maxPrice=" + maxPrice;
+    }
+
+    if (minDate.getFullYear() > 1950) {
+      // url = url + "&minDate=" + minDate.toISOString();
+    }
+
+    if (maxDate.getFullYear() > 1950) {
+      // url = url + "&maxDate=" + maxDate.toISOString();
+    }
+
+    setFilterUrl(url);
+    setFilterData({
+      minPrice: minPrice <= 0 ? -1 : minPrice,
+      maxPrice: maxPrice <= 0 ? -1 : maxPrice,
+      minDate: minDate.getFullYear() < 1950 ? new Date(1, 1, 1) : minDate,
+      maxDate: maxDate.getFullYear() < 1950 ? new Date(1, 1, 1) : maxDate,
+    });
+    setShowFilterModal(false);
+  };
+
+  useEffect(() => {
+    setMinPrice(filterData.minPrice);
+    setMaxPrice(filterData.maxPrice);
+
+    if (filterData.minDate.getFullYear() > 1950) {
+      setMinDate(filterData.minDate);
+      setMinDateString(filterData.minDate.toLocaleDateString());
+    }
+
+    if (filterData.maxDate.getFullYear() > 1950) {
+      setMaxDate(filterData.maxDate);
+      setMaxDateString(filterData.maxDate.toLocaleDateString());
+    }
+  }, []);
 
   return (
     <View style={styles.principalContainer}>
@@ -154,19 +199,12 @@ const FilterModal = ({ setShowFilterModal }) => {
               )}
             </View>
           </View>
-          <Text style={styles.categoryLabel}>Categoria</Text>
-          <View style={styles.categorySelectInputContainer}>
-            <InputSelectBox
-              placeHolder={"Seleccione una categoria"}
-              listItems={listCategories}
-            ></InputSelectBox>
-          </View>
         </ScrollView>
         <View style={styles.buttonFilterContainer} className="d-flex flex-row">
           <TouchableOpacity
             style={styles.bottonFilter}
             onPress={() => {
-              setShowFilterModal(false);
+              mostrarDatosSeleccionados();
             }}
           >
             <Text style={styles.bottonFilterText}>Filtrar</Text>
@@ -184,7 +222,7 @@ const styles = StyleSheet.create({
     paddingTop: "50%",
     paddingHorizontal: 16,
   },
-  secondContainer: { backgroundColor: "#f4f5f6", height: 400 },
+  secondContainer: { backgroundColor: "#f4f5f6", height: 350 },
   exitIconContainer: {
     position: "absolute",
     top: 10,
