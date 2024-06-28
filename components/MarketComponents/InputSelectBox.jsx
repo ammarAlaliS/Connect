@@ -6,11 +6,16 @@ import { View } from "react-native";
 import CheckIcon from "../../icons/CheckIcon";
 import { ScrollView } from "react-native";
 
-const InputSelectBox = ({ listItems, placeHolder, setSelectedItemIdex }) => {
+const InputSelectBox = ({
+  listItems,
+  placeHolder,
+  setSelectedItemIdex,
+  selectedItemIdex,
+}) => {
   const [itemSelected, setItemSelect] = useState(false);
   const [showSelectItem, setShowSelectItem] = useState(false);
   const [itemIndex, setItemIndex] = useState(-1);
-  const [selectedItem, setSelectedItem] = useState(-1);
+  const [selectedItem, setSelectedItem] = useState(selectedItemIdex);
   const heigthItemAnim = useRef(new Animated.Value(0)).current;
   useEffect(() => {
     Animated.sequence([

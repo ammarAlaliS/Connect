@@ -39,6 +39,7 @@ const MarketScreen = () => {
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [firstStoreLoading, setFirstStoreLoading] = useState(true);
+  const [isNewProduct, setIsNewProduct] = useState(false);
   const [filterData, setFilterData] = useState({
     minPrice: -1,
     maxPrice: -1,
@@ -195,7 +196,17 @@ const MarketScreen = () => {
           </View>
 
           <View style={styles.container}>
-            <View style={styles.searchSection} className="d-flex flex-row">
+            <View
+              style={[
+                styles.searchSection,
+                {
+                  borderWidth: filterUrl.length > 0 ? 1 : 0,
+                  borderColor: "#2b00b6",
+                  borderStyle: "solid",
+                },
+              ]}
+              className="d-flex flex-row"
+            >
               <TouchableOpacity
                 onPress={() => {
                   setShowFilterModal(true);
@@ -269,6 +280,10 @@ const MarketScreen = () => {
                     productLocation={item.productLocation.state}
                     setSelectedProduct={setSelectedProduct}
                     item={item}
+                    setShowNewProductModal={setShowNewProductModal}
+                    showNewProductModal={showNewProductModal}
+                    showModal={showModal}
+                    setIsNewProduct={setIsNewProduct}
                   ></ArticleCard>
                 );
               })}
@@ -303,7 +318,10 @@ const MarketScreen = () => {
         style={styles.secondModalContainer}
         transparent={true}
       >
-        <NewProductForm setShowModal={setShowNewProductModal}></NewProductForm>
+        <NewProductForm
+          setShowModal={setShowNewProductModal}
+          selectedProduct={selectedProduct}
+        ></NewProductForm>
       </Modal>
       <Modal
         visible={showFilterModal}

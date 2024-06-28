@@ -1,8 +1,36 @@
 import { Image, StyleSheet, Text, View } from "react-native";
 import { TouchableOpacity } from "react-native";
 import ContactIcon from "../../icons/ContactIcon";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { jwtDecode } from "jwt-decode";
+import EditIcon from "../../icons/EditIcon";
 
-const ArticleCard = ({ setShowModal, setSelectedProduct, item }) => {
+const ArticleCard = ({
+  setShowModal,
+  setSelectedProduct,
+  item,
+  setShowNewProductModal,
+  showNewProductModal,
+  showModal,
+  setIsNewProduct,
+}) => {
+  const [userId, setUserId] = useState("");
+  const global_user = useSelector((state) => state.user.global_user);
+  const token = global_user?.token;
+
+  const decodedToken = jwtDecode(token);
+
+  useEffect(() => {
+    setUserId(item.user._id);
+  }, []);
+
+  useEffect(() => {
+    if (showNewProductModal && showModal) {
+      setShowModal(false);
+    }
+  }, [showModal, showNewProductModal]);
+
   return (
     <View
       style={styles.container}
@@ -29,8 +57,20 @@ const ArticleCard = ({ setShowModal, setSelectedProduct, item }) => {
         <TouchableOpacity
           className="d-flex flex-row"
           style={styles.messageContainer}
+          onPress={(e) => {
+            e.stopPropagation();
+            if (userId == decodedToken.id) {
+              setIsNewProduct(false);
+              setShowNewProductModal(true);
+            }
+          }}
         >
-          <ContactIcon width={25} height={30} color="#3725dd" />
+          {userId != decodedToken.id && (
+            <ContactIcon width={25} height={30} color="#3725dd" />
+          )}
+          {userId == decodedToken.id && (
+            <EditIcon width={25} height={30} color="#3725dd" />
+          )}
         </TouchableOpacity>
       </View>
       <View style={styles.descriptionContainer}>

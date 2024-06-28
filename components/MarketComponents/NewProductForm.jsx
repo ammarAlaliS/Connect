@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import * as ImagePicker from "expo-image-picker";
 import AlertMessage from "./AlertMessage.jsx";
 
-const NewProductForm = ({ setShowModal }) => {
+const NewProductForm = ({ setShowModal, isNewProduct, selectedProduct }) => {
   const idProduct = useSelector((state) => state.market?.idProduct);
   const ulrImage = useSelector((state) => state.market?.urlProductImage);
   const global_user = useSelector((state) => state.user.global_user);
@@ -143,6 +143,88 @@ const NewProductForm = ({ setShowModal }) => {
       });
   };
 
+  const updateProducto = async () => {
+    if (title.length <= 5) {
+      setAlertMessage("Ingrese un titulo valido");
+      setShowAlert(true);
+      return;
+    }
+
+    if (price <= 0) {
+      setAlertMessage("Ingrese un precio valido");
+      setShowAlert(true);
+      return;
+    }
+
+    if (categorySelectedIndex < 0) {
+      setAlertMessage("Seleccione una categoria");
+      setShowAlert(true);
+      return;
+    }
+
+    if (statusSelectedIndex < 0) {
+      setAlertMessage("Seleccione un estado");
+      setShowAlert(true);
+      return;
+    }
+
+    if (imageList.length == 0) {
+      setAlertMessage("Agregue por lo menos una imagen");
+      setShowAlert(true);
+      return;
+    }
+
+    if (locationSelectedIndex < 0) {
+      setAlertMessage("Seleccione una ubicacion");
+      setShowAlert(true);
+      return;
+    }
+
+    if (stock <= 0) {
+      setAlertMessage("Ingrese un stock valido");
+      setShowAlert(true);
+      return;
+    }
+
+    const body = {
+      id: selectedProduct?._id,
+      productName: title,
+      productCategory: listCategories[categorySelectedIndex],
+      productStatus: articleState[statusSelectedIndex],
+      productLocation: {
+        state: listState[locationSelectedIndex],
+        latitude: 40.109319,
+        longitude: -3.229615,
+      },
+      description: description,
+      price: price,
+      image: [
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
+      ],
+      stock: parseInt(stock),
+    };
+
+    const response = await fetch(
+      "https://obbaramarket-backend-1.onrender.com/api/ObbaraMarket/update/product",
+      {
+        method: "put",
+        body: JSON.stringify(body),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (response.ok) {
+      setproductStatus(true);
+    } else {
+      console.log("Se obtuvo el error al intentar actualizar el producto: ");
+      console.log(response);
+    }
+  };
+
   const onTextInputChange = (setValue, text) => {
     setValue(text);
   };
@@ -173,7 +255,11 @@ const NewProductForm = ({ setShowModal }) => {
 
   useEffect(() => {
     if (productStatus && !showAlert) {
-      setAlertMessage("El producto se creo correctamente");
+      setAlertMessage(
+        isNewProduct
+          ? "El producto se creo correctamente"
+          : "El producto se actualizo correctamente"
+      );
       setproductStatus(false);
       setShowAlert(true);
     }
@@ -181,11 +267,37 @@ const NewProductForm = ({ setShowModal }) => {
     if (
       !productStatus &&
       !showAlert &&
-      alertMessage == "El producto se creo correctamente"
+      (alertMessage == "El producto se creo correctamente" ||
+        alertMessage == "El producto se actualizo correctamente")
     ) {
       setShowModal(false);
     }
   }, [productStatus, showAlert]);
+
+  useEffect(() => {
+    if (!isNewProduct) {
+      setTitle(selectedProduct?.productName);
+      setPrice(selectedProduct?.price);
+      setImageList(
+        selectedProduct?.image.map((item) => {
+          return { uri: item };
+        })
+      );
+      onStockChange(setStock, selectedProduct?.stock.toString());
+      setDescription(selectedProduct?.description);
+      setCategorySelectedIndex(
+        listCategories.findIndex((el) => el == selectedProduct?.productCategory)
+      );
+      setStatusSelectedIndex(
+        articleState.findIndex((el) => el == selectedProduct?.productStatus)
+      );
+      setLocationSelectedIndex(
+        listState.findIndex(
+          (el) => el == selectedProduct?.productLocation.state
+        )
+      );
+    }
+  }, [isNewProduct]);
 
   return (
     <View style={styles.container}>
@@ -208,7 +320,9 @@ const NewProductForm = ({ setShowModal }) => {
           </View>
 
           <View style={styles.principalDetailContainer} className="d-flex">
-            <Text style={styles.detailsTitle}>Nuevo Producto</Text>
+            <Text style={styles.detailsTitle}>
+              {isNewProduct ? "Nuevo Producto" : "Editar Producto"}
+            </Text>
             <View style={styles.dividingLine}></View>
           </View>
 
@@ -278,6 +392,9 @@ const NewProductForm = ({ setShowModal }) => {
                 listItems={listCategories}
                 placeHolder={"Selecciona una categoria"}
                 setSelectedItemIdex={setCategorySelectedIndex}
+                selectedItemIdex={listCategories.findIndex(
+                  (el) => el == selectedProduct?.productCategory
+                )}
               ></InputSelectBox>
 
               <Text style={styles.stateLabel}>Estado</Text>
@@ -285,6 +402,9 @@ const NewProductForm = ({ setShowModal }) => {
                 listItems={articleState}
                 placeHolder={"Selecciona un estado"}
                 setSelectedItemIdex={setStatusSelectedIndex}
+                selectedItemIdex={articleState.findIndex(
+                  (el) => el == selectedProduct?.productStatus
+                )}
               ></InputSelectBox>
 
               <View style={styles.principalFotoContainer}>
@@ -345,6 +465,9 @@ const NewProductForm = ({ setShowModal }) => {
                   listItems={listState}
                   placeHolder={"Seleccione la ubicacion"}
                   setSelectedItemIdex={setLocationSelectedIndex}
+                  selectedItemIdex={listState.findIndex(
+                    (el) => el == selectedProduct?.productLocation.state
+                  )}
                 ></InputSelectBox>
                 <Text style={styles.stockLabel}>Stock / Disponible</Text>
                 <TextInput
@@ -353,7 +476,8 @@ const NewProductForm = ({ setShowModal }) => {
                   onChangeText={(text) => {
                     onStockChange(setStock, text);
                   }}
-                  value={stock > 0 ? "€ " + stock : ""}
+                  value={stock <= 0 ? "" : stock}
+                  keyboardType="numeric"
                 ></TextInput>
                 <Text style={styles.descriptionLabel}>Descripcion</Text>
                 <TextInput
@@ -379,10 +503,16 @@ const NewProductForm = ({ setShowModal }) => {
               <TouchableOpacity
                 style={styles.publicBotton}
                 onPress={() => {
-                  crearProducto();
+                  if (isNewProduct) {
+                    crearProducto();
+                  } else {
+                    updateProducto();
+                  }
                 }}
               >
-                <Text style={styles.publicLabel}>Publicar</Text>
+                <Text style={styles.publicLabel}>
+                  {isNewProduct ? "Publicar" : "Actualizar"}
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
