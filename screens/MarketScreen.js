@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   StyleSheet,
   View,
@@ -6,8 +6,10 @@ import {
   TextInput,
   TouchableOpacity,
   Modal,
+  Alert,
+  ActivityIndicator,
 } from "react-native";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { ScrollView } from "react-native";
 import ArticleCard from "../components/MarketComponents/ArticleCard.jsx";
@@ -15,126 +17,151 @@ import ArticleModal from "../components/MarketComponents/ArticleModal.jsx";
 import BottomSellModal from "../components/MarketComponents/BottomSellModal.jsx";
 import NewProductForm from "../components/MarketComponents/NewProductForm.jsx";
 import FilterModal from "../components/MarketComponents/FilterModal.jsx";
+import axios from "axios";
+import AlertMessage from "../components/MarketComponents/AlertMessage.jsx";
+import XMarkIcon from "../icons/XMarkIcon.js";
 
 const MarketScreen = () => {
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    // fetch("https://jsonplaceholder.typicode.com/users/1")
-    //   .then((response) => response.json())
-    //   .then((data) => dispatch(addUser(data)));
-  }, []);
+  const [products, setProducts] = useState([]);
+  const [loadingProducts, setLoadingProducts] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [lastPage, setLastPage] = useState(1);
+  const scrollViewRef = useRef(null);
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+
   const [search, setSearch] = useState("");
   const [selectedclassification, setSelectedclassification] = useState(1);
-  const [carroDeCompras, setCarroDeCompras] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [showNewProductModal, setShowNewProductModal] = useState(false);
   const [showFilterModal, setShowFilterModal] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [firstStoreLoading, setFirstStoreLoading] = useState(true);
+  const [isNewProduct, setIsNewProduct] = useState(false);
+  const [filterData, setFilterData] = useState({
+    minPrice: -1,
+    maxPrice: -1,
+    minDate: new Date(1, 1, 1),
+    maxDate: new Date(1, 1, 1),
+  });
+
+  const [filterUrl, setFilterUrl] = useState("");
+
+  const API_BASE_URL =
+    "https://obbaramarket-backend-1.onrender.com/api/ObbaraMarket";
+  const global_user = useSelector((state) => state.user.global_user);
+  const token = global_user?.token;
 
   const listClasifications = [
     { id: 1, name: "Todos" },
-    { id: 2, name: "Vehiculos de Traccion" },
-    { id: 3, name: "Motocicletas" },
+    { id: 2, name: "Coche" },
+    { id: 3, name: "Moto" },
     { id: 4, name: "Motocarro" },
-    { id: 5, name: "Ciclomotor" },
-    { id: 6, name: "Ciclomotor" },
-    { id: 7, name: "Ciclomotor" },
+    { id: 5, name: "Articulos" },
   ];
 
-  const productList = [
-    {
-      id: 1,
-      urlImage:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-    },
-    {
-      id: 2,
-      urlImage:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-    },
-    {
-      id: 3,
-      urlImage:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-    },
-    {
-      id: 4,
-      urlImage:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-    },
-    {
-      id: 5,
-      urlImage:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-    },
-    {
-      id: 6,
-      urlImage:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-    },
-    {
-      id: 7,
-      urlImage:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-    },
-    {
-      id: 8,
-      urlImage:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-    },
-    {
-      id: 9,
-      urlImage:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-    },
-    {
-      id: 10,
-      urlImage:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-    },
-    {
-      id: 11,
-      urlImage:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-    },
-    {
-      id: 12,
-      urlImage:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-    },
-    {
-      id: 13,
-      urlImage:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-    },
-    {
-      id: 14,
-      urlImage:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-    },
-    {
-      id: 15,
-      urlImage:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-    },
-    {
-      id: 16,
-      urlImage:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-    },
-    {
-      id: 17,
-      urlImage:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-    },
-  ];
+  const getProducts = async (isNewRequest) => {
+    setLoadingProducts(true);
+    setFirstStoreLoading(false);
+
+    if (isNewRequest) {
+      setProducts([]);
+      if (currentPage != 1) {
+        setCurrentPage(1);
+        return;
+      }
+    }
+
+    try {
+      const url =
+        `${API_BASE_URL}/get/products?${
+          (selectedclassification > 1
+            ? "productCategory=" +
+              listClasifications[selectedclassification - 1].name +
+              "&"
+            : "") + (search.length > 0 ? "search=" + search + "&" : "")
+        }limit=10&page=${currentPage}` + filterUrl;
+
+      const response = await fetch(url, {
+        method: "get",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        const res = await response.text();
+        const data = JSON.parse(res);
+
+        if (!isNewRequest) {
+          products.push(...data.docs);
+        } else {
+          setProducts(data.docs);
+        }
+
+        setLastPage(data.totalPages);
+        setLoadingProducts(false);
+      } else {
+        console.log("ocurrio un error en la peticion");
+        console.log(response);
+      }
+    } catch (error) {
+      setAlertMessage("No se encontraron productos");
+      setShowAlert(true);
+      setLoadingProducts(false);
+    }
+  };
+
+  const ifScrollIsInTheEnd = (event) => {
+    if (
+      event.layoutMeasurement.height + event.contentOffset.y >=
+      event.contentSize.height - 5
+    ) {
+      if (currentPage < lastPage && !loadingProducts) {
+        setLoadingProducts(true);
+        setCurrentPage(currentPage + 1);
+        scrollViewRef.current.scrollTo({
+          x: 0,
+          y: event.contentSize.height + 20,
+          animated: true,
+        });
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (!firstStoreLoading) {
+      getProducts(true);
+    }
+  }, [filterUrl]);
+
+  useEffect(() => {
+    getProducts(currentPage == 1 ? true : false);
+  }, [currentPage]);
+
+  useEffect(() => {
+    if (!firstStoreLoading) {
+      getProducts(true);
+    }
+  }, [selectedclassification]);
 
   return (
     <View style={styles.principalContainer}>
+      <AlertMessage
+        message={alertMessage}
+        seeModal={showAlert}
+        setShowAlert={setShowAlert}
+      ></AlertMessage>
       <ScrollView
         showsVerticalScrollIndicator={false}
         scrollEventThrottle={16}
         stickyHeaderIndices={[1]}
+        onScroll={(e) => {
+          ifScrollIsInTheEnd(e.nativeEvent);
+        }}
+        ref={scrollViewRef}
       >
         <View className="d-flex flex-row">
           <View style={styles.searchContainer}>
@@ -144,6 +171,9 @@ const MarketScreen = () => {
                 name="search"
                 size={20}
                 color={search ? "#000000" : "#00000099"}
+                onPress={() => {
+                  getProducts(true);
+                }}
               />
               <TextInput
                 style={styles.input}
@@ -152,11 +182,31 @@ const MarketScreen = () => {
                 value={search}
                 underlineColorAndroid="transparent"
               />
+              {search.length > 0 && (
+                <TouchableOpacity
+                  style={{ paddingRight: 10 }}
+                  onPress={() => {
+                    setSearch("");
+                  }}
+                >
+                  <XMarkIcon color={"#000"} height={25} width={25}></XMarkIcon>
+                </TouchableOpacity>
+              )}
             </View>
           </View>
 
           <View style={styles.container}>
-            <View style={styles.searchSection} className="d-flex flex-row">
+            <View
+              style={[
+                styles.searchSection,
+                {
+                  borderWidth: filterUrl.length > 0 ? 1 : 0,
+                  borderColor: "#2b00b6",
+                  borderStyle: "solid",
+                },
+              ]}
+              className="d-flex flex-row"
+            >
               <TouchableOpacity
                 onPress={() => {
                   setShowFilterModal(true);
@@ -184,53 +234,66 @@ const MarketScreen = () => {
             className="d-flex flex-row"
           >
             {listClasifications.map((item, index) => {
-              if (item.id == selectedclassification) {
-                return (
-                  <TouchableOpacity
-                    key={index}
-                    style={styles.selectedItem}
-                    onPress={() => {
-                      setSelectedclassification(item.id);
+              return (
+                <TouchableOpacity
+                  key={index}
+                  style={
+                    item.id == selectedclassification
+                      ? styles.selectedItem
+                      : styles.item
+                  }
+                  onPress={() => {
+                    setSelectedclassification(item.id);
+                  }}
+                >
+                  <Text
+                    style={{
+                      color:
+                        item.id == selectedclassification ? "#fff" : "#000",
                     }}
                   >
-                    <Text style={{ color: "#fff" }}>{item.name}</Text>
-                  </TouchableOpacity>
-                );
-              } else {
-                return (
-                  <TouchableOpacity
-                    key={index}
-                    style={styles.item}
-                    onPress={() => {
-                      setSelectedclassification(item.id);
-                    }}
-                  >
-                    <Text>{item.name}</Text>
-                  </TouchableOpacity>
-                );
-              }
+                    {item.name}
+                  </Text>
+                </TouchableOpacity>
+              );
             })}
           </ScrollView>
         </View>
 
         {/* Cards de articulos */}
 
-        <ScrollView showsVerticalScrollIndicator={false} horizontal={false}>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          horizontal={false}
+          scrollEventThrottle={16}
+        >
           <View
             className="d-flex flex-row mx-4 my-2"
             style={[styles.articlesContainer]}
           >
-            {productList.map((item, index) => {
-              return (
-                <ArticleCard
-                  carroDeCompras={carroDeCompras}
-                  setCarroDeCompras={setCarroDeCompras}
-                  urlImage={item.urlImage}
-                  key={index}
-                  setShowModal={setShowModal}
-                ></ArticleCard>
-              );
-            })}
+            {products &&
+              products.map((item, index) => {
+                return (
+                  <ArticleCard
+                    key={index}
+                    setShowModal={setShowModal}
+                    productLocation={item.productLocation.state}
+                    setSelectedProduct={setSelectedProduct}
+                    item={item}
+                    setShowNewProductModal={setShowNewProductModal}
+                    showNewProductModal={showNewProductModal}
+                    showModal={showModal}
+                    setIsNewProduct={setIsNewProduct}
+                  ></ArticleCard>
+                );
+              })}
+            {loadingProducts && (
+              <ActivityIndicator
+                size={"large"}
+                color={"#00000090"}
+                style={{ height: 30, width: "100%", marginVertical: 10 }}
+              ></ActivityIndicator>
+            )}
           </View>
         </ScrollView>
       </ScrollView>
@@ -241,7 +304,10 @@ const MarketScreen = () => {
         style={styles.modalContainer}
         transparent={true}
       >
-        <ArticleModal setShowModal={setShowModal}></ArticleModal>
+        <ArticleModal
+          setShowModal={setShowModal}
+          selectedProduct={selectedProduct}
+        ></ArticleModal>
       </Modal>
       <BottomSellModal
         setShowNewProductModal={setShowNewProductModal}
@@ -252,7 +318,10 @@ const MarketScreen = () => {
         style={styles.secondModalContainer}
         transparent={true}
       >
-        <NewProductForm setShowModal={setShowNewProductModal}></NewProductForm>
+        <NewProductForm
+          setShowModal={setShowNewProductModal}
+          selectedProduct={selectedProduct}
+        ></NewProductForm>
       </Modal>
       <Modal
         visible={showFilterModal}
@@ -260,7 +329,12 @@ const MarketScreen = () => {
         style={styles.thirdModalContainer}
         transparent={true}
       >
-        <FilterModal setShowFilterModal={setShowFilterModal}></FilterModal>
+        <FilterModal
+          setShowFilterModal={setShowFilterModal}
+          setFilterUrl={setFilterUrl}
+          filterData={filterData}
+          setFilterData={setFilterData}
+        ></FilterModal>
       </Modal>
     </View>
   );

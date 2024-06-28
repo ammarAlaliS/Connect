@@ -1,11 +1,4 @@
-import {
-  Alert,
-  Image,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 import { Animated, StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
@@ -13,7 +6,7 @@ import ModalInitialChat from "./ModalInitialChat.jsx";
 import ArticleCarousel from "./ArticleCarousel.jsx";
 import XMarkIcon from "../../icons/XMarkIcon.js";
 
-const ArticleModal = ({ setShowModal }) => {
+const ArticleModal = ({ setShowModal, selectedProduct }) => {
   const idProduct = useSelector((state) => state.market?.idProduct);
   const ulrImage = useSelector((state) => state.market?.urlProductImage);
 
@@ -35,14 +28,20 @@ const ArticleModal = ({ setShowModal }) => {
                 <XMarkIcon width={30} height={30} color={"#f1f1f1"}></XMarkIcon>
               </TouchableOpacity>
             </View>
-            <Text style={styles.titleStyles}>Mercedes Benz {idProduct}</Text>
+            <Text style={styles.titleStyles}>
+              {selectedProduct?.productName}
+            </Text>
             <View style={styles.subTitlesContainer} className="d-flex flex-row">
-              <Text style={styles.fisrtSubTitle}>$1,500</Text>
-              <Text style={styles.secondSubtitle}>2 disponibles</Text>
+              <Text style={styles.fisrtSubTitle}>
+                € {selectedProduct?.price}
+              </Text>
+              <Text style={styles.secondSubtitle}>
+                {selectedProduct?.stock} disponibles
+              </Text>
             </View>
           </View>
           {/* CARRUCEL */}
-          <ArticleCarousel></ArticleCarousel>
+          <ArticleCarousel images={selectedProduct?.image}></ArticleCarousel>
 
           <View style={styles.dividingLine}></View>
 
@@ -56,7 +55,9 @@ const ArticleModal = ({ setShowModal }) => {
               >
                 <View style={styles.stateContainer} className="d-flex flex-row">
                   <Text style={styles.titleState}>Estado:</Text>
-                  <Text style={styles.state}>Nuevo</Text>
+                  <Text style={styles.state}>
+                    {selectedProduct?.productStatus}
+                  </Text>
                 </View>
 
                 <View
@@ -64,7 +65,9 @@ const ArticleModal = ({ setShowModal }) => {
                   className="d-flex flex-row"
                 >
                   <Text style={styles.locationTitle}>Ubicacion:</Text>
-                  <Text style={styles.location}>Valencia</Text>
+                  <Text style={styles.location}>
+                    {selectedProduct?.productLocation.state}
+                  </Text>
                 </View>
 
                 <View
@@ -76,11 +79,7 @@ const ArticleModal = ({ setShowModal }) => {
               </View>
 
               <Text style={styles.principalDescriptionContainer}>
-                Auto con 3000 km de uso, papeles en regla, con un pequeño golpe
-                lateral Auto con 3000 km de uso, papeles en regla, con un
-                pequeño golpe lateral Auto con 3000 km de uso, papeles en regla,
-                con un pequeño golpe lateral Auto con 3000 km de uso, papeles en
-                regla, con un pequeño golpe lateral Auto con 3000 km de uso.
+                {selectedProduct?.description}
               </Text>
               <View
                 style={styles.sellerInfoContainer}
@@ -95,13 +94,17 @@ const ArticleModal = ({ setShowModal }) => {
               >
                 <Image
                   source={{
-                    uri: ulrImage,
+                    uri: selectedProduct?.user.global_user.profile_img_url,
                   }}
                   style={styles.sellerImage}
                   resizeMode="cover"
                 />
                 <View>
-                  <Text style={styles.sellerName}>Carlos Perez</Text>
+                  <Text style={styles.sellerName}>
+                    {selectedProduct?.user.global_user.first_name +
+                      " " +
+                      selectedProduct?.user.global_user.last_name}
+                  </Text>
                   <Text style={styles.sellerContactInfo}>Pide un QuickCar</Text>
                 </View>
               </View>
