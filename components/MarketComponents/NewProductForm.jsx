@@ -9,7 +9,12 @@ import { useEffect, useState } from "react";
 import * as ImagePicker from "expo-image-picker";
 import AlertMessage from "./AlertMessage.jsx";
 
-const NewProductForm = ({ setShowModal, isNewProduct, selectedProduct }) => {
+const NewProductForm = ({
+  setShowModal,
+  isNewProduct,
+  selectedProduct,
+  setSelectedProduct,
+}) => {
   const idProduct = useSelector((state) => state.market?.idProduct);
   const ulrImage = useSelector((state) => state.market?.urlProductImage);
   const global_user = useSelector((state) => state.user.global_user);
@@ -56,7 +61,6 @@ const NewProductForm = ({ setShowModal, isNewProduct, selectedProduct }) => {
 
     if (!result.canceled) {
       setImageList([...imageList, result.assets[0]]);
-      console.log("El numero de imagenes es: " + imageList.length);
     }
   };
 
@@ -122,7 +126,7 @@ const NewProductForm = ({ setShowModal, isNewProduct, selectedProduct }) => {
     };
 
     const response = await fetch(
-      "https://obbaramarket-backend-1.onrender.com/api/ObbaraMarket/create/products",
+      "https://obbaramarket-backend.onrender.com/api/ObbaraMarket/create/products",
       {
         method: "post",
         body: JSON.stringify(body),
@@ -134,8 +138,15 @@ const NewProductForm = ({ setShowModal, isNewProduct, selectedProduct }) => {
     )
       .then((res) => {
         if (res.status == 201) {
-          setproductStatus(true);
+          return res.json();
         }
+      })
+      .then((data) => {
+        setproductStatus(true);
+        setSelectedProduct({
+          ...data,
+          user: { _id: data.user, global_user: global_user },
+        });
       })
       .catch((error) => {
         console.log("Se obtuvo el error: ");
@@ -206,7 +217,7 @@ const NewProductForm = ({ setShowModal, isNewProduct, selectedProduct }) => {
     };
 
     const response = await fetch(
-      "https://obbaramarket-backend-1.onrender.com/api/ObbaraMarket/update/product",
+      "https://obbaramarket-backend.onrender.com/api/ObbaraMarket/update/product",
       {
         method: "put",
         body: JSON.stringify(body),
@@ -219,6 +230,24 @@ const NewProductForm = ({ setShowModal, isNewProduct, selectedProduct }) => {
 
     if (response.ok) {
       setproductStatus(true);
+      setSelectedProduct({
+        ...selectedProduct,
+        productName: title,
+        productCategory: listCategories[categorySelectedIndex],
+        productStatus: articleState[statusSelectedIndex],
+        productLocation: {
+          state: listState[locationSelectedIndex],
+          latitude: 40.109319,
+          longitude: -3.229615,
+        },
+        description: description,
+        price: price,
+        image: [
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
+        ],
+        stock: parseInt(stock),
+      });
     } else {
       console.log("Se obtuvo el error al intentar actualizar el producto: ");
       console.log(response);
@@ -392,9 +421,13 @@ const NewProductForm = ({ setShowModal, isNewProduct, selectedProduct }) => {
                 listItems={listCategories}
                 placeHolder={"Selecciona una categoria"}
                 setSelectedItemIdex={setCategorySelectedIndex}
-                selectedItemIdex={listCategories.findIndex(
-                  (el) => el == selectedProduct?.productCategory
-                )}
+                selectedItemIdex={
+                  isNewProduct
+                    ? -1
+                    : listCategories.findIndex(
+                        (el) => el == selectedProduct?.productCategory
+                      )
+                }
               ></InputSelectBox>
 
               <Text style={styles.stateLabel}>Estado</Text>
@@ -402,9 +435,13 @@ const NewProductForm = ({ setShowModal, isNewProduct, selectedProduct }) => {
                 listItems={articleState}
                 placeHolder={"Selecciona un estado"}
                 setSelectedItemIdex={setStatusSelectedIndex}
-                selectedItemIdex={articleState.findIndex(
-                  (el) => el == selectedProduct?.productStatus
-                )}
+                selectedItemIdex={
+                  isNewProduct
+                    ? -1
+                    : articleState.findIndex(
+                        (el) => el == selectedProduct?.productStatus
+                      )
+                }
               ></InputSelectBox>
 
               <View style={styles.principalFotoContainer}>
@@ -465,9 +502,13 @@ const NewProductForm = ({ setShowModal, isNewProduct, selectedProduct }) => {
                   listItems={listState}
                   placeHolder={"Seleccione la ubicacion"}
                   setSelectedItemIdex={setLocationSelectedIndex}
-                  selectedItemIdex={listState.findIndex(
-                    (el) => el == selectedProduct?.productLocation.state
-                  )}
+                  selectedItemIdex={
+                    isNewProduct
+                      ? -1
+                      : listState.findIndex(
+                          (el) => el == selectedProduct?.productLocation.state
+                        )
+                  }
                 ></InputSelectBox>
                 <Text style={styles.stockLabel}>Stock / Disponible</Text>
                 <TextInput

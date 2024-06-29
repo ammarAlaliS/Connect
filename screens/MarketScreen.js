@@ -43,14 +43,14 @@ const MarketScreen = () => {
   const [filterData, setFilterData] = useState({
     minPrice: -1,
     maxPrice: -1,
-    minDate: new Date(1, 1, 1),
-    maxDate: new Date(1, 1, 1),
+    minDate: null,
+    maxDate: null,
   });
 
   const [filterUrl, setFilterUrl] = useState("");
 
   const API_BASE_URL =
-    "https://obbaramarket-backend-1.onrender.com/api/ObbaraMarket";
+    "https://obbaramarket-backend.onrender.com/api/ObbaraMarket";
   const global_user = useSelector((state) => state.user.global_user);
   const token = global_user?.token;
 
@@ -146,6 +146,26 @@ const MarketScreen = () => {
       getProducts(true);
     }
   }, [selectedclassification]);
+
+  useEffect(() => {
+    if (
+      selectedProduct?._id != undefined &&
+      selectedProduct?._id != null &&
+      showNewProductModal == false
+    ) {
+      if (products.indexOf((el) => el._id == selectedProduct?._id) >= 0) {
+        let productsOutSide = products.map((item) => {
+          if (item._id == selectedProduct?._id) {
+            return selectedProduct;
+          }
+          return item;
+        });
+        setProducts(productsOutSide);
+      } else {
+        setProducts([selectedProduct, ...products]);
+      }
+    }
+  }, [selectedProduct, showNewProductModal]);
 
   return (
     <View style={styles.principalContainer}>
@@ -311,6 +331,7 @@ const MarketScreen = () => {
       </Modal>
       <BottomSellModal
         setShowNewProductModal={setShowNewProductModal}
+        setIsNewProduct={setIsNewProduct}
       ></BottomSellModal>
       <Modal
         visible={showNewProductModal}
@@ -321,6 +342,8 @@ const MarketScreen = () => {
         <NewProductForm
           setShowModal={setShowNewProductModal}
           selectedProduct={selectedProduct}
+          setSelectedProduct={setSelectedProduct}
+          isNewProduct={isNewProduct}
         ></NewProductForm>
       </Modal>
       <Modal

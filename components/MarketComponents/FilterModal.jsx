@@ -85,16 +85,22 @@ const FilterModal = ({
     setMinPrice(filterData.minPrice);
     setMaxPrice(filterData.maxPrice);
 
-    if (filterData.minDate.getFullYear() > 1950) {
+    if (filterData.minDate?.getFullYear() > 1950) {
       setMinDate(filterData.minDate);
       setMinDateString(filterData.minDate.toLocaleDateString());
+    } else {
+      setMinDate(new Date());
+      setMinDateString("");
     }
 
-    if (filterData.maxDate.getFullYear() > 1950) {
+    if (filterData.maxDate?.getFullYear() > 1950) {
       setMaxDate(filterData.maxDate);
       setMaxDateString(filterData.maxDate.toLocaleDateString());
+    } else {
+      setMaxDate(new Date());
+      setMaxDateString("");
     }
-  }, []);
+  }, [filterData]);
 
   return (
     <View style={styles.principalContainer}>
@@ -202,6 +208,20 @@ const FilterModal = ({
         </ScrollView>
         <View style={styles.buttonFilterContainer} className="d-flex flex-row">
           <TouchableOpacity
+            style={styles.bottomClear}
+            onPress={() => {
+              // mostrarDatosSeleccionados();
+              setFilterData({
+                minPrice: -1,
+                maxPrice: -1,
+                minDate: null,
+                maxDate: null,
+              });
+            }}
+          >
+            <Text style={styles.bottonClearText}>Limpiar</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
             style={styles.bottonFilter}
             onPress={() => {
               mostrarDatosSeleccionados();
@@ -308,7 +328,7 @@ const styles = StyleSheet.create({
   categorySelectInputContainer: { marginLeft: "10%" },
   buttonFilterContainer: {
     width: "100%",
-    justifyContent: "center",
+    justifyContent: "space-evenly",
     marginTop: 10,
     marginBottom: 10,
   },
@@ -318,11 +338,26 @@ const styles = StyleSheet.create({
     width: 100,
     borderRadius: 8,
   },
+  bottomClear: {
+    height: 43,
+    backgroundColor: "#c3c3c3",
+    width: 100,
+    borderRadius: 8,
+  },
   bottonFilterText: {
     fontSize: 20,
     fontWeight: "900",
     fontFamily: "PlusJakartaSans-Bold",
     color: "#f1f1f1",
+    textAlign: "center",
+    textAlignVertical: "center",
+    height: "100%",
+  },
+  bottonClearText: {
+    fontSize: 20,
+    fontWeight: "900",
+    fontFamily: "PlusJakartaSans-Bold",
+    color: "#121326",
     textAlign: "center",
     textAlignVertical: "center",
     height: "100%",
