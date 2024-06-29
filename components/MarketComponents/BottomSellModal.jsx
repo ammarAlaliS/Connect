@@ -3,7 +3,7 @@ import PlusIcon from "../../icons/PlusIcon";
 import { Animated } from "react-native";
 import { useEffect, useRef } from "react";
 
-const BottomSellModal = ({ setShowNewProductModal }) => {
+const BottomSellModal = ({ setShowNewProductModal, setIsNewProduct }) => {
   const widthAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -27,6 +27,7 @@ const BottomSellModal = ({ setShowNewProductModal }) => {
       <TouchableOpacity
         style={styles.sellerBottom}
         onPress={() => {
+          setIsNewProduct(true);
           setShowNewProductModal(true);
         }}
         className="d-flex"
@@ -57,7 +58,7 @@ const BottomSellModal = ({ setShowNewProductModal }) => {
 const styles = StyleSheet.create({
   container: {
     position: "absolute",
-    bottom: 45,
+    bottom: 25,
     right: 30,
     height: 50,
     width: 50,

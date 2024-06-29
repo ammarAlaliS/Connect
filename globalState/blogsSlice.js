@@ -1,51 +1,63 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-const API_BASE_URL = 'https://obbaramarket-backend-1.onrender.com';
-const CACHE_DURATION = 2 * 60 * 1000; 
+const API_BASE_URL = "https://obbaramarket-backend.onrender.com";
+const CACHE_DURATION = 2 * 60 * 1000;
 
 export const fetchBlogsAndAuthors = createAsyncThunk(
-  'blogs/fetchBlogsAndAuthors',
+  "blogs/fetchBlogsAndAuthors",
   async (_, { getState, dispatch, rejectWithValue }) => {
-    const { user: { global_user: { token } }, blogs: { lastFetched } } = getState();
+    const {
+      user: {
+        global_user: { token },
+      },
+      blogs: { lastFetched },
+    } = getState();
 
     if (!token) {
-      return rejectWithValue('Token de autenticación no disponible');
+      return rejectWithValue("Token de autenticación no disponible");
     }
 
     const now = Date.now();
-    if (lastFetched && (now - lastFetched) < CACHE_DURATION) {
-      return rejectWithValue('Datos ya están en caché');
+    if (lastFetched && now - lastFetched < CACHE_DURATION) {
+      return rejectWithValue("Datos ya están en caché");
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/ObbaraMarket/blogs`, {   
-      });
+      const response = await fetch(
+        `${API_BASE_URL}/api/ObbaraMarket/blogs`,
+        {}
+      );
 
       if (!response.ok) {
-        throw new Error('Failed to fetch blogs');
+        throw new Error("Failed to fetch blogs");
       }
 
       const data = await response.json();
 
-      const blogsWithAuthors = await Promise.all(data.map(async (blog) => {
-        try {
-          const authorId = blog.user;
-          const authorResponse = await fetch(`${API_BASE_URL}/api/ObbaraMarket/user/${authorId}`, {
-            headers: {
-              'Authorization': `Bearer ${token}`
+      const blogsWithAuthors = await Promise.all(
+        data.map(async (blog) => {
+          try {
+            const authorId = blog.user;
+            const authorResponse = await fetch(
+              `${API_BASE_URL}/api/ObbaraMarket/user/${authorId}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            );
+
+            if (!authorResponse.ok) {
+              throw new Error("Failed to fetch author data");
             }
-          });
 
-          if (!authorResponse.ok) {
-            throw new Error('Failed to fetch author data');
+            const authorData = await authorResponse.json();
+            return { ...blog, author: authorData.global_user };
+          } catch (error) {
+            return { ...blog, author: null };
           }
-
-          const authorData = await authorResponse.json();
-          return { ...blog, author: authorData.global_user };
-        } catch (error) {
-          return { ...blog, author: null };
-        }
-      }));
+        })
+      );
 
       dispatch(setBlogsAndAuthors(blogsWithAuthors));
       dispatch(setLastFetched(now));
@@ -58,21 +70,21 @@ export const fetchBlogsAndAuthors = createAsyncThunk(
 );
 
 const blogsSlice = createSlice({
-  name: 'blogs',
+  name: "blogs",
   initialState: {
     blogs: [],
     authorsById: {},
-    status: 'idle',
+    status: "idle",
     error: null,
     lastFetched: null,
   },
   reducers: {
     setBlogsAndAuthors: (state, action) => {
-      state.status = 'succeeded';
-      state.blogs = action.payload.map(blog => ({
+      state.status = "succeeded";
+      state.blogs = action.payload.map((blog) => ({
         ...blog,
         author: blog.author ? blog.author._id : null,
-        createdAt: new Date(blog.createdAt).toLocaleDateString()
+        createdAt: new Date(blog.createdAt).toLocaleDateString(),
       }));
 
       const authorsById = action.payload.reduce((acc, blog) => {
@@ -88,17 +100,17 @@ const blogsSlice = createSlice({
       state.lastFetched = action.payload;
     },
     setError: (state, action) => {
-      state.status = 'failed';
+      state.status = "failed";
       state.error = action.payload;
     },
     resetStatus: (state) => {
-      state.status = 'idle';
+      state.status = "idle";
       state.error = null;
     },
     clearBlogs: (state) => {
       state.blogs = [];
       state.authorsById = {};
-      state.status = 'idle';
+      state.status = "idle";
       state.error = null;
       state.lastFetched = null;
     },
@@ -106,22 +118,28 @@ const blogsSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchBlogsAndAuthors.pending, (state) => {
-        state.status = 'loading';
+        state.status = "loading";
       })
       .addCase(fetchBlogsAndAuthors.fulfilled, (state, action) => {
-        state.status = 'succeeded';
+        state.status = "succeeded";
         state.blogs = action.payload;
       })
       .addCase(fetchBlogsAndAuthors.rejected, (state, action) => {
-        if (action.payload !== 'Datos ya están en caché') {
-          state.status = 'failed';
+        if (action.payload !== "Datos ya están en caché") {
+          state.status = "failed";
           state.error = action.error.message;
         }
       });
   },
 });
 
-export const { setBlogsAndAuthors, setLastFetched, setError, resetStatus, clearBlogs } = blogsSlice.actions;
+export const {
+  setBlogsAndAuthors,
+  setLastFetched,
+  setError,
+  resetStatus,
+  clearBlogs,
+} = blogsSlice.actions;
 
 export default blogsSlice.reducer;
 
