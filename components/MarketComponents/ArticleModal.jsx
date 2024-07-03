@@ -6,10 +6,8 @@ import ModalInitialChat from "./ModalInitialChat.jsx";
 import ArticleCarousel from "./ArticleCarousel.jsx";
 import XMarkIcon from "../../icons/XMarkIcon.js";
 
-const ArticleModal = ({ setShowModal, selectedProduct }) => {
-  const idProduct = useSelector((state) => state.market?.idProduct);
-  const ulrImage = useSelector((state) => state.market?.urlProductImage);
-
+const ArticleModal = ({ setShowModal }) => {
+  const selectedProduct = useSelector((state) => state.market.selectedProduct);
   return (
     <View style={styles.container} className="px-4">
       <Animated.View style={[styles.animatedContainer]}>
@@ -221,14 +219,14 @@ const styles = StyleSheet.create({
   titleState: {
     fontSize: 15,
     fontWeight: "700",
-    width: "40%",
+    width: "30%",
     textAlign: "left",
     fontFamily: "PlusJakartaSans-Bold",
   },
   state: {
     fontSize: 15,
-    width: "40%",
-    textAlign: "left",
+    width: "70%",
+    textAlign: "center",
     fontFamily: "PlusJakartaSans-Regular",
   },
   detailsTitle: {

@@ -2,28 +2,33 @@ import { Image, StyleSheet, Text, View } from "react-native";
 import { TouchableOpacity } from "react-native";
 import ContactIcon from "../../icons/ContactIcon";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { jwtDecode } from "jwt-decode";
 import EditIcon from "../../icons/EditIcon";
+import TrashIcon from "../../icons/TrashIcon";
+import { setSelectedProduct } from "../../globalState/marketSlice";
 
 const ArticleCard = ({
   setShowModal,
-  setSelectedProduct,
   item,
   setShowNewProductModal,
   showNewProductModal,
   showModal,
   setIsNewProduct,
+  setDeleteAlertModal,
 }) => {
+  const dispatch = useDispatch();
   const [userId, setUserId] = useState("");
+  const [isDeletingProduct, setIsDeletingProduct] = useState(false);
+  const [productItem, setProductItem] = useState(item);
   const global_user = useSelector((state) => state.user.global_user);
   const token = global_user?.token;
 
   const decodedToken = jwtDecode(token);
 
   useEffect(() => {
-    setUserId(item.user._id);
-  }, []);
+    setUserId(productItem?.user._id);
+  }, [productItem]);
 
   useEffect(() => {
     if (showNewProductModal && showModal) {
@@ -31,11 +36,18 @@ const ArticleCard = ({
     }
   }, [showModal, showNewProductModal]);
 
+  useEffect(() => {
+    if (isDeletingProduct) {
+      setShowModal(false);
+      setIsDeletingProduct(false);
+    }
+  }, [isDeletingProduct]);
+
   return (
     <View
       style={styles.container}
       onTouchEnd={() => {
-        setSelectedProduct(item);
+        dispatch(setSelectedProduct(productItem));
       }}
     >
       <View
@@ -46,8 +58,8 @@ const ArticleCard = ({
       >
         <Image
           source={{
-            uri: item.image[0]
-              ? item.image[0]
+            uri: productItem?.image[0]
+              ? productItem?.image[0]
               : "https://noticias.coches.com/wp-content/uploads/2019/12/Recirculacion-de-Aire-2-859x483.jpg",
           }}
           style={styles.imageContainer}
@@ -72,6 +84,18 @@ const ArticleCard = ({
             <EditIcon width={25} height={30} color="#3725dd" />
           )}
         </TouchableOpacity>
+        {userId == decodedToken.id && (
+          <TouchableOpacity
+            style={styles.trashContainer}
+            onPress={(e) => {
+              e.stopPropagation();
+              setIsDeletingProduct(true);
+              setDeleteAlertModal(true);
+            }}
+          >
+            <TrashIcon width={25} height={30} color="#3725dd" />
+          </TouchableOpacity>
+        )}
       </View>
       <View style={styles.descriptionContainer}>
         <Text
@@ -81,11 +105,15 @@ const ArticleCard = ({
             fontFamily: "PlusJakartaSans-Bold",
           }}
         >
-          {item.productName}
+          {productItem?.productName}
         </Text>
-        <Text style={styles.detailTextStyle}>€ {item.price}</Text>
-        <Text style={styles.detailTextStyle}>{item.stock} disponibles</Text>
-        <Text style={styles.location}>{item.productLocation.state}</Text>
+        <Text style={styles.detailTextStyle}>€ {productItem?.price}</Text>
+        <Text style={styles.detailTextStyle}>
+          {productItem?.stock} disponibles
+        </Text>
+        <Text style={styles.location}>
+          {productItem?.productLocation.state}
+        </Text>
       </View>
     </View>
   );
@@ -142,6 +170,18 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     fontWeight: "700",
     paddingBottom: 10,
+  },
+  trashContainer: {
+    position: "absolute",
+    bottom: 5,
+    right: 39,
+    backgroundColor: "#f1f1f1",
+    height: 29,
+    width: 29,
+    borderRadius: 5,
+    alignItems: "center",
+    alignSelf: "center",
+    justifyContent: "center",
   },
 });
 export default ArticleCard;
