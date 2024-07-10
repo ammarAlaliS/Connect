@@ -3,9 +3,10 @@ import navbarReducer from "./navbarSlice";
 import userReducer from "./userSlice";
 import scrollYReducer from "./scrollYslice";
 import marketSlice from "./marketSlice";
-import menuReducer from './menuSlice';
-import headerReducer from './headerSlice';
-import blogsReducer from './blogsSlice'; 
+import menuReducer from "./menuSlice";
+import headerReducer from "./headerSlice";
+import blogsReducer from "./blogsSlice";
+import travelReducer from "./travelSlice";
 
 export const store = configureStore({
   reducer: {
@@ -16,6 +17,6 @@ export const store = configureStore({
     menu: menuReducer,
     header: headerReducer,
     blogs: blogsReducer,
-
+    travel: travelReducer,
   },
 });
