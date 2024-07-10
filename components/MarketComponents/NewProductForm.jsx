@@ -1,6 +1,6 @@
 import { Image, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { Animated, StyleSheet } from "react-native";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import XMarkIcon from "../../icons/XMarkIcon.js";
 import AddFileIcon from "../../icons/AddFileIcon.js";
 import InputSelectBox from "./InputSelectBox.jsx";
@@ -8,19 +8,16 @@ import { ScrollView } from "react-native";
 import { useEffect, useState } from "react";
 import * as ImagePicker from "expo-image-picker";
 import AlertMessage from "./AlertMessage.jsx";
+import ConfirmAlertMessage from "./ConfirmAlertMessage.jsx";
+import { setProducts } from "../../globalState/marketSlice";
 
-const NewProductForm = ({
-  setShowModal,
-  isNewProduct,
-  selectedProduct,
-  setSelectedProduct,
-}) => {
-  const idProduct = useSelector((state) => state.market?.idProduct);
-  const ulrImage = useSelector((state) => state.market?.urlProductImage);
+const NewProductForm = ({ setShowModal, isNewProduct }) => {
+  const dispatch = useDispatch();
   const global_user = useSelector((state) => state.user.global_user);
   const token = global_user?.token;
   const completeName = global_user?.first_name + " " + global_user?.last_name;
   const profileImageUrl = global_user?.profile_img_url;
+  const selectedProduct = useSelector((state) => state.market.selectedProduct);
   const [productStatus, setproductStatus] = useState(false);
 
   const listCategories = ["Coche", "Moto", "Motocarro", "Articulos"];
@@ -35,6 +32,7 @@ const NewProductForm = ({
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [imageList, setImageList] = useState([]);
+  const [imageListSelectedProduct, setImageListSelectedProduct] = useState([]);
 
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState(0);
@@ -43,6 +41,9 @@ const NewProductForm = ({
   const [statusSelectedIndex, setStatusSelectedIndex] = useState(-1);
   const [locationSelectedIndex, setLocationSelectedIndex] = useState(-1);
   const [description, setDescription] = useState("");
+  const [confirmAlertMessage, setConfirmAlertMessage] = useState(false);
+  const [markingAsSold, setMarkingAsSold] = useState(false);
+  const products = useSelector((state) => state.market.products);
 
   const pickImage = async () => {
     // Solicitar permisos para acceder a la galería
@@ -58,6 +59,12 @@ const NewProductForm = ({
       allowsEditing: true,
       quality: 1,
     });
+
+    if (imageList.length == 5) {
+      setAlertMessage("Solo puedes enviar 5 imagenes como maximo");
+      setShowAlert(true);
+      return;
+    }
 
     if (!result.canceled) {
       setImageList([...imageList, result.assets[0]]);
@@ -118,44 +125,66 @@ const NewProductForm = ({
       },
       description: description,
       price: price,
-      image: [
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-      ],
       stock: parseInt(stock),
+      salesStatus: "Disponible",
+      productRegistrationStatus: "Publico",
     };
 
-    const response = await fetch(
-      "https://obbaramarket-backend.onrender.com/api/ObbaraMarket/create/products",
-      {
-        method: "post",
-        body: JSON.stringify(body),
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    )
-      .then((res) => {
-        if (res.status == 201) {
-          return res.json();
-        }
-      })
-      .then((data) => {
-        setproductStatus(true);
-        setSelectedProduct({
-          ...data,
-          user: { _id: data.user, global_user: global_user },
-        });
-      })
-      .catch((error) => {
-        console.log("Se obtuvo el error: ");
-        console.log(error);
+    const formData = new FormData();
+
+    for (let i = 0; i < imageList.length; i++) {
+      let localUri = imageList[i].uri;
+      let filename = localUri.split("/").pop();
+
+      // Infer the type of the image
+      let match = /\.(\w+)$/.exec(filename);
+      let type = match ? `image/${match[1]}` : `image`;
+
+      formData.append("product_image_url", {
+        uri: localUri,
+        name: filename,
+        type,
       });
+    }
+
+    formData.append("body", JSON.stringify(body));
+
+    try {
+      const response = await fetch(
+        "https://obbaramarket-backend.onrender.com/api/ObbaraMarket/create/product",
+        {
+          method: "post",
+          body: formData,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.status === 201) {
+        const data = await response.json();
+
+        setproductStatus(true);
+
+        let productsUpdate = [
+          {
+            ...data,
+            user: { _id: data.user, global_user: global_user },
+          },
+          ...products,
+        ];
+        dispatch(setProducts([]));
+        dispatch(setProducts(productsUpdate));
+      } else {
+        console.error(`Error en la solicitud: ${response.status}`);
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
   };
 
-  const updateProducto = async () => {
-    if (title.length <= 5) {
+  const updateProducto = async (IsASoldProduct) => {
+    if (title.length < 5) {
       setAlertMessage("Ingrese un titulo valido");
       setShowAlert(true);
       return;
@@ -179,7 +208,7 @@ const NewProductForm = ({
       return;
     }
 
-    if (imageList.length == 0) {
+    if (imageList.length == 0 && imageListSelectedProduct.length == 0) {
       setAlertMessage("Agregue por lo menos una imagen");
       setShowAlert(true);
       return;
@@ -209,45 +238,89 @@ const NewProductForm = ({
       },
       description: description,
       price: price,
-      image: [
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-      ],
+      image:
+        imageListSelectedProduct.length > 0 ? imageListSelectedProduct : null,
       stock: parseInt(stock),
+      salesStatus: IsASoldProduct ? "Vendido" : "Disponible",
     };
+
+    const formData = new FormData();
+
+    for (let i = 0; i < imageList.length; i++) {
+      let localUri = imageList[i].uri;
+      let filename = localUri.split("/").pop();
+
+      // Infer the type of the image
+      let match = /\.(\w+)$/.exec(filename);
+      let type = match ? `image/${match[1]}` : `image`;
+
+      formData.append("product_image_url", {
+        uri: localUri,
+        name: filename,
+        type,
+      });
+    }
+
+    formData.append("body", JSON.stringify(body));
 
     const response = await fetch(
       "https://obbaramarket-backend.onrender.com/api/ObbaraMarket/update/product",
       {
         method: "put",
-        body: JSON.stringify(body),
+        body: formData,
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       }
     );
 
     if (response.ok) {
-      setproductStatus(true);
-      setSelectedProduct({
-        ...selectedProduct,
-        productName: title,
-        productCategory: listCategories[categorySelectedIndex],
-        productStatus: articleState[statusSelectedIndex],
-        productLocation: {
-          state: listState[locationSelectedIndex],
-          latitude: 40.109319,
-          longitude: -3.229615,
-        },
-        description: description,
-        price: price,
-        image: [
-          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSs1ne2JPwK-k3y1qa9Vzms1Tmsq2i5dMVjSA&s",
-        ],
-        stock: parseInt(stock),
+      setproductStatus(IsASoldProduct ? false : true);
+
+      let finalImages = imageListSelectedProduct || [];
+
+      if (imageList.length > 0) {
+        let secondaryImages = imageList.map((el) => {
+          return el.uri;
+        });
+
+        finalImages.push(...secondaryImages);
+      }
+
+      let productsUpdated = products.map((item) => {
+        if (selectedProduct._id == item._id) {
+          return {
+            ...selectedProduct,
+            productName: title,
+            productCategory: listCategories[categorySelectedIndex],
+            productStatus: articleState[statusSelectedIndex],
+            productLocation: {
+              state: listState[locationSelectedIndex],
+              latitude: 40.109319,
+              longitude: -3.229615,
+            },
+            description: description,
+            price: price,
+            image: finalImages,
+            stock: parseInt(stock),
+          };
+        } else {
+          return item;
+        }
       });
+
+      dispatch(setProducts([]));
+      if (IsASoldProduct) {
+        productsUpdated = productsUpdated.filter(
+          (el) => el._id != selectedProduct._id
+        );
+      }
+      dispatch(setProducts(productsUpdated));
+
+      if (IsASoldProduct) {
+        setAlertMessage("El producto se marco como vendido");
+        setShowAlert(true);
+      }
     } else {
       console.log("Se obtuvo el error al intentar actualizar el producto: ");
       console.log(response);
@@ -283,7 +356,11 @@ const NewProductForm = ({
   };
 
   useEffect(() => {
-    if (productStatus && !showAlert) {
+    if (
+      productStatus &&
+      !showAlert &&
+      alertMessage != "El producto se marco como vendido"
+    ) {
       setAlertMessage(
         isNewProduct
           ? "El producto se creo correctamente"
@@ -297,7 +374,8 @@ const NewProductForm = ({
       !productStatus &&
       !showAlert &&
       (alertMessage == "El producto se creo correctamente" ||
-        alertMessage == "El producto se actualizo correctamente")
+        alertMessage == "El producto se actualizo correctamente" ||
+        alertMessage == "El producto se marco como vendido")
     ) {
       setShowModal(false);
     }
@@ -307,11 +385,6 @@ const NewProductForm = ({
     if (!isNewProduct) {
       setTitle(selectedProduct?.productName);
       setPrice(selectedProduct?.price);
-      setImageList(
-        selectedProduct?.image.map((item) => {
-          return { uri: item };
-        })
-      );
       onStockChange(setStock, selectedProduct?.stock.toString());
       setDescription(selectedProduct?.description);
       setCategorySelectedIndex(
@@ -325,6 +398,18 @@ const NewProductForm = ({
           (el) => el == selectedProduct?.productLocation.state
         )
       );
+    }
+  }, [isNewProduct]);
+
+  useEffect(() => {
+    if (markingAsSold) {
+      updateProducto(true);
+    }
+  }, [markingAsSold]);
+
+  useEffect(() => {
+    if (!isNewProduct) {
+      setImageListSelectedProduct(selectedProduct?.image);
     }
   }, [isNewProduct]);
 
@@ -355,6 +440,11 @@ const NewProductForm = ({
             <View style={styles.dividingLine}></View>
           </View>
 
+          <ConfirmAlertMessage
+            seeModal={confirmAlertMessage}
+            setShowAlert={setConfirmAlertMessage}
+            setMarkingAsSold={setMarkingAsSold}
+          ></ConfirmAlertMessage>
           {/* Ubcacion de la alerta */}
           <AlertMessage
             seeModal={showAlert}
@@ -447,36 +537,87 @@ const NewProductForm = ({
               <View style={styles.principalFotoContainer}>
                 <Text style={styles.addFotoLabel}>Agrega una foto</Text>
                 <Text style={styles.addFotoSubLable}>Puedes subir 5 fotos</Text>
-                {imageList.length == 0 && (
-                  <View style={styles.fotoContainer}>
-                    <View style={styles.addImageBottomContainer}>
-                      <TouchableOpacity
-                        style={styles.addImageBottom}
-                        onPress={pickImage}
-                      >
-                        <AddFileIcon
-                          color={"#2b00b6"}
-                          width={40}
-                          height={40}
-                        ></AddFileIcon>
-                        <Text style={styles.plusText}>+</Text>
-                      </TouchableOpacity>
-                      <Text style={styles.fotoLabel}>Sube una foto</Text>
+                {imageList.length == 0 &&
+                  imageListSelectedProduct.length == 0 && (
+                    <View style={styles.fotoContainer}>
+                      <View style={styles.addImageBottomContainer}>
+                        <TouchableOpacity
+                          style={styles.addImageBottom}
+                          onPress={pickImage}
+                        >
+                          <AddFileIcon
+                            color={"#2b00b6"}
+                            width={40}
+                            height={40}
+                          ></AddFileIcon>
+                          <Text style={styles.plusText}>+</Text>
+                        </TouchableOpacity>
+                        <Text style={styles.fotoLabel}>Sube una foto</Text>
+                      </View>
                     </View>
-                  </View>
-                )}
-                {imageList.length > 0 && (
+                  )}
+                {(imageList.length > 0 ||
+                  imageListSelectedProduct.length > 0) && (
                   <ScrollView style={styles.fotoContainer} horizontal={true}>
-                    {imageList.map((item, index) => {
-                      return (
-                        <View key={index}>
-                          <Image
-                            source={{ uri: item.uri }}
-                            style={styles.fistImageStyle}
-                          ></Image>
-                        </View>
-                      );
-                    })}
+                    {imageListSelectedProduct.length > 0 &&
+                      imageListSelectedProduct.map((item, index) => {
+                        return (
+                          <View key={index}>
+                            <View>
+                              <TouchableOpacity
+                                style={styles.deleteImageBottomContainer}
+                                onPress={() => {
+                                  setImageListSelectedProduct(
+                                    imageListSelectedProduct.filter(
+                                      (item, subIndex) => subIndex != index
+                                    )
+                                  );
+                                }}
+                              >
+                                <XMarkIcon
+                                  width={30}
+                                  height={30}
+                                  color={"#000"}
+                                ></XMarkIcon>
+                              </TouchableOpacity>
+                              <Image
+                                source={{ uri: item }}
+                                style={styles.fistImageStyle}
+                              ></Image>
+                            </View>
+                          </View>
+                        );
+                      })}
+
+                    {imageList.length > 0 &&
+                      imageList.map((item, index) => {
+                        return (
+                          <View key={index}>
+                            <View>
+                              <TouchableOpacity
+                                style={styles.deleteImageBottomContainer}
+                                onPress={() => {
+                                  setImageList(
+                                    imageList.filter(
+                                      (el, subindex) => subindex != index
+                                    )
+                                  );
+                                }}
+                              >
+                                <XMarkIcon
+                                  width={30}
+                                  height={30}
+                                  color={"#000"}
+                                ></XMarkIcon>
+                              </TouchableOpacity>
+                              <Image
+                                source={{ uri: item.uri }}
+                                style={styles.fistImageStyle}
+                              ></Image>
+                            </View>
+                          </View>
+                        );
+                      })}
 
                     <View style={styles.secondImageContainer}>
                       <TouchableOpacity
@@ -532,6 +673,21 @@ const NewProductForm = ({
                 ></TextInput>
               </View>
             </ScrollView>
+
+            {!isNewProduct && (
+              <View style={styles.sellerBottomContainer}>
+                <TouchableOpacity
+                  style={styles.sellerBottom}
+                  onPress={() => {
+                    setConfirmAlertMessage(true);
+                  }}
+                >
+                  <Text style={styles.sellerBottomText}>
+                    Marcar como vendido
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            )}
             <View style={styles.bottonsContainer} className="d-flex flex-row">
               <TouchableOpacity
                 style={styles.cancelBotton}
@@ -547,7 +703,7 @@ const NewProductForm = ({
                   if (isNewProduct) {
                     crearProducto();
                   } else {
-                    updateProducto();
+                    updateProducto(false);
                   }
                 }}
               >
@@ -901,6 +1057,35 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 0.8,
     width: 45,
+  },
+  deleteImageBottomContainer: {
+    position: "absolute",
+    right: 0,
+    top: 30,
+    zIndex: 100,
+    backgroundColor: "#f1f1f1",
+    borderRadius: 15,
+  },
+  sellerBottomText: {
+    fontSize: 20,
+    fontWeight: "900",
+    fontFamily: "PlusJakartaSans-Bold",
+    color: "#000",
+    textAlign: "center",
+    textAlignVertical: "center",
+    height: "100%",
+  },
+  sellerBottom: {
+    height: 43,
+    backgroundColor: "#FFCD57",
+    width: 220,
+    borderRadius: 8,
+  },
+  sellerBottomContainer: {
+    display: "flex",
+    justifyContent: "center",
+    flexDirection: "row",
+    marginTop: 10,
   },
 });
 export default NewProductForm;

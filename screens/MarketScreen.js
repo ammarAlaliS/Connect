@@ -6,7 +6,6 @@ import {
   TextInput,
   TouchableOpacity,
   Modal,
-  Alert,
   ActivityIndicator,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
@@ -17,40 +16,46 @@ import ArticleModal from "../components/MarketComponents/ArticleModal.jsx";
 import BottomSellModal from "../components/MarketComponents/BottomSellModal.jsx";
 import NewProductForm from "../components/MarketComponents/NewProductForm.jsx";
 import FilterModal from "../components/MarketComponents/FilterModal.jsx";
-import axios from "axios";
-import AlertMessage from "../components/MarketComponents/AlertMessage.jsx";
 import XMarkIcon from "../icons/XMarkIcon.js";
+import DeleteAlertMessage from "../components/MarketComponents/DeleteAlertMessage.jsx";
+import {
+  fetchProducts,
+  setProducts,
+  setResetProductList,
+} from "../globalState/marketSlice.js";
+import { setSelectedclassification } from "../globalState/marketSlice.js";
+import { setSearch } from "../globalState/marketSlice.js";
+import { setLoadingProducts } from "../globalState/marketSlice.js";
+import { setCurrentPage } from "../globalState/marketSlice.js";
+import AlertMessage from "../components/MarketComponents/AlertMessage.jsx";
 
 const MarketScreen = () => {
   const dispatch = useDispatch();
 
-  const [products, setProducts] = useState([]);
-  const [loadingProducts, setLoadingProducts] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [lastPage, setLastPage] = useState(1);
+  const lastPage = useSelector((state) => state.market.lastPage);
   const scrollViewRef = useRef(null);
-  const [showAlert, setShowAlert] = useState(false);
-  const [alertMessage, setAlertMessage] = useState("");
+  const [deleteAlertModal, setDeleteAlertModal] = useState(false);
+  const [productDeleting, setProductDeleting] = useState(false);
 
-  const [search, setSearch] = useState("");
-  const [selectedclassification, setSelectedclassification] = useState(1);
   const [showModal, setShowModal] = useState(false);
   const [showNewProductModal, setShowNewProductModal] = useState(false);
   const [showFilterModal, setShowFilterModal] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState(null);
-  const [firstStoreLoading, setFirstStoreLoading] = useState(true);
   const [isNewProduct, setIsNewProduct] = useState(false);
-  const [filterData, setFilterData] = useState({
-    minPrice: -1,
-    maxPrice: -1,
-    minDate: null,
-    maxDate: null,
-  });
 
-  const [filterUrl, setFilterUrl] = useState("");
+  const status = useSelector((state) => state.market.status);
+  const products = useSelector((state) => state.market.products);
+  const loadingProducts = useSelector((state) => state.market.loadingProducts);
+  const currentPage = useSelector((state) => state.market.currentPage);
+  const selectedclassification = useSelector(
+    (state) => state.market.selectedclassification
+  );
 
-  const API_BASE_URL =
-    "https://obbaramarket-backend.onrender.com/api/ObbaraMarket";
+  const search = useSelector((state) => state.market.search);
+  const filterUrl = useSelector((state) => state.market.filterUrl);
+  const selectedProduct = useSelector((state) => state.market.selectedProduct);
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+
   const global_user = useSelector((state) => state.user.global_user);
   const token = global_user?.token;
 
@@ -62,66 +67,15 @@ const MarketScreen = () => {
     { id: 5, name: "Articulos" },
   ];
 
-  const getProducts = async (isNewRequest) => {
-    setLoadingProducts(true);
-    setFirstStoreLoading(false);
-
-    if (isNewRequest) {
-      setProducts([]);
-      if (currentPage != 1) {
-        setCurrentPage(1);
-        return;
-      }
-    }
-
-    try {
-      const url =
-        `${API_BASE_URL}/get/products?${
-          (selectedclassification > 1
-            ? "productCategory=" +
-              listClasifications[selectedclassification - 1].name +
-              "&"
-            : "") + (search.length > 0 ? "search=" + search + "&" : "")
-        }limit=10&page=${currentPage}` + filterUrl;
-
-      const response = await fetch(url, {
-        method: "get",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (response.ok) {
-        const res = await response.text();
-        const data = JSON.parse(res);
-
-        if (!isNewRequest) {
-          products.push(...data.docs);
-        } else {
-          setProducts(data.docs);
-        }
-
-        setLastPage(data.totalPages);
-        setLoadingProducts(false);
-      } else {
-        console.log("ocurrio un error en la peticion");
-        console.log(response);
-      }
-    } catch (error) {
-      setAlertMessage("No se encontraron productos");
-      setShowAlert(true);
-      setLoadingProducts(false);
-    }
-  };
-
   const ifScrollIsInTheEnd = (event) => {
     if (
       event.layoutMeasurement.height + event.contentOffset.y >=
       event.contentSize.height - 5
     ) {
       if (currentPage < lastPage && !loadingProducts) {
-        setLoadingProducts(true);
-        setCurrentPage(currentPage + 1);
+        dispatch(setLoadingProducts(true));
+        dispatch(setCurrentPage(currentPage + 1));
+        dispatch(fetchProducts());
         scrollViewRef.current.scrollTo({
           x: 0,
           y: event.contentSize.height + 20,
@@ -131,42 +85,57 @@ const MarketScreen = () => {
     }
   };
 
-  useEffect(() => {
-    if (!firstStoreLoading) {
-      getProducts(true);
-    }
-  }, [filterUrl]);
+  const deleteProducto = async () => {
+    const body = {
+      ...selectedProduct,
+      id: selectedProduct?._id,
+      productRegistrationStatus: "Eliminado",
+    };
 
-  useEffect(() => {
-    getProducts(currentPage == 1 ? true : false);
-  }, [currentPage]);
+    const formData = new FormData();
 
-  useEffect(() => {
-    if (!firstStoreLoading) {
-      getProducts(true);
-    }
-  }, [selectedclassification]);
+    formData.append("body", JSON.stringify(body));
 
-  useEffect(() => {
-    if (
-      selectedProduct?._id != undefined &&
-      selectedProduct?._id != null &&
-      showNewProductModal == false
-    ) {
-      if (products.indexOf((el) => el._id == selectedProduct?._id) >= 0) {
-        let productsOutSide = products.map((item) => {
-          if (item._id == selectedProduct?._id) {
-            return selectedProduct;
-          }
-          return item;
-        });
-        setProducts(productsOutSide);
-      } else {
-        setProducts([selectedProduct, ...products]);
+    const response = await fetch(
+      "https://obbaramarket-backend.onrender.com/api/ObbaraMarket/update/product",
+      {
+        method: "put",
+        body: formData,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
-    }
-  }, [selectedProduct, showNewProductModal]);
+    );
 
+    if (response.ok) {
+      let productsUpdated = products;
+
+      productsUpdated = productsUpdated.filter(
+        (el) => el._id != selectedProduct._id
+      );
+
+      dispatch(setProducts([]));
+      dispatch(setProducts(productsUpdated));
+      setAlertMessage("Se elimino el producto");
+      setShowAlert(true);
+    } else {
+      console.log("Se obtuvo el error al intentar actualizar el producto: ");
+      console.log(response);
+    }
+  };
+
+  useEffect(() => {
+    if (productDeleting) {
+      deleteProducto();
+      setProductDeleting(false);
+    }
+  }, [productDeleting]);
+
+  useEffect(() => {
+    if (global_user && global_user?.token && status === "idle") {
+      dispatch(fetchProducts());
+    }
+  }, [global_user, status]);
   return (
     <View style={styles.principalContainer}>
       <AlertMessage
@@ -174,6 +143,12 @@ const MarketScreen = () => {
         seeModal={showAlert}
         setShowAlert={setShowAlert}
       ></AlertMessage>
+
+      <DeleteAlertMessage
+        seeModal={deleteAlertModal}
+        setShowAlert={setDeleteAlertModal}
+        setDeleteProduct={setProductDeleting}
+      ></DeleteAlertMessage>
       <ScrollView
         showsVerticalScrollIndicator={false}
         scrollEventThrottle={16}
@@ -192,13 +167,16 @@ const MarketScreen = () => {
                 size={20}
                 color={search ? "#000000" : "#00000099"}
                 onPress={() => {
-                  getProducts(true);
+                  dispatch(setResetProductList(true));
+                  dispatch(fetchProducts());
                 }}
               />
               <TextInput
                 style={styles.input}
                 placeholder="Busca por nombre o codigo"
-                onChangeText={(text) => setSearch(text)}
+                onChangeText={(text) => {
+                  dispatch(setSearch(text));
+                }}
                 value={search}
                 underlineColorAndroid="transparent"
               />
@@ -206,7 +184,7 @@ const MarketScreen = () => {
                 <TouchableOpacity
                   style={{ paddingRight: 10 }}
                   onPress={() => {
-                    setSearch("");
+                    dispatch(setSearch(""));
                   }}
                 >
                   <XMarkIcon color={"#000"} height={25} width={25}></XMarkIcon>
@@ -258,18 +236,20 @@ const MarketScreen = () => {
                 <TouchableOpacity
                   key={index}
                   style={
-                    item.id == selectedclassification
+                    item.name == selectedclassification
                       ? styles.selectedItem
                       : styles.item
                   }
                   onPress={() => {
-                    setSelectedclassification(item.id);
+                    dispatch(setResetProductList(true));
+                    dispatch(setSelectedclassification(item.name));
+                    dispatch(fetchProducts());
                   }}
                 >
                   <Text
                     style={{
                       color:
-                        item.id == selectedclassification ? "#fff" : "#000",
+                        item.name == selectedclassification ? "#fff" : "#000",
                     }}
                   >
                     {item.name}
@@ -298,12 +278,12 @@ const MarketScreen = () => {
                     key={index}
                     setShowModal={setShowModal}
                     productLocation={item.productLocation.state}
-                    setSelectedProduct={setSelectedProduct}
                     item={item}
                     setShowNewProductModal={setShowNewProductModal}
                     showNewProductModal={showNewProductModal}
                     showModal={showModal}
                     setIsNewProduct={setIsNewProduct}
+                    setDeleteAlertModal={setDeleteAlertModal}
                   ></ArticleCard>
                 );
               })}
@@ -324,10 +304,7 @@ const MarketScreen = () => {
         style={styles.modalContainer}
         transparent={true}
       >
-        <ArticleModal
-          setShowModal={setShowModal}
-          selectedProduct={selectedProduct}
-        ></ArticleModal>
+        <ArticleModal setShowModal={setShowModal}></ArticleModal>
       </Modal>
       <BottomSellModal
         setShowNewProductModal={setShowNewProductModal}
@@ -341,8 +318,6 @@ const MarketScreen = () => {
       >
         <NewProductForm
           setShowModal={setShowNewProductModal}
-          selectedProduct={selectedProduct}
-          setSelectedProduct={setSelectedProduct}
           isNewProduct={isNewProduct}
         ></NewProductForm>
       </Modal>
@@ -352,12 +327,7 @@ const MarketScreen = () => {
         style={styles.thirdModalContainer}
         transparent={true}
       >
-        <FilterModal
-          setShowFilterModal={setShowFilterModal}
-          setFilterUrl={setFilterUrl}
-          filterData={filterData}
-          setFilterData={setFilterData}
-        ></FilterModal>
+        <FilterModal setShowFilterModal={setShowFilterModal}></FilterModal>
       </Modal>
     </View>
   );

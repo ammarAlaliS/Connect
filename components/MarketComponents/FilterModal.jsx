@@ -5,13 +5,19 @@ import { ScrollView } from "react-native";
 import { useEffect, useState } from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import XMarkIcon from "../../icons/XMarkIcon";
-
-const FilterModal = ({
-  setShowFilterModal,
+import {
+  fetchProducts,
   setFilterUrl,
-  filterData,
-  setFilterData,
-}) => {
+  setResetProductList,
+} from "../../globalState/marketSlice.js";
+import { useDispatch, useSelector } from "react-redux";
+import { setFilterData } from "../../globalState/marketSlice.js";
+
+const FilterModal = ({ setShowFilterModal }) => {
+  const dispatch = useDispatch();
+
+  const filterData = useSelector((state) => state.market.filterData);
+
   const [minPrice, setMinPrice] = useState(-1);
   const [maxPrice, setMaxPrice] = useState(-1);
 
@@ -27,7 +33,7 @@ const FilterModal = ({
     setShow(value);
   };
 
-  const onChange = (selectedDate, date, setDate, setDateString) => {
+  const onChange = (selectedDate, date, setDate, setDateString, isMaxDate) => {
     const currentDate = selectedDate || date;
 
     setDate(currentDate);
@@ -37,6 +43,16 @@ const FilterModal = ({
       currentDate.getMonth() + 1
     }/${currentDate.getFullYear()}`;
     setDateString(formattedDate);
+
+    if (isMaxDate) {
+      dispatch(
+        setFilterData({ ...filterData, maxDate: currentDate.getTime() })
+      );
+    } else {
+      dispatch(
+        setFilterData({ ...filterData, minDate: currentDate.getTime() })
+      );
+    }
 
     setShow(0);
   };
@@ -53,7 +69,7 @@ const FilterModal = ({
     setValue(numericValue);
   };
 
-  const mostrarDatosSeleccionados = () => {
+  const getFilterProducts = () => {
     let url = "";
     if (minPrice > 0) {
       url = url + "&minPrice=" + minPrice;
@@ -63,39 +79,59 @@ const FilterModal = ({
       url = url + "&maxPrice=" + maxPrice;
     }
 
-    if (minDate.getFullYear() > 1950) {
-      // url = url + "&minDate=" + minDate.toISOString();
+    if (new Date(filterData.minDate)?.getFullYear() > 1950) {
+      url = url + "&minDate=" + minDate.toISOString();
     }
 
-    if (maxDate.getFullYear() > 1950) {
-      // url = url + "&maxDate=" + maxDate.toISOString();
+    if (new Date(filterData.maxDate)?.getFullYear() > 1950) {
+      url = url + "&maxDate=" + maxDate.toISOString();
     }
 
-    setFilterUrl(url);
-    setFilterData({
-      minPrice: minPrice <= 0 ? -1 : minPrice,
-      maxPrice: maxPrice <= 0 ? -1 : maxPrice,
-      minDate: minDate.getFullYear() < 1950 ? new Date(1, 1, 1) : minDate,
-      maxDate: maxDate.getFullYear() < 1950 ? new Date(1, 1, 1) : maxDate,
-    });
+    dispatch(setFilterUrl(url));
+    dispatch(setResetProductList(true));
+    dispatch(fetchProducts());
+    dispatch(
+      setFilterData({
+        ...filterData,
+        minPrice: minPrice <= 0 ? -1 : minPrice,
+        maxPrice: maxPrice <= 0 ? -1 : maxPrice,
+      })
+    );
     setShowFilterModal(false);
+  };
+
+  const clearFilter = () => {
+    dispatch(
+      setFilterData({
+        minPrice: -1,
+        maxPrice: -1,
+        minDate: new Date(1, 1, 1).getTime(),
+        maxDate: new Date(1, 1, 1).getTime(),
+      })
+    );
   };
 
   useEffect(() => {
     setMinPrice(filterData.minPrice);
     setMaxPrice(filterData.maxPrice);
 
-    if (filterData.minDate?.getFullYear() > 1950) {
-      setMinDate(filterData.minDate);
-      setMinDateString(filterData.minDate.toLocaleDateString());
+    if (
+      filterData.minDate &&
+      new Date(filterData.minDate)?.getFullYear() > 1950
+    ) {
+      setMinDate(new Date(filterData.minDate));
+      setMinDateString(new Date(filterData.minDate).toLocaleDateString());
     } else {
       setMinDate(new Date());
       setMinDateString("");
     }
 
-    if (filterData.maxDate?.getFullYear() > 1950) {
-      setMaxDate(filterData.maxDate);
-      setMaxDateString(filterData.maxDate.toLocaleDateString());
+    if (
+      filterData.maxDate &&
+      new Date(filterData.maxDate)?.getFullYear() > 1950
+    ) {
+      setMaxDate(new Date(filterData.maxDate));
+      setMaxDateString(new Date(filterData.maxDate).toLocaleDateString());
     } else {
       setMaxDate(new Date());
       setMaxDateString("");
@@ -170,7 +206,8 @@ const FilterModal = ({
                       selectedDate,
                       minDate,
                       setMinDate,
-                      setMinDateString
+                      setMinDateString,
+                      false
                     );
                   }}
                 />
@@ -198,7 +235,8 @@ const FilterModal = ({
                       selectedDate,
                       maxDate,
                       setMaxDate,
-                      setMaxDateString
+                      setMaxDateString,
+                      true
                     );
                   }}
                 />
@@ -207,24 +245,13 @@ const FilterModal = ({
           </View>
         </ScrollView>
         <View style={styles.buttonFilterContainer} className="d-flex flex-row">
-          <TouchableOpacity
-            style={styles.bottomClear}
-            onPress={() => {
-              // mostrarDatosSeleccionados();
-              setFilterData({
-                minPrice: -1,
-                maxPrice: -1,
-                minDate: null,
-                maxDate: null,
-              });
-            }}
-          >
+          <TouchableOpacity style={styles.bottomClear} onPress={clearFilter}>
             <Text style={styles.bottonClearText}>Limpiar</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.bottonFilter}
             onPress={() => {
-              mostrarDatosSeleccionados();
+              getFilterProducts();
             }}
           >
             <Text style={styles.bottonFilterText}>Filtrar</Text>
