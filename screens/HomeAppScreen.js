@@ -1,60 +1,57 @@
-import React from 'react';
-import { View,  StatusBar} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import Card from '../components/Card';
-import MarketScreen from './MarketScreen';
-import BlogScreen from './BlogScreen';
-import ProfileScreen from './ProfileScreen'
-import ContactScreen from './ContactScreen'
-import MenuButton from '../components/menuButton';
-import HeaderC from '../components/Header_C';
+import React from "react";
+import { View, StatusBar } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import Card from "../components/Card";
+import MarketScreen from "./MarketScreen";
+import BlogScreen from "./BlogScreen";
+import ProfileScreen from "./ProfileScreen";
+import ContactScreen from "./ContactScreen";
+import MenuButton from "../components/menuButton";
+import HeaderC from "../components/Header_C";
+import TravelScreen from "./TravelScreen";
 
 const statusBarHeight = StatusBar.currentHeight || 0;
 
-
-
 const HomeAppScreen = () => {
-  const [activeScreen, setActiveScreen] = React.useState('Card');
-  const [animation, setAnimation] = React.useState('fadeIn');
+  const [activeScreen, setActiveScreen] = React.useState("Card");
+  const [animation, setAnimation] = React.useState("fadeIn");
 
   const handlePress = (screen) => {
-    setAnimation('fadeOut');
+    setAnimation("fadeOut");
     setTimeout(() => {
       setActiveScreen(screen);
-      setAnimation('fadeIn');
-
+      setAnimation("fadeIn");
     }, 100);
   };
 
   const renderContent = () => {
     switch (activeScreen) {
-      case 'Store':
+      case "Store":
         return <MarketScreen />;
-      case 'Blog':
+      case "Blog":
         return <BlogScreen />;
-      case 'Profile':
+      case "Profile":
         return <ProfileScreen />;
-      case 'Contact':
+      case "Contact":
         return <ContactScreen />;
-      case 'Card':
+      case "Card":
       default:
-        return <Card />;
+        return <TravelScreen />;
+      // return <Card />;
     }
   };
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={{ flex: 1 }}>
-      <HeaderC />
-        <View style={{ flex: 1, backgroundColor: '#F9F6FE', }}>
+        <HeaderC />
+        <View style={{ flex: 1, backgroundColor: "#F9F6FE" }}>
           {renderContent()}
         </View>
       </View>
-      <MenuButton activeScreen={activeScreen} handlePress={handlePress}/>
+      <MenuButton activeScreen={activeScreen} handlePress={handlePress} />
     </SafeAreaView>
   );
 };
-
-
 
 export default HomeAppScreen;
