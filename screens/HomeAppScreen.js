@@ -13,33 +13,30 @@ import { toggleDarkMode, selectTheme } from "../globalState/themeSlice";
 
 const statusBarHeight = StatusBar.currentHeight || 0;
 
-
-
 const HomeAppScreen = () => {
   const [activeScreen, setActiveScreen] = React.useState('Card');
   const [animation, setAnimation] = React.useState('fadeIn');
    const darkMode = useSelector(selectTheme);
 
   const handlePress = (screen) => {
-    setAnimation('fadeOut');
+    setAnimation("fadeOut");
     setTimeout(() => {
       setActiveScreen(screen);
-      setAnimation('fadeIn');
-
+      setAnimation("fadeIn");
     }, 100);
   };
 
   const renderContent = () => {
     switch (activeScreen) {
-      case 'Store':
+      case "Store":
         return <MarketScreen />;
-      case 'Blog':
+      case "Blog":
         return <BlogScreen />;
-      case 'Profile':
+      case "Profile":
         return <ProfileScreen />;
-      case 'Contact':
+      case "Contact":
         return <ContactScreen />;
-      case 'Card':
+      case "Card":
       default:
         return <Card  darkMode={darkMode}/>;
     }
@@ -56,7 +53,5 @@ const HomeAppScreen = () => {
     </SafeAreaView>
   );
 };
-
-
 
 export default HomeAppScreen;
