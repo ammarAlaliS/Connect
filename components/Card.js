@@ -5,7 +5,7 @@ import useCustomFonts from '../fonts/useCustomFonts';
 import * as Animatable from 'react-native-animatable';
 import AntDesign from '@expo/vector-icons/AntDesign';
 
-const Card = () => {
+const Card = ( {darkMode}) => {
     const user = useSelector(state => state.user);
     const { fontsLoaded, onLayoutRootView } = useCustomFonts();
 
@@ -14,7 +14,14 @@ const Card = () => {
     }
 
     return (
-        <View className="bg-white px-6 py-2 border-2 border-gray-400/40 shadow-lg shadow-black" style={{ width: '100%' }}>
+        <View className=" px-6 py-2 " style={{ 
+                width: '100%',
+                marginTop:4, 
+                backgroundColor: darkMode.background,
+                borderBottomWidth: 1, 
+                borderTopWidth: 1, 
+                borderColor : darkMode.borderBox
+            }}>
             <View className="flex-row space-x-2 items-center">
                 <View className="flex items-center">
                     {user && user.global_user && user.global_user.profile_img_url ? (
@@ -38,40 +45,39 @@ const Card = () => {
                             borderRadius: 9999,
                             borderWidth: 2,
                             borderColor: 'rgba(255, 205, 87, 0.6)',
-                            backgroundColor: 'gray', // Opcional: puede ser un color de fondo temporal
+                            backgroundColor: darkMode.backgroundDark, 
                             justifyContent: 'center',
                             alignItems: 'center'
                         }}>
-                            <Text style={{ fontFamily: 'PlusJakartaSans-SemiBold' }}>Usuario</Text>
                         </View>
                     )}
-                    <Text style={{ fontFamily: 'PlusJakartaSans-SemiBold' }} className="text-sm">Usuario</Text>
+                    <Text style={{ fontFamily: 'PlusJakartaSans-SemiBold', color: darkMode.text }} className="text-sm">Usuario</Text>
                 </View> 
                 <View className="p-2 space-y-2 " style={{ flex: 1 }}>
                     <View>
                         {user && user.global_user && (
-                            <Text style={{ fontFamily: 'PlusJakartaSans-SemiBold' }} className="text-base">
-                                ¡Hola de nuevo!
-                                <Text style={{ fontFamily: 'PlusJakartaSans-Bold' }} className="text-lg"> {user.global_user.first_name} {user.global_user.last_name} </Text>
-                            </Text>
+                            <View className="text-base flex flex-wrap">
+                                <Text  style={{ fontFamily: 'PlusJakartaSans-SemiBold', color: darkMode.text }}>¡Hola de nuevo!</Text>
+                                <Text style={{ fontFamily: 'PlusJakartaSans-Bold', color: darkMode.text  }} className="text-lg"> {user.global_user.first_name} {user.global_user.last_name} </Text>
+                            </View>
                         )}
                     </View>
                     <Animatable.View
                         animation="fadeIn"
                         duration={1000}
-                        style={{ backgroundColor: '#F9F6FE', padding: 8, borderRadius: 5, textAlign: 'left', borderWidth:1, borderColor: 'rgba(0, 0, 0, 0.1)' }}
+                        style={{ backgroundColor: darkMode.backgroundDark, padding: 8, borderRadius: 5, textAlign: 'left', borderWidth:1, borderColor: 'rgba(0, 0, 0, 0.1)' }}
                     >
                         <Animatable.Text
                             animation="bounceIn"
                             delay={500}
-                            style={{ fontFamily: 'PlusJakartaSans-SemiBold', fontSize: 12 }}
+                            style={{ fontFamily: 'PlusJakartaSans-SemiBold', fontSize: 12, color: darkMode.text }}
                         >
                             ¿Listo para tu próximo viaje en QuickCar?
                         </Animatable.Text>
                         <Animatable.Text
                             animation="bounceIn"
                             delay={1000}
-                            style={{ fontFamily: 'PlusJakartaSans-SemiBold', fontSize: 12 }}
+                            style={{ fontFamily: 'PlusJakartaSans-SemiBold', fontSize: 12,  color: darkMode.text  }}
                         >
                             Elige tu conductor y tu asiento.
                         </Animatable.Text>

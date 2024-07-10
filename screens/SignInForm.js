@@ -18,13 +18,15 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import Eyes from "../icons/Eyes";
 import UnEye from "../icons/UnEye";
 import useCustomFonts from "../fonts/useCustomFonts";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { toggleDarkMode, selectTheme } from "../globalState/themeSlice";
 import { setUser } from "../globalState/userSlice";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import Toast from "react-native-toast-message";
 import * as Animatable from "react-native-animatable";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+
 
 const SignInSchema = Yup.object().shape({
   email: Yup.string()
@@ -40,6 +42,8 @@ const SignInForm = () => {
   const dispatch = useDispatch();
   const [passwordVisible, setPasswordVisible] = React.useState(false);
   const { fontsLoaded } = useCustomFonts();
+  if (!fontsLoaded) {
+}
 
   const [buttonText, setButtonText] = React.useState(false);
   const [inputColor, setInputColor] = React.useState([

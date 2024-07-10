@@ -133,11 +133,16 @@ const BlogCard = ({
       style={styles.card}
       className="px-4 pt-4 border-2 border-gray-400/10 z-50"
     >
-      <Image
-        source={{ uri: image_url }}
-        style={styles.image}
-        resizeMode="cover"
-      />
+      {image_url.map((image, index) => (
+        <Image
+          source={{ uri: image.url }}
+          alt={image.alt}
+          style={styles.image}
+          resizeMode="cover"
+          key={index}
+        />
+      ))}
+
       <View className="space-y-2">
         <Text style={styles.title}>{blog_title}</Text>
         <View className="w2esc  flex-row flex-wrap items-center justify-start space-y-2 ">

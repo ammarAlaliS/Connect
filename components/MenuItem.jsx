@@ -27,9 +27,8 @@ const MenuItem = ({ iconName, iconWidth, iconHeight, iconColor, iconTitle, onPre
     return (
         <View>
             <TouchableOpacity onPress={onPress}>
-                <View style={{ alignItems: 'center', justifyContent: 'center' }} className=" h-[65px] w-[70px] border-2 border-transparent ">
+                <View style={{ alignItems: 'center', justifyContent: 'center' }} className="py-2   ">
                     <IconComponent width={iconWidth} height={iconHeight} color={iconColor} />
-                    <Text style={{ fontFamily: 'PlusJakartaSans-SemiBold', fontSize: 14, color: titleColor }}>{iconTitle}</Text>
                 </View>
             </TouchableOpacity>
         </View>

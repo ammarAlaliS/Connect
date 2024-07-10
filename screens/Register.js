@@ -133,10 +133,7 @@ const Register = () => {
                         name: "profile_img.jpg",
                       });
                     }
-                    console.log(values);
-
-                    // Log the FormData as key-value pairs
-                    console.log("Datos enviados:", formData);
+        
 
                     const response = await fetch(
                       "https://obbaramarket-backend.onrender.com/api/ObbaraMarket/register",

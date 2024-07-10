@@ -72,6 +72,7 @@ const BlogScreen = () => {
                     {status === 'failed' && <Text>Error: {error}</Text>}
                     {status === 'succeeded' && (
                         <>
+                      
                             {blogs.map((blog) => (
                                 <View key={blog._id} className="mb-4">
                                     <BlogCard
