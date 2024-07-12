@@ -14,9 +14,10 @@ import { useSelector } from "react-redux";
 import { Text } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import MapIcon from "../../icons/MapIcon";
+import SearchInput from "./SearchInput";
 
 const TravelHome = () => {
-  const GOOGLE_PLACES_API_KEY = "";
+  const GOOGLE_PLACES_API_KEY = "AIzaSyAAwUd5bO7daxQUktwliIcG4YA8M5mWhrY";
   const showInitialCard = useSelector((state) => state.travel.showInitialCard);
 
   const refInputAutoComplete = useRef();
@@ -69,7 +70,10 @@ const TravelHome = () => {
             width: "100%",
             backgroundColor: "#00000050",
           }}
-        ></View>
+        >
+
+        
+        </View>
       )}
 
       {!showInitialCard && (
