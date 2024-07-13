@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   showInitialCard: true,
+  isOriginAutoCompleteFocused: false,
 };
 
 export const travelSlice = createSlice({
@@ -11,8 +12,12 @@ export const travelSlice = createSlice({
     setShowInitialCard: (state, action) => {
       state.showInitialCard = action.payload;
     },
+    setIsOriginAutoCompleteFocused: (state, action) => {
+      state.isOriginAutoCompleteFocused = action.payload;
+    },
   },
 });
 
-export const { setShowInitialCard } = travelSlice.actions;
+export const { setShowInitialCard, setIsOriginAutoCompleteFocused } =
+  travelSlice.actions;
 export default travelSlice.reducer;
