@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import MapView, { Marker } from "react-native-maps";
+import MapView, { Marker, Polyline } from "react-native-maps";
 import stylesMap from "./MapViewStyles";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { useEffect, useRef, useState } from "react";
@@ -17,6 +17,12 @@ import MapIcon from "../../icons/MapIcon";
 import SearchInput from "./SearchInput";
 import { setIsOriginAutoCompleteFocused } from "../../globalState/travelSlice";
 import { selectTheme } from "../../globalState/themeSlice";
+import { FontAwesome } from "@expo/vector-icons";
+import { Image } from "react-native";
+import carImage from "../../assets/car.png";
+import QuickCarDetailsButtom from "./QuickCarDetailsButtom";
+import { Modal } from "react-native";
+import QuickCarsSearchesDetails from "./QuickCarsSearchesDetails";
 
 const TravelHome = () => {
   const [region, setRegion] = useState({
@@ -32,7 +38,9 @@ const TravelHome = () => {
 
   const [marker, setMarker] = useState(null);
   const [isFocused, setIsFocused] = useState(false);
+  const [showQuickCarDetails, setShowQuickCarDetails] = useState(false);
   const darkMode = useSelector(selectTheme);
+  const placesSelected = useSelector((state) => state.travel.placesSelected);
 
   useEffect(() => {
     console.log("El componente esta enfocado");
@@ -40,10 +48,40 @@ const TravelHome = () => {
     console.log(!isFocused ?? 46);
   }, [isFocused]);
 
+  const listQuickCars = [
+    { latitude: 40.474112, longitude: -3.573604 },
+    { latitude: 40.468495, longitude: -3.639607 },
+    { latitude: 40.426692, longitude: -3.645916 },
+    { latitude: 40.335654, longitude: -3.602275 },
+    { latitude: 40.381723, longitude: -3.635751 },
+    { latitude: 40.394951, longitude: -3.759253 },
+    { latitude: 40.394951, longitude: -3.759253 },
+    { latitude: 40.43665, longitude: -3.663058 },
+    { latitude: 40.453972, longitude: -3.720027 },
+    { latitude: 40.492609, longitude: -3.686962 },
+  ];
+
+  const polylineCoordinates = [
+    { latitude: 40.479112, longitude: -3.573604 },
+    { latitude: 40.472, longitude: -3.58 }, // Punto adicional
+    { latitude: 40.47, longitude: -3.59 }, // Punto adicional
+    { latitude: 40.474495, longitude: -3.639607 },
+  ];
+
   return (
     <View>
       <SearchInput setRegion={setRegion} setMarker={setMarker}></SearchInput>
+      {showQuickCarDetails && (
+        <QuickCarsSearchesDetails
+          setShowQuickCarDetails={setShowQuickCarDetails}
+        ></QuickCarsSearchesDetails>
+      )}
 
+      {placesSelected && (
+        <QuickCarDetailsButtom
+          setShowQuickCarDetails={setShowQuickCarDetails}
+        ></QuickCarDetailsButtom>
+      )}
       <MapView
         customMapStyle={
           // darkMode.darkMode ? stylesMap.mapStyleLight : stylesMap.mapStyle
@@ -60,9 +98,30 @@ const TravelHome = () => {
         //   latitudeDelta: 0.1522,
         //   longitudeDelta: 0.221,
         // }}
-        showsUserLocation={true}
+        // showsUserLocation={true}
       >
         {marker && <Marker coordinate={marker} />}
+        {placesSelected &&
+          listQuickCars.map((item, index) => {
+            return (
+              <Marker coordinate={item} key={index}>
+                <Image
+                  source={carImage}
+                  style={{ height: 50, width: 20 }}
+                  resizeMode="contain"
+                ></Image>
+              </Marker>
+            );
+          })}
+        {placesSelected && (
+          <Polyline
+            coordinates={polylineCoordinates}
+            strokeColor="#2b00b6" // Color de la línea
+            strokeWidth={6} // Ancho de la línea
+          />
+        )}
+        {/* <Marker coordinate={polylineCoordinates[0]}></Marker>
+        <Marker coordinate={polylineCoordinates[3]}></Marker> */}
       </MapView>
     </View>
   );

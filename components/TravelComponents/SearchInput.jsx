@@ -1,21 +1,25 @@
 import {
-  Alert,
   Keyboard,
   StyleSheet,
+  Text,
   TextInput,
   TouchableOpacity,
 } from "react-native";
 import { View } from "react-native-animatable";
 import XMarkIcon from "../../icons/XMarkIcon";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useRef, useState } from "react";
 import Icon from "react-native-vector-icons/FontAwesome";
-import MapIcon from "../../icons/MapIcon";
-import LogginIcon from "../../icons/LogginIcon";
-import UserIcon from "../../icons/UserIcon";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import CalendarIcon from "../../icons/CalendarIcon";
+import SquarePlusIcon from "../../icons/SquarePlusIcon";
+import { Entypo } from "@expo/vector-icons";
+import { setPlacesSelected } from "../../globalState/travelSlice";
 
 const SearchInput = ({ setRegion, setMarker }) => {
+  const dispatch = useDispatch();
+
   const GOOGLE_PLACES_API_KEY = "AIzaSyAAwUd5bO7daxQUktwliIcG4YA8M5mWhrY";
 
   const [inputIsActive, setInputIsActive] = useState(false);
@@ -23,7 +27,11 @@ const SearchInput = ({ setRegion, setMarker }) => {
   const [destininationCleaning, setDestininationCleaning] = useState(false);
   const [originName, setOriginName] = useState("");
   const [destinationName, setDestinationName] = useState("");
-  const [busquedaIniciada, setBusquedaIniciada] = useState(false);
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [dateSelected, setDateSelected] = useState(null);
+  const [dateSelectedString, setDateSelectedString] = useState("");
+  const placesSelected = useSelector((state) => state.travel.placesSelected);
+  // const [placesSelected, setPlacesSelected] = useState(false);
 
   const refInputAutoComplete = useRef();
   const refInputAutoCompleteDestination = useRef();
@@ -114,6 +122,36 @@ const SearchInput = ({ setRegion, setMarker }) => {
     }
   };
 
+  const onChange = (selectedDate, date) => {
+    const currentDate = selectedDate || date;
+
+    setDateSelected(currentDate);
+
+    const formattedDate = `${currentDate.getDate()}/${
+      currentDate.getMonth() + 1
+    }/${currentDate.getFullYear()}`;
+    setDateSelectedString(formattedDate);
+
+    setShowDatePicker(false);
+  };
+
+  useEffect(() => {
+    console.log("adsfsdfds");
+    console.log(refInputAutoComplete.current);
+    console.log(refInputAutoCompleteDestination.current);
+    if (!placesSelected) {
+      console.log("INTENTO LIMPIAR LA VAINA");
+      if (refInputAutoComplete.current) {
+        refInputAutoComplete.current.clear();
+        refInputAutoComplete.current.blur();
+      }
+      if (refInputAutoCompleteDestination.current) {
+        refInputAutoCompleteDestination.current.clear();
+        refInputAutoCompleteDestination.current.blur();
+      }
+    }
+  }, [inputIsActive, placesSelected]);
+
   return (
     <>
       {inputIsActive && (
@@ -121,6 +159,8 @@ const SearchInput = ({ setRegion, setMarker }) => {
           style={styles.backgroundContainer}
           onTouchEnd={() => {
             setInputIsActive(false);
+            refInputAutoComplete.current.clear();
+            refInputAutoCompleteDestination.current.clear();
             refInputAutoComplete.current.blur();
             refInputAutoCompleteDestination.current.blur();
           }}
@@ -134,7 +174,7 @@ const SearchInput = ({ setRegion, setMarker }) => {
             { backgroundColor: !inputIsActive ? "white" : "#f4f5f6" },
           ]}
         >
-          {inputIsActive && (
+          {(inputIsActive || placesSelected) && (
             <View style={styles.secondInputContainer}>
               <View style={styles.originCircle}></View>
               <View style={styles.borderIdentifier}></View>
@@ -143,9 +183,9 @@ const SearchInput = ({ setRegion, setMarker }) => {
           )}
           <View
             style={[
-              inputIsActive ? {} : { height: 46 },
+              inputIsActive || placesSelected ? {} : { height: 46 },
               styles.thirdInputContainer,
-              { width: inputIsActive ? "90%" : "100%" },
+              { width: inputIsActive || placesSelected ? "90%" : "100%" },
             ]}
           >
             <View style={styles.fourthInputContainer}>
@@ -196,19 +236,35 @@ const SearchInput = ({ setRegion, setMarker }) => {
                     justifyContent: "center",
                   }}
                 >
-                  <Icon
-                    style={{ padding: 0 }}
-                    name="search"
-                    size={21}
-                    color={"#00000050"}
-                    onPress={() => {
-                      setInputIsActive(true);
-                    }}
-                  />
+                  {!inputIsActive && !placesSelected && (
+                    <Icon
+                      style={{ padding: 0 }}
+                      name="search"
+                      size={21}
+                      color={"#00000050"}
+                      onPress={() => {
+                        setInputIsActive(true);
+                      }}
+                    />
+                  )}
+                  {!inputIsActive && placesSelected && (
+                    <Entypo
+                      name="block"
+                      size={24}
+                      color="#00000080"
+                      style={{ marginRight: 4 }}
+                      onPress={() => {
+                        setInputIsActive(false);
+                        setOriginName("");
+                        setDestinationName("");
+                        dispatch(setPlacesSelected(false));
+                      }}
+                    />
+                  )}
                 </TouchableOpacity>
               )}
             </View>
-            {inputIsActive && (
+            {(inputIsActive || placesSelected) && (
               <View style={styles.destinationAutoCompleteContainer}>
                 <GooglePlacesAutocomplete
                   ref={refInputAutoCompleteDestination}
@@ -273,11 +329,31 @@ const SearchInput = ({ setRegion, setMarker }) => {
               alignItems: "center",
             }}
           >
-            <MapIcon color={"#0000ff99"} height={25} width={30}></MapIcon>
+            <CalendarIcon
+              color={"#0000ff99"}
+              height={25}
+              width={30}
+            ></CalendarIcon>
             <TextInput
               style={{ width: "100%" }}
-              placeholder={"Fecha y Hora" + originName + ", " + destinationName}
+              onFocus={() => {
+                setShowDatePicker(true);
+              }}
+              showSoftInputOnFocus={false}
+              value={dateSelectedString}
+              placeholder="Selecciona la hora"
             ></TextInput>
+            {showDatePicker && (
+              <DateTimePicker
+                value={new Date()}
+                mode="date"
+                display="default"
+                locale="es-ES"
+                onChange={(e, selectDate) => {
+                  onChange(selectDate, dateSelected);
+                }}
+              />
+            )}
           </View>
         )}
 
@@ -295,11 +371,63 @@ const SearchInput = ({ setRegion, setMarker }) => {
               alignItems: "center",
             }}
           >
-            <UserIcon color={"#00000090"} height={25} width={30}></UserIcon>
+            <SquarePlusIcon
+              color={"#2b00b6"}
+              height={25}
+              width={30}
+            ></SquarePlusIcon>
             <TextInput
               style={{ width: "100%" }}
               placeholder="Numero de asientos"
             ></TextInput>
+          </View>
+        )}
+
+        {inputIsActive && (
+          <View
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-evenly",
+              marginTop: 12,
+            }}
+          >
+            {/* <TouchableOpacity
+              style={{
+                height: 42,
+                backgroundColor: "#ffbb1c",
+                justifyContent: "center",
+                alignItems: "center",
+                width: "45%",
+                borderRadius: 10,
+              }}
+              onPress={() => {
+                setInputIsActive(false);
+                dispatch(setPlacesSelected(false));
+                refInputAutoComplete.current.blur();
+                refInputAutoCompleteDestination.current.blur();
+              }}
+            >
+              <Text style={{ fontSize: 16 }}>Cancelar</Text>
+            </TouchableOpacity> */}
+            <TouchableOpacity
+              style={{
+                height: 46,
+                backgroundColor: "#2b00b6",
+                justifyContent: "center",
+                alignItems: "center",
+                width: "65%",
+                borderRadius: 10,
+              }}
+              onPress={() => {
+                setInputIsActive(false);
+                dispatch(setPlacesSelected(true));
+              }}
+            >
+              <Text style={{ fontSize: 16, color: "#f4f5f6" }}>
+                Buscar QuickCars
+              </Text>
+            </TouchableOpacity>
           </View>
         )}
       </View>
@@ -347,7 +475,7 @@ const styles = StyleSheet.create({
     padding: 1,
     display: "flex",
     flexDirection: "row",
-    borderWidth: 0.5,
+    borderWidth: 0.4,
     borderColor: "#000",
     borderStyle: "solid",
     borderRadius: 5,
