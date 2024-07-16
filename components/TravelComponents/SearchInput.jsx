@@ -136,11 +136,7 @@ const SearchInput = ({ setRegion, setMarker }) => {
   };
 
   useEffect(() => {
-    console.log("adsfsdfds");
-    console.log(refInputAutoComplete.current);
-    console.log(refInputAutoCompleteDestination.current);
     if (!placesSelected) {
-      console.log("INTENTO LIMPIAR LA VAINA");
       if (refInputAutoComplete.current) {
         refInputAutoComplete.current.clear();
         refInputAutoComplete.current.blur();
