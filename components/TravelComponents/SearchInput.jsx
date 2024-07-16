@@ -20,7 +20,7 @@ import { setPlacesSelected } from "../../globalState/travelSlice";
 const SearchInput = ({ setRegion, setMarker }) => {
   const dispatch = useDispatch();
 
-  const GOOGLE_PLACES_API_KEY = "AIzaSyAAwUd5bO7daxQUktwliIcG4YA8M5mWhrY";
+  const GOOGLE_PLACES_API_KEY = "";
 
   const [inputIsActive, setInputIsActive] = useState(false);
   const [originCleaning, setOriginCleaning] = useState(false);
