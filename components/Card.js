@@ -14,9 +14,9 @@ const Card = ({ darkMode, handlePress, activeScreen }) => {
   }
 
   return (
-    <View className=" px-6 py-2 " style={{
+    <View className=" px-6 py-2  space-y-1" style={{
       width: '100%',
-      marginTop: 4,
+      marginTop: 2,
       backgroundColor: darkMode.background,
       borderBottomWidth: 1,
       borderTopWidth: 1,

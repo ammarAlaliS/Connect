@@ -38,7 +38,7 @@ const HomeAppScreen = () => {
       case "Profile":
         return <ProfileScreen />;
       case "Contact":
-        return <ContactScreen />;
+        return <ContactScreen darkMode={darkMode}/>;
       case "Card":
       default:
         return <Card darkMode={darkMode} activeScreen={activeScreen} handlePress={handlePress} />;
