@@ -163,6 +163,51 @@ const QuickCarsSearchesDetails = ({ setShowQuickCarDetails }) => {
 
               <View
                 style={{
+                  width: "100%",
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "space-around",
+                  marginVertical: 5,
+                }}
+              >
+                <Text
+                  style={{
+                    fontFamily: "PlusJakartaSans-SemiBold",
+                    color: "#52535a",
+                  }}
+                >
+                  A{" "}
+                  <Text
+                    style={{
+                      fontFamily: "PlusJakartaSans-Bold",
+                      color: "#2b00b6",
+                    }}
+                  >
+                    2km
+                  </Text>{" "}
+                  de tu ubicacion
+                </Text>
+                <Text
+                  style={{
+                    fontFamily: "PlusJakartaSans-SemiBold",
+                    color: "#52535a",
+                  }}
+                >
+                  A{" "}
+                  <Text
+                    style={{
+                      fontFamily: "PlusJakartaSans-Bold",
+                      color: "#2b00b6",
+                    }}
+                  >
+                    1km
+                  </Text>{" "}
+                  del punto de partida
+                </Text>
+              </View>
+
+              <View
+                style={{
                   display: "flex",
                   flexDirection: "row",
                   width: "100%",
