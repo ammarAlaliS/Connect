@@ -1,5 +1,6 @@
 import {
   Keyboard,
+  Platform,
   StyleSheet,
   Text,
   TextInput,
@@ -15,7 +16,11 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import CalendarIcon from "../../icons/CalendarIcon";
 import SquarePlusIcon from "../../icons/SquarePlusIcon";
 import { Entypo } from "@expo/vector-icons";
-import { setPlacesSelected } from "../../globalState/travelSlice";
+import {
+  setPlacesSelected,
+  setQuickarData,
+} from "../../globalState/travelSlice";
+import ClockIcon from "../../icons/ClockIcon";
 
 const SearchInput = ({ setRegion, setMarker }) => {
   const dispatch = useDispatch();
@@ -28,10 +33,9 @@ const SearchInput = ({ setRegion, setMarker }) => {
   const [originName, setOriginName] = useState("");
   const [destinationName, setDestinationName] = useState("");
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [dateSelected, setDateSelected] = useState(null);
-  const [dateSelectedString, setDateSelectedString] = useState("");
+  const [dateTimeSelected, setDateTimeSelected] = useState(null);
+  const [dateTimeSelectedString, setDateTimeSelectedString] = useState("");
   const placesSelected = useSelector((state) => state.travel.placesSelected);
-  // const [placesSelected, setPlacesSelected] = useState(false);
 
   const refInputAutoComplete = useRef();
   const refInputAutoCompleteDestination = useRef();
@@ -122,17 +126,30 @@ const SearchInput = ({ setRegion, setMarker }) => {
     }
   };
 
-  const onChange = (selectedDate, date) => {
+  const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
+    setShowDatePicker(Platform.OS === "ios");
+    setDateTimeSelected(currentDate);
 
-    setDateSelected(currentDate);
+    const hours = currentDate.getHours();
+    const minutes = currentDate.getMinutes();
+    const formattedTime = `${hours}:${minutes < 10 ? "0" : ""}${minutes}`;
+    setDateTimeSelectedString(formattedTime);
+  };
 
-    const formattedDate = `${currentDate.getDate()}/${
-      currentDate.getMonth() + 1
-    }/${currentDate.getFullYear()}`;
-    setDateSelectedString(formattedDate);
+  const searchQuickCars = async () => {
+    try {
+      const data = await fetch(
+        "https://obbaramarket-backend.onrender.com/api/ObbaraMarket/drivers-nearby-trip-filters?starLocationLatitude=40.424087&starLocationLongitude=-3.705350&endLocationLatitude=40.434124&endLocationLongitude=-3.696072&starTimeHour=13&starTimeMinutes=40&numberOfSeatRequested=2"
+      ).then((res) => res.json());
 
-    setShowDatePicker(false);
+      if (data && data.conductores && data.conductores[0]) {
+        dispatch(setQuickarData(data.conductores));
+      }
+    } catch (error) {
+      console.log("Ocurrio un error");
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -189,7 +206,7 @@ const SearchInput = ({ setRegion, setMarker }) => {
                 ref={refInputAutoComplete}
                 minLength={3}
                 placeholder={
-                  inputIsActive ? "Origen del viaje" : "Busca un QuickCar"
+                  inputIsActive ? "Origen del viaje" : "A donde quieres ir?"
                 }
                 fetchDetails={true}
                 onPress={handleLocationSelect}
@@ -325,29 +342,23 @@ const SearchInput = ({ setRegion, setMarker }) => {
               alignItems: "center",
             }}
           >
-            <CalendarIcon
-              color={"#0000ff99"}
-              height={25}
-              width={30}
-            ></CalendarIcon>
+            <ClockIcon height={25} width={25} color={"#0000ff99"}></ClockIcon>
             <TextInput
-              style={{ width: "100%" }}
+              style={{ width: "100%", fontSize: 16, marginLeft: 10 }}
               onFocus={() => {
                 setShowDatePicker(true);
               }}
               showSoftInputOnFocus={false}
-              value={dateSelectedString}
+              value={dateTimeSelectedString}
               placeholder="Selecciona la hora"
             ></TextInput>
             {showDatePicker && (
               <DateTimePicker
                 value={new Date()}
-                mode="date"
+                mode="time"
                 display="default"
                 locale="es-ES"
-                onChange={(e, selectDate) => {
-                  onChange(selectDate, dateSelected);
-                }}
+                onChange={onChange}
               />
             )}
           </View>
@@ -418,6 +429,7 @@ const SearchInput = ({ setRegion, setMarker }) => {
               onPress={() => {
                 setInputIsActive(false);
                 dispatch(setPlacesSelected(true));
+                searchQuickCars();
               }}
             >
               <Text style={{ fontSize: 16, color: "#f4f5f6" }}>
