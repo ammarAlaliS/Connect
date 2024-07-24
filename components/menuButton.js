@@ -28,7 +28,7 @@ const MenuButton = ({
         borderBottomWidth: 3,
         width: 50,
         borderRadius: 10,
-        borderBottomColor: '#1E90FF',
+        borderBottomColor: darkMode.headerBorderIcon,
         marginBottom:3
       };
     } else {
@@ -58,7 +58,7 @@ const MenuButton = ({
                 iconName="HomeIcon"
                 iconWidth={32}
                 iconHeight={28}
-                iconColor={activeScreen === "Card" ? '#1E90FF' : darkMode.icon}
+                iconColor={activeScreen === "Card" ? darkMode.headerIconColor : darkMode.icon}
                 onPress={() => {
                   handlePress("Card");
                 }}
@@ -69,7 +69,7 @@ const MenuButton = ({
                 iconName="UserIcon"
                 iconWidth={32}
                 iconHeight={28}
-                iconColor={activeScreen === "Profile" ? '#1E90FF' : darkMode.icon}
+                iconColor={activeScreen === "Profile" ? darkMode.headerIconColor : darkMode.icon}
                 onPress={() => {
                   handlePress("Profile");
                 }}
@@ -80,7 +80,7 @@ const MenuButton = ({
                 iconName="StoreIcon"
                 iconWidth={32}
                 iconHeight={28}
-                iconColor={activeScreen === "Store" ? '#1E90FF' : darkMode.icon}
+                iconColor={activeScreen === "Store" ? darkMode.headerIconColor : darkMode.icon}
                 onPress={() => {
                   handlePress("Store");
                 }}
@@ -91,7 +91,7 @@ const MenuButton = ({
                 iconName="BlogIcon"
                 iconWidth={32}
                 iconHeight={28}
-                iconColor={activeScreen === "Blog" ? '#1E90FF' : darkMode.icon}
+                iconColor={activeScreen === "Blog" ? darkMode.headerIconColor : darkMode.icon}
                 onPress={() => {
                   handlePress("Blog");
                 }}
@@ -102,7 +102,7 @@ const MenuButton = ({
                 iconName="ContactIcon"
                 iconWidth={32}
                 iconHeight={28}
-                iconColor={activeScreen === "Contact" ? '#1E90FF' : darkMode.icon}
+                iconColor={activeScreen === "Contact" ? darkMode.headerIconColor : darkMode.icon}
                 onPress={() => {
                   handlePress("Contact");
                 }}

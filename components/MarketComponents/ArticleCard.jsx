@@ -1,5 +1,4 @@
-import { Image, StyleSheet, Text, View } from "react-native";
-import { TouchableOpacity } from "react-native";
+import { Image, Text, View, TouchableOpacity } from "react-native";
 import ContactIcon from "../../icons/ContactIcon";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,6 +15,7 @@ const ArticleCard = ({
   showModal,
   setIsNewProduct,
   setDeleteAlertModal,
+  darkMode
 }) => {
   const dispatch = useDispatch();
   const [userId, setUserId] = useState("");
@@ -45,13 +45,22 @@ const ArticleCard = ({
 
   return (
     <View
-      style={styles.container}
+      style={{
+        width: "45%",
+        backgroundColor: darkMode.backgroundDark,
+        shadowRadius: 2,
+        marginBottom: 10, // Ajusta esto si es necesario
+      }}
       onTouchEnd={() => {
         dispatch(setSelectedProduct(productItem));
       }}
     >
       <View
-        style={styles.secondContainer}
+        style={{
+          position: "relative",
+          width: "100%",
+          height: 150,
+        }}
         onTouchEnd={() => {
           setShowModal(true);
         }}
@@ -62,31 +71,50 @@ const ArticleCard = ({
               ? productItem?.image[0]
               : "https://noticias.coches.com/wp-content/uploads/2019/12/Recirculacion-de-Aire-2-859x483.jpg",
           }}
-          style={styles.imageContainer}
+          style={{
+            width: "100%",
+            height: 150,
+          }}
           resizeMode="cover"
         />
 
         <TouchableOpacity
-          className="d-flex flex-row"
-          style={styles.messageContainer}
+          style={{
+            position: "absolute",
+            bottom: 5,
+            right: 5,
+            backgroundColor: "#f1f1f1",
+            height: 29,
+            width: 29,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
           onPress={(e) => {
             e.stopPropagation();
-            if (userId == decodedToken.id) {
+            if (userId === decodedToken.id) {
               setIsNewProduct(false);
               setShowNewProductModal(true);
             }
           }}
         >
-          {userId != decodedToken.id && (
+          {userId !== decodedToken.id ? (
             <ContactIcon width={25} height={30} color="#3725dd" />
-          )}
-          {userId == decodedToken.id && (
+          ) : (
             <EditIcon width={25} height={30} color="#3725dd" />
           )}
         </TouchableOpacity>
-        {userId == decodedToken.id && (
+        {userId === decodedToken.id && (
           <TouchableOpacity
-            style={styles.trashContainer}
+            style={{
+              position: "absolute",
+              bottom: 5,
+              right: 39,
+              backgroundColor: "#f1f1f1",
+              height: 29,
+              width: 29,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
             onPress={(e) => {
               e.stopPropagation();
               setIsDeletingProduct(true);
@@ -97,7 +125,7 @@ const ArticleCard = ({
           </TouchableOpacity>
         )}
       </View>
-      <View style={styles.descriptionContainer}>
+      <View style={{ padding: 5 }}>
         <Text
           style={{
             fontSize: 19,
@@ -107,11 +135,32 @@ const ArticleCard = ({
         >
           {productItem?.productName}
         </Text>
-        <Text style={styles.detailTextStyle}>€ {productItem?.price}</Text>
-        <Text style={styles.detailTextStyle}>
+        <Text
+          style={{
+            color: "#000",
+            fontFamily: "PlusJakartaSans-SemiBold",
+            fontSize: 14,
+          }}
+        >
+          € {productItem?.price}
+        </Text>
+        <Text
+          style={{
+            color: "#000",
+            fontFamily: "PlusJakartaSans-SemiBold",
+            fontSize: 14,
+          }}
+        >
           {productItem?.stock} disponibles
         </Text>
-        <Text style={styles.location}>
+        <Text
+          style={{
+            color: "#000",
+            fontFamily: "PlusJakartaSans-SemiBold",
+            fontSize: 12,
+            fontWeight: "700",
+          }}
+        >
           {productItem?.productLocation.state}
         </Text>
       </View>
@@ -119,69 +168,4 @@ const ArticleCard = ({
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    width: "45%",
-    borderBottomLeftRadius: 10,
-    borderBottomRightRadius: 10,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 1.5,
-    marginTop: 14,
-  },
-  imageContainer: {
-    width: "100%",
-    height: 150,
-    borderTopRightRadius: 6,
-    borderTopLeftRadius: 6,
-  },
-  messageContainer: {
-    position: "absolute",
-    bottom: 5,
-    right: 5,
-    backgroundColor: "#f1f1f1",
-    height: 29,
-    width: 29,
-    borderRadius: 5,
-    alignItems: "center",
-    alignSelf: "center",
-    justifyContent: "center",
-  },
-  secondContainer: { position: "relative", width: "100%", height: 150 },
-  descriptionContainer: {
-    borderTopWidth: 0,
-    borderWidth: 1.5,
-    borderColor: "#ccc",
-    borderStyle: "solid",
-    borderBottomLeftRadius: 10,
-    borderBottomRightRadius: 10,
-  },
-  detailTextStyle: {
-    color: "#000",
-    fontFamily: "PlusJakartaSans-SemiBold",
-    fontSize: 14,
-    paddingLeft: 10,
-  },
-  location: {
-    color: "#000",
-    fontFamily: "PlusJakartaSans-SemiBold",
-    fontSize: 12,
-    paddingLeft: 10,
-    fontWeight: "700",
-    paddingBottom: 10,
-  },
-  trashContainer: {
-    position: "absolute",
-    bottom: 5,
-    right: 39,
-    backgroundColor: "#f1f1f1",
-    height: 29,
-    width: 29,
-    borderRadius: 5,
-    alignItems: "center",
-    alignSelf: "center",
-    justifyContent: "center",
-  },
-});
 export default ArticleCard;

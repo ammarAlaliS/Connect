@@ -30,11 +30,11 @@ const HomeAppScreen = () => {
   const renderContent = () => {
     switch (activeScreen) {
       case "Store":
-        return <MarketScreen />;
+        return <MarketScreen darkMode={darkMode}/>;
       case "Travel":
         return <TravelScreen />;
       case "Blog":
-        return <BlogScreen />;
+        return <BlogScreen darkMode={darkMode} />;
       case "Profile":
         return <ProfileScreen />;
       case "Contact":
@@ -48,7 +48,7 @@ const HomeAppScreen = () => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={{ flex: 1 }}>
-        <HeaderC activeScreen={activeScreen} handlePress={handlePress} />
+        <HeaderC  activeScreen={activeScreen} handlePress={handlePress} />
         <View style={{ backgroundColor: darkMode.backgroundDark || '#000', flex: 1 }}>
           {renderContent()}
         </View>

@@ -29,7 +29,7 @@ import { setLoadingProducts } from "../globalState/marketSlice.js";
 import { setCurrentPage } from "../globalState/marketSlice.js";
 import AlertMessage from "../components/MarketComponents/AlertMessage.jsx";
 
-const MarketScreen = () => {
+const MarketScreen = ({ darkMode }) => {
   const dispatch = useDispatch();
 
   const lastPage = useSelector((state) => state.market.lastPage);
@@ -64,7 +64,7 @@ const MarketScreen = () => {
     { id: 2, name: "Coche" },
     { id: 3, name: "Moto" },
     { id: 4, name: "Motocarro" },
-    { id: 5, name: "Articulos" },
+    { id: 5, name: "Articulos variados " },
   ];
 
   const ifScrollIsInTheEnd = (event) => {
@@ -137,7 +137,13 @@ const MarketScreen = () => {
     }
   }, [global_user, status]);
   return (
-    <View style={styles.principalContainer}>
+    <View
+      style={{
+        backgroundColor: darkMode.backgroundDark,
+        flex: 1,
+      }}
+      className="h-full"
+    >
       <AlertMessage
         message={alertMessage}
         seeModal={showAlert}
@@ -152,112 +158,197 @@ const MarketScreen = () => {
       <ScrollView
         showsVerticalScrollIndicator={false}
         scrollEventThrottle={16}
-        stickyHeaderIndices={[1]}
         onScroll={(e) => {
           ifScrollIsInTheEnd(e.nativeEvent);
         }}
         ref={scrollViewRef}
       >
-        <View className="d-flex flex-row">
-          <View style={styles.searchContainer}>
-            <View style={styles.searchSection} className="d-flex flex-row">
-              <Icon
-                style={styles.searchIcon}
-                name="search"
-                size={20}
-                color={search ? "#000000" : "#00000099"}
-                onPress={() => {
-                  dispatch(setResetProductList(true));
-                  dispatch(fetchProducts());
-                }}
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="Busca por nombre o codigo"
-                onChangeText={(text) => {
-                  dispatch(setSearch(text));
-                }}
-                value={search}
-                underlineColorAndroid="transparent"
-              />
-              {search.length > 0 && (
-                <TouchableOpacity
-                  style={{ paddingRight: 10 }}
-                  onPress={() => {
-                    dispatch(setSearch(""));
-                  }}
-                >
-                  <XMarkIcon color={"#000"} height={25} width={25}></XMarkIcon>
-                </TouchableOpacity>
-              )}
-            </View>
+        <View
+        
+        >
+          <View
+            style={{
+              backgroundColor: darkMode.background,
+              borderColor: darkMode.borderBox,
+              color: darkMode.text,
+              zIndex: 100,
+              paddingVertical: 10,
+              paddingHorizontal: 4,
+              borderBottomWidth: 1,
+            }}
+          >
+            <ScrollView
+              horizontal={true}
+              showsHorizontalScrollIndicator={false}
+              className="flex-row"
+              style={{
+                width: "100%",
+              }}
+            >
+              {listClasifications.map((item, index) => {
+                return (
+                  <TouchableOpacity
+                    onPress={() => {
+                      dispatch(setResetProductList(true));
+                      dispatch(setSelectedclassification(item.name));
+                      dispatch(fetchProducts());
+                    }}
+                    key={index}
+                  >
+                    <Text
+                      style={
+                        item.name == selectedclassification
+                          ? {
+                              paddingHorizontal: 8,
+                              paddingVertical: 5,
+                              marginRight: 10,
+                              borderRadius: 2,
+                              borderWidth: 1,
+                              backgroundColor: darkMode.backgroundCardList,
+                              borderColor: darkMode.borderBoxCardList,
+                              color: darkMode.colorTextCardList,
+                            }
+                          : {
+                              backgroundColor: darkMode.backgroundDark,
+                              borderColor: darkMode.borderBox,
+                              color: darkMode.text,
+                              paddingHorizontal: 8,
+                              paddingVertical: 5,
+                              marginRight: 10,
+                              borderRadius: 2,
+                              borderWidth: 1,
+                              color: darkMode.text,
+                            }
+                      }
+                    >
+                      {item.name}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </ScrollView>
           </View>
 
-          <View style={styles.container}>
+          <View className="flex-row">
             <View
-              style={[
-                styles.searchSection,
-                {
-                  borderWidth: filterUrl.length > 0 ? 1 : 0,
-                  borderColor: "#2b00b6",
-                  borderStyle: "solid",
-                },
-              ]}
-              className="d-flex flex-row"
+              style={{
+                marginTop: 2,
+                marginBottom: 0,
+                marginLeft: 4,
+                marginRight: 0,
+                flex: 1,
+              }}
             >
-              <TouchableOpacity
-                onPress={() => {
-                  setShowFilterModal(true);
+              <View
+                style={{
+                  backgroundColor: darkMode.background,
+                  alignItems: "center",
+                  borderRadius: 2,
+                  paddingLeft: 10,
+                  borderWidth: 1,
+                  borderStyle: "solid",
+                  borderColor: darkMode.borderBox,
                 }}
+                className="d-flex flex-row"
               >
                 <Icon
-                  style={styles.secondFilterIcon}
-                  name="filter"
+                  style={{
+                    padding: 10,
+                  }}
+                  name="search"
                   size={20}
-                  color="#000"
-                />
-              </TouchableOpacity>
-              <TextInput
-                style={styles.secondImput}
-                onChangeText={(text) => setSearch(text)}
-              />
-            </View>
-          </View>
-        </View>
-
-        <View style={styles.clasificationContainer}>
-          <ScrollView
-            horizontal={true}
-            showsHorizontalScrollIndicator={false}
-            className="d-flex flex-row"
-          >
-            {listClasifications.map((item, index) => {
-              return (
-                <TouchableOpacity
-                  key={index}
-                  style={
-                    item.name == selectedclassification
-                      ? styles.selectedItem
-                      : styles.item
-                  }
+                  color={darkMode.text}
                   onPress={() => {
                     dispatch(setResetProductList(true));
-                    dispatch(setSelectedclassification(item.name));
                     dispatch(fetchProducts());
                   }}
-                >
-                  <Text
-                    style={{
-                      color:
-                        item.name == selectedclassification ? "#fff" : "#000",
+                />
+                <TextInput
+                  style={{
+                    backgroundColor: darkMode.background,
+                    flex: 1,
+                    paddingTop: 10,
+                    paddingRight: 10,
+                    paddingBottom: 10,
+                    paddingLeft: 0,
+                    borderRadius: 2,
+                    fontFamily: "PlusJakartaSans-SemiBold",
+                    color: darkMode.text,
+                  }}
+                  placeholder="Busca por nombre o codigo"
+                  placeholderTextColor={darkMode.text}
+                  onChangeText={(text) => {
+                    dispatch(setSearch(text));
+                  }}
+                  value={search}
+                  underlineColorAndroid="transparent"
+                />
+                {search.length > 0 && (
+                  <TouchableOpacity
+                    style={{ paddingRight: 10 }}
+                    onPress={() => {
+                      dispatch(setSearch(""));
                     }}
                   >
-                    {item.name}
-                  </Text>
+                    <XMarkIcon
+                      color={darkMode.text}
+                      height={25}
+                      width={25}
+                    ></XMarkIcon>
+                  </TouchableOpacity>
+                )}
+              </View>
+            </View>
+
+            <View
+              style={{
+                marginTop: 2,
+                marginRight: 4,
+                marginLeft: 4,
+                borderRadius: 2,
+              }}
+            >
+              <View
+                style={{
+                  borderWidth: 1,
+                  borderStyle: "solid",
+                  borderColor: darkMode.borderBox,
+                  backgroundColor: darkMode.background,
+                  alignItems: "center",
+                  borderRadius: 2,
+                  paddingRight: 10,
+                  paddingLeft: 10,
+                }}
+                className="d-flex flex-row"
+              >
+                <TouchableOpacity
+                  onPress={() => {
+                    setShowFilterModal(true);
+                  }}
+                >
+                  <Icon
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      borderRadius: 2,
+                    }}
+                    name="filter"
+                    size={20}
+                    color={darkMode.text}
+                  />
                 </TouchableOpacity>
-              );
-            })}
-          </ScrollView>
+                <TextInput
+                  style={{
+                    width: 0,
+                    paddingTop: 10,
+                    paddingBottom: 10,
+                    borderRadius: 2,
+                  }}
+                  onChangeText={(text) => setSearch(text)}
+                />
+              </View>
+            </View>
+          </View>
         </View>
 
         {/* Cards de articulos */}
@@ -266,34 +357,24 @@ const MarketScreen = () => {
           showsVerticalScrollIndicator={false}
           horizontal={false}
           scrollEventThrottle={16}
+          contentContainerStyle={{ paddingBottom: 0 }}
         >
           <View
-            className="d-flex flex-row mx-4 my-2"
-            style={[styles.articlesContainer]}
+            className="flex-row flex-1"
+            style={[
+              styles.articlesContainer,
+              {
+                marginTop: 4,
+                marginRight: 4,
+                marginBottom: 4,
+                marginLeft: 4,
+                backgroundColor: darkMode.background,
+                borderWidth:1,
+                borderColor: darkMode.borderBox
+              },
+            ]}
           >
-            {products &&
-              products.map((item, index) => {
-                return (
-                  <ArticleCard
-                    key={index}
-                    setShowModal={setShowModal}
-                    productLocation={item.productLocation.state}
-                    item={item}
-                    setShowNewProductModal={setShowNewProductModal}
-                    showNewProductModal={showNewProductModal}
-                    showModal={showModal}
-                    setIsNewProduct={setIsNewProduct}
-                    setDeleteAlertModal={setDeleteAlertModal}
-                  ></ArticleCard>
-                );
-              })}
-            {loadingProducts && (
-              <ActivityIndicator
-                size={"large"}
-                color={"#00000090"}
-                style={{ height: 30, width: "100%", marginVertical: 10 }}
-              ></ActivityIndicator>
-            )}
+          <Text>Hola como estas hola</Text>
           </View>
         </ScrollView>
       </ScrollView>
@@ -342,55 +423,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     overflow: "hidden",
   },
-  principalContainer: {
-    height: "100%",
-    width: "100%",
-    backgroundColor: "#f4f5f6",
-  },
-  searchContainer: {
-    margin: 10,
-    marginRight: 0,
-    flex: 1,
-  },
-  container: {
-    margin: 10,
-  },
-  searchSection: {
-    alignItems: "center",
-    backgroundColor: "#ffffff",
-    borderRadius: 10,
-    paddingLeft: 10,
-  },
-  searchIcon: {
-    padding: 10,
-  },
-  input: {
-    flex: 1,
-    paddingTop: 10,
-    paddingRight: 10,
-    paddingBottom: 10,
-    paddingLeft: 0,
-    backgroundColor: "#ffffff",
-    color: "#424242",
-    borderRadius: 10,
-    fontFamily: "PlusJakartaSans-SemiBold",
-  },
-  secondFilterIcon: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#ffffff",
-    borderRadius: 10,
-    paddingRight: 15,
-    paddingLeft: 5,
-  },
-  secondImput: {
-    width: 0,
-    paddingTop: 10,
-    paddingBottom: 10,
-    backgroundColor: "yellow",
-    color: "#424242",
-    borderRadius: 10,
-  },
+  principalContainer: {},
   item: {
     paddingHorizontal: 8,
     paddingVertical: 5,
@@ -415,8 +448,7 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     justifyContent: "space-evenly",
     paddingBottom: 10,
-    backgroundColor: "#fff",
-    borderRadius: 5,
+    borderRadius: 2,
     shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowRadius: 5,
@@ -442,9 +474,7 @@ const styles = StyleSheet.create({
   modalContainer: {
     height: 100,
     width: "100%",
-    marginTop: "25%",
     backgroundColor: "red",
-    padding: 40,
   },
   secondModalContainer: {
     height: 100,
