@@ -9,6 +9,12 @@ const initialState = {
   tripOriginName: "",
   tripDestination: { latitude: 0, longitude: 0 },
   tripDestinationName: "",
+  quickCarsDistances: [],
+  locationForegroundPermissions: "denied",
+  userLocation: { latitude: 0, longitude: 0 },
+  startTime: { hour: 0, minutes: 0 },
+  seatRequested: 0,
+  inputIsActive: false,
 };
 
 export const travelSlice = createSlice({
@@ -39,6 +45,24 @@ export const travelSlice = createSlice({
     setTripDestinationName: (state, action) => {
       state.tripDestinationName = action.payload;
     },
+    setQuickCarsDistances: (state, action) => {
+      state.quickCarsDistances = action.payload;
+    },
+    setLocationForegroundPermissions: (state, action) => {
+      state.locationForegroundPermissions = action.payload;
+    },
+    setUserLocation: (state, action) => {
+      state.userLocation = action.payload;
+    },
+    setStartTime: (state, action) => {
+      state.startTime = action.payload;
+    },
+    setSeatRequested: (state, action) => {
+      state.seatRequested = action.payload;
+    },
+    setIsInputActive: (state, action) => {
+      state.inputIsActive = action.payload;
+    },
   },
 });
 
@@ -51,5 +75,11 @@ export const {
   setTripOriginName,
   setTripDestination,
   setTripDestinationName,
+  setQuickCarsDistances,
+  setLocationForegroundPermissions,
+  setUserLocation,
+  setStartTime,
+  setSeatRequested,
+  setIsInputActive,
 } = travelSlice.actions;
 export default travelSlice.reducer;

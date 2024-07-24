@@ -9,6 +9,7 @@ import { Image } from "react-native";
 import carImage from "../../assets/car.png";
 import QuickCarDetailsButtom from "./QuickCarDetailsButtom";
 import QuickCarsSearchesDetails from "./QuickCarsSearchesDetails";
+import SearchNearQuickCarButton from "./SearchNearQuickCarButton";
 
 const TravelHome = () => {
   const [region, setRegion] = useState({
@@ -56,6 +57,7 @@ const TravelHome = () => {
           setShowQuickCarDetails={setShowQuickCarDetails}
         ></QuickCarDetailsButtom>
       )}
+      <SearchNearQuickCarButton></SearchNearQuickCarButton>
       <MapView
         customMapStyle={
           // darkMode.darkMode ? stylesMap.mapStyleLight : stylesMap.mapStyle
