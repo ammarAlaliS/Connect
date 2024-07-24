@@ -86,7 +86,7 @@ const SignInForm = () => {
                     iterationCount="infinite"
                     iterationDelay={1000}
                     source={{
-                      uri: "https://quickcaronline.obbaramarket.com/wp-content/uploads/2024/05/cropped-quickcar-1-127x79.png",
+                      uri: "https://storage.googleapis.com/quickcar-storage/quickcar-removebg-preview%20(1).png",
                     }}
                     className="w-24 h-24"
                     resizeMode="contain"
@@ -323,8 +323,8 @@ const SignInForm = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginHorizontal: 20,
-    marginVertical: 20,
+    marginHorizontal: 10,
+    marginVertical: 10,
     backgroundColor: "#fff",
     borderRadius: 5,
     borderWidth: 2,

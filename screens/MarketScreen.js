@@ -158,13 +158,18 @@ const MarketScreen = ({ darkMode }) => {
       <ScrollView
         showsVerticalScrollIndicator={false}
         scrollEventThrottle={16}
+        
         onScroll={(e) => {
           ifScrollIsInTheEnd(e.nativeEvent);
         }}
         ref={scrollViewRef}
       >
         <View
-        
+          style={{
+            paddingBottom: 4,
+            borderBottomWidth: 1,
+            borderColor: darkMode.borderBox,
+          }}
         >
           <View
             style={{
@@ -180,6 +185,7 @@ const MarketScreen = ({ darkMode }) => {
             <ScrollView
               horizontal={true}
               showsHorizontalScrollIndicator={false}
+              stickyHeaderIndices={[1]}
               className="flex-row"
               style={{
                 width: "100%",
@@ -232,7 +238,7 @@ const MarketScreen = ({ darkMode }) => {
           <View className="flex-row">
             <View
               style={{
-                marginTop: 2,
+                marginTop: 4,
                 marginBottom: 0,
                 marginLeft: 4,
                 marginRight: 0,
@@ -302,7 +308,7 @@ const MarketScreen = ({ darkMode }) => {
 
             <View
               style={{
-                marginTop: 2,
+                marginTop: 4,
                 marginRight: 4,
                 marginLeft: 4,
                 borderRadius: 2,
@@ -360,21 +366,55 @@ const MarketScreen = ({ darkMode }) => {
           contentContainerStyle={{ paddingBottom: 0 }}
         >
           <View
-            className="flex-row flex-1"
+            className="flex-row flex-1  "
             style={[
               styles.articlesContainer,
               {
-                marginTop: 4,
-                marginRight: 4,
-                marginBottom: 4,
-                marginLeft: 4,
-                backgroundColor: darkMode.background,
-                borderWidth:1,
-                borderColor: darkMode.borderBox
+                marginTop: 2,
+
+                backgroundColor: darkMode.backgroundDark,
               },
             ]}
           >
-          <Text>Hola como estas hola</Text>
+            <View
+              className="d-flex flex-row flex-1"
+              style={[
+                styles.articlesContainer,
+                {
+                  marginTop: 4,
+                  marginBottom: 4,
+                  backgroundColor: darkMode.backgroundDark,
+                  
+                },
+              ]}
+            >
+              <View className=" w-full flex-row flex-wrap ">
+                {products &&
+                  products.map((item, index) => {
+                    return (
+                      <ArticleCard
+                        key={index}
+                        setShowModal={setShowModal}
+                        productLocation={item.productLocation.state}
+                        item={item}
+                        setShowNewProductModal={setShowNewProductModal}
+                        showNewProductModal={showNewProductModal}
+                        showModal={showModal}
+                        setIsNewProduct={setIsNewProduct}
+                        setDeleteAlertModal={setDeleteAlertModal}
+                        darkMode={darkMode}
+                      ></ArticleCard>
+                    );
+                  })}
+              </View>
+              {loadingProducts && (
+                <ActivityIndicator
+                  size={"large"}
+                  color={darkMode.text}
+                  style={{ height: 30, width: "100%", marginVertical: 10 }}
+                ></ActivityIndicator>
+              )}
+            </View>
           </View>
         </ScrollView>
       </ScrollView>
@@ -419,11 +459,8 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     margin: 16,
-    textAlign: "center",
-    justifyContent: "center",
     overflow: "hidden",
   },
-  principalContainer: {},
   item: {
     paddingHorizontal: 8,
     paddingVertical: 5,
@@ -446,17 +483,6 @@ const styles = StyleSheet.create({
   },
   articlesContainer: {
     flexWrap: "wrap",
-    justifyContent: "space-evenly",
-    paddingBottom: 10,
-    borderRadius: 2,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 3,
-    // paddingRight: 12,
-    marginBottom: 0,
-    borderBottomLeftRadius: 0,
-    borderBottomRightRadius: 0,
   },
   clasificationContainer: {
     backgroundColor: "white",

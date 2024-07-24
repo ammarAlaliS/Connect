@@ -34,7 +34,7 @@ export const colors = {
     backgroundComment : '#000'
   },
   dark: {
-    background: "#242526",
+    background: "#0D1117",
     text: "#fff",
     icon: "#f5f5f5",
     buttonBackground: "#1E90FF",
@@ -49,12 +49,12 @@ export const colors = {
     backgroundList: "#1a5319",
     backgroundBlodCard: '#555555',
     backgroundCardList: 'rgba(128, 128, 128, 0.4)',
-    colorTextCardList: '#FFCD57',
+    colorTextCardList: '#06BCEE',
     backgroundCommentButton :  'rgba(128, 128, 128, 0.4)',
     showText: '#FFCD57',
      // header icon color 
-    headerIconColor: '#FFCD57',
-    headerBorderIcon: '#000',
+    headerIconColor: '#06BCEE',
+    headerBorderIcon: '#06BCEE',
       // like color 
     textColorLikeButton: '#ff226e',
     // comment button 
@@ -64,7 +64,7 @@ export const colors = {
 };
 
 const initialState = {
-  darkMode: false,
+  darkMode: true,
 };
 
 const themeSlice = createSlice({

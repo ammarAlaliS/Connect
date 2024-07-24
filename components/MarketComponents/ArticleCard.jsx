@@ -6,6 +6,7 @@ import { jwtDecode } from "jwt-decode";
 import EditIcon from "../../icons/EditIcon";
 import TrashIcon from "../../icons/TrashIcon";
 import { setSelectedProduct } from "../../globalState/marketSlice";
+import { Entypo } from "@expo/vector-icons";
 
 const ArticleCard = ({
   setShowModal,
@@ -15,7 +16,7 @@ const ArticleCard = ({
   showModal,
   setIsNewProduct,
   setDeleteAlertModal,
-  darkMode
+  darkMode,
 }) => {
   const dispatch = useDispatch();
   const [userId, setUserId] = useState("");
@@ -46,11 +47,16 @@ const ArticleCard = ({
   return (
     <View
       style={{
-        width: "45%",
-        backgroundColor: darkMode.backgroundDark,
+        flex: 1,
         shadowRadius: 2,
-        marginBottom: 10, // Ajusta esto si es necesario
+        backgroundColor: darkMode.background,
+        borderWidth: 1,
+        borderColor: darkMode.borderBox,
+        marginRight: 2,
+        marginLeft: 2,
+        minWidth: "50%",
       }}
+      className=" p-1"
       onTouchEnd={() => {
         dispatch(setSelectedProduct(productItem));
       }}
@@ -59,7 +65,7 @@ const ArticleCard = ({
         style={{
           position: "relative",
           width: "100%",
-          height: 150,
+          height: 200,
         }}
         onTouchEnd={() => {
           setShowModal(true);
@@ -73,7 +79,7 @@ const ArticleCard = ({
           }}
           style={{
             width: "100%",
-            height: 150,
+            height: 200,
           }}
           resizeMode="cover"
         />
@@ -83,11 +89,14 @@ const ArticleCard = ({
             position: "absolute",
             bottom: 5,
             right: 5,
-            backgroundColor: "#f1f1f1",
-            height: 29,
-            width: 29,
+            backgroundColor: "#0D1117",
+            height: 36,
+            width: 36,
+            borderRadius: 9999,
             alignItems: "center",
             justifyContent: "center",
+            borderWidth: 1,
+            borderColor: darkMode.borderBox,
           }}
           onPress={(e) => {
             e.stopPropagation();
@@ -98,9 +107,9 @@ const ArticleCard = ({
           }}
         >
           {userId !== decodedToken.id ? (
-            <ContactIcon width={25} height={30} color="#3725dd" />
+            <ContactIcon width={25} height={30} color="#008000" />
           ) : (
-            <EditIcon width={25} height={30} color="#3725dd" />
+            <EditIcon width={25} height={30} color="#008000" />
           )}
         </TouchableOpacity>
         {userId === decodedToken.id && (
@@ -108,12 +117,15 @@ const ArticleCard = ({
             style={{
               position: "absolute",
               bottom: 5,
-              right: 39,
-              backgroundColor: "#f1f1f1",
-              height: 29,
-              width: 29,
+              right: 44,
+              backgroundColor: "#0D1117",
+              height: 36,
+              width: 36,
+              borderRadius: 9999,
               alignItems: "center",
               justifyContent: "center",
+              borderWidth: 1,
+              borderColor: darkMode.borderBox,
             }}
             onPress={(e) => {
               e.stopPropagation();
@@ -121,7 +133,7 @@ const ArticleCard = ({
               setDeleteAlertModal(true);
             }}
           >
-            <TrashIcon width={25} height={30} color="#3725dd" />
+            <TrashIcon width={25} height={30} color="#F6001B" />
           </TouchableOpacity>
         )}
       </View>
@@ -129,40 +141,71 @@ const ArticleCard = ({
         <Text
           style={{
             fontSize: 19,
-            paddingLeft: 5,
-            fontFamily: "PlusJakartaSans-Bold",
+            fontFamily: "PlusJakartaSans-SemiBold",
+            color: darkMode.text,
           }}
         >
           {productItem?.productName}
         </Text>
-        <Text
-          style={{
-            color: "#000",
-            fontFamily: "PlusJakartaSans-SemiBold",
-            fontSize: 14,
-          }}
-        >
-          € {productItem?.price}
-        </Text>
-        <Text
-          style={{
-            color: "#000",
-            fontFamily: "PlusJakartaSans-SemiBold",
-            fontSize: 14,
-          }}
-        >
-          {productItem?.stock} disponibles
-        </Text>
-        <Text
-          style={{
-            color: "#000",
-            fontFamily: "PlusJakartaSans-SemiBold",
-            fontSize: 12,
-            fontWeight: "700",
-          }}
-        >
-          {productItem?.productLocation.state}
-        </Text>
+        <View className=" flex-row items-center justify-between">
+          <Text
+            style={{
+              color: "#000",
+              fontFamily: "PlusJakartaSans-SemiBold",
+              fontSize: 14,
+              color: darkMode.text,
+            }}
+          >
+            <Text
+              style={{
+                color: "#008000",
+              }}
+            >
+              Precio €:
+            </Text>{" "}
+            {productItem?.price}
+          </Text>
+          <Text
+            style={{
+              color: "#000",
+              fontFamily: "PlusJakartaSans-Bold",
+              fontSize: 14,
+              color: "#06BCEE",
+            }}
+          >
+            <Text
+              style={{
+                color: darkMode.text,
+                fontFamily: "PlusJakartaSans-SemiBold",
+              }}
+            >
+              {" "}
+              disponibles:
+            </Text>
+            {productItem?.stock}{" "}
+          </Text>
+        </View>
+        <View className=" flex-row items-center justify-between space-x-2 my-1">
+          <View>
+          <TouchableOpacity>
+             <Text  style={{color: '#06BCEE', fontSize:16}}> Detalles</Text>
+          </TouchableOpacity>
+          </View>
+          <View className=" flex-row items-center justify-end space-x-2 my-1">
+            <Entypo name="location" size={18} color="#06BCEE" />
+            <Text
+              style={{
+                color: darkMode.text,
+                fontFamily: "PlusJakartaSans-SemiBold",
+                fontSize: 14,
+                fontWeight: "700",
+                textAlign: "end",
+              }}
+            >
+              {productItem?.productLocation.state}
+            </Text>
+          </View>
+        </View>
       </View>
     </View>
   );

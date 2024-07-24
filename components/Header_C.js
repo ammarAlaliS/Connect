@@ -47,11 +47,14 @@ const HeaderC = ({ activeScreen, handlePress }) => {
   };
 
   return (
-    <View  style={[{ borderBottomWidth: 1, borderBottomColor : darkMode.borderBox},]}>
-      <StatusBar 
-      backgroundColor={darkMode.background} 
-      barStyle="light-content" 
-      translucent />
+    <View
+      style={[{ borderBottomWidth: 1, borderBottomColor: darkMode.borderBox }]}
+    >
+      <StatusBar
+        backgroundColor={darkMode.background}
+        barStyle="light-content"
+        translucent
+      />
       <View
         style={[
           styles.headerContainer,
@@ -59,10 +62,24 @@ const HeaderC = ({ activeScreen, handlePress }) => {
         ]}
       >
         <TouchableOpacity style={{ flex: 1 }}>
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <Text style={[styles.title, { color: darkMode.text }]}>
-              QuickCar
-            </Text>
+          <View className=" flex-row items-center">
+            <View>
+              <Image
+                source={{
+                  uri: "https://storage.googleapis.com/quickcar-storage/quickcar-removebg-preview%20(1).png",
+                }}
+                style={{
+                  width: 50,
+                  height: 50,
+                }}
+                resizeMode="contain"
+              />
+            </View>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <Text style={[styles.title, { color: darkMode.text }]}>
+                QuickCar
+              </Text>
+            </View>
           </View>
         </TouchableOpacity>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 15 }}>
@@ -74,18 +91,17 @@ const HeaderC = ({ activeScreen, handlePress }) => {
             }
           />
           <TouchableOpacity onPress={toggleDarkModeHandler}>
-          <FontAwesome
-            name={darkMode.darkMode ? "sun-o" : "moon-o"}
-            size={32}
-            color={
-              darkMode.darkMode ? darkMode.colors.dark.icon : darkMode.icon
-            }
-          />
-        </TouchableOpacity>
+            <FontAwesome
+              name={darkMode.darkMode ? "sun-o" : "moon-o"}
+              size={32}
+              color={
+                darkMode.darkMode ? darkMode.colors.dark.icon : darkMode.icon
+              }
+            />
+          </TouchableOpacity>
           <TouchableOpacity onPress={handleLogout}>
             <AntDesign name="logout" size={30} color="#FF2121" />
           </TouchableOpacity>
-         
         </View>
       </View>
       <View>
@@ -115,8 +131,9 @@ const styles = StyleSheet.create({
   },
   title: {
     fontFamily: "Eina01-BoldItalic",
-    fontSize: 30,
+    fontSize: 28,
     color: "#fff",
+    marginTop:10
   },
 });
 
