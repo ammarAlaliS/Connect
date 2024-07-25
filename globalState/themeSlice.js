@@ -15,23 +15,31 @@ export const colors = {
     iconBorderBottomActive: "#333",
     borderBox: "rgba(128, 128, 128, 0.4)",
     borderBoxCardList: "1E90FF",
-    backgroundDark: "#DDDDDD",
+    backgroundDark: "#fff",
     backgroundList: "#4ade80",
     backgroundCardList: '#000',
     colorTextCardList: '#67ED94',
     backgroundBlodCard: '#fff',
     showText: '#1E90FF',
     backgroundCommentButton :  '#1E90FF',
-
-    // header icon color 
     headerIconColor: '#1A5319',
     headerBorderIcon: '#67ED94 ',
-
-    // like color 
     textColorLikeButton: '#ff226e',
-    // comment button 
     textCommentButton: '#1E90FF',
-    backgroundComment : '#000'
+    backgroundComment : '#000',
+    // SingIn
+    signInTextColor: '#06BCEE',
+    singInBgColor: '#fff',
+    singInInputBgColor: "rgba(173, 216, 230, 0.09)",
+    singInButtonTextColor: '#fff',
+    singInBorderColor: '#ccc',
+    singInRegisterTextColor: '#008000',
+    singInForgotPtextColor: '#EB4166',
+    singInEmailIconColor : '#008000',
+    singInPasswordIconColor : '#EB4166',
+    
+    // Presentation
+    PreBgColor: '#fff'
   },
   dark: {
     background: "#0D1117",
@@ -52,14 +60,24 @@ export const colors = {
     colorTextCardList: '#06BCEE',
     backgroundCommentButton :  'rgba(128, 128, 128, 0.4)',
     showText: '#FFCD57',
-     // header icon color 
     headerIconColor: '#06BCEE',
     headerBorderIcon: '#06BCEE',
-      // like color 
     textColorLikeButton: '#ff226e',
-    // comment button 
     textCommentButton: '#1E90FF',
-    backgroundComment : '#000'
+    backgroundComment : '#000',
+    // SingIn
+    signInTextColor: '#06BCEE',
+    singInBgColor: '#000',
+    singInInputBgColor: "#000",
+    singInButtonTextColor: '#fff',
+    singInBorderColor: '#ccc',
+    singInRegisterTextColor: '#06BCEE',
+    singInForgotPtextColor: '#EB4166',
+    singInEmailIconColor : '#06BCEE',
+    singInPasswordIconColor : '#EB4166',
+
+    // Presentation
+    PreBgColor: '#000'
   },
 };
 
@@ -78,8 +96,8 @@ const themeSlice = createSlice({
 });
 
 export const { toggleDarkMode } = themeSlice.actions;
-
-export const selectTheme = (state) =>
+export const selectDarkMode = (state) => state.theme.darkMode;
+export const selectTheme  = (state) =>
   state.theme.darkMode ? colors.dark : colors.light;
 
 export default themeSlice.reducer;

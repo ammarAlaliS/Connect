@@ -138,10 +138,10 @@ const BlogCard = ({
         shadowOpacity: 0.1,
         shadowRadius: 5,
         elevation: 3,
-        borderWidth: 1,
+        borderLeftWight: 1,
         borderColor: darkMode.borderBox,
       }}
-      className="px-4 pt-4  z-50"
+      className="px-2 pt-3  z-50"
     >
       {image_url.map((image, index) => (
         <Image

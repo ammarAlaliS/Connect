@@ -102,7 +102,7 @@ const BlogScreen = ({ darkMode }) => {
 
         <View
           style={{ backgroundColor: darkMode.backgroundDark }}
-          className=" px-[4px] pt-[2px]"
+          className=" px-[4px]"
         >
           {status === "loading" && (
             <View className=" flex-1">

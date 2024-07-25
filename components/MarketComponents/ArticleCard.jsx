@@ -7,6 +7,7 @@ import EditIcon from "../../icons/EditIcon";
 import TrashIcon from "../../icons/TrashIcon";
 import { setSelectedProduct } from "../../globalState/marketSlice";
 import { Entypo } from "@expo/vector-icons";
+import ModalInitialChat from "./ModalInitialChat";
 
 const ArticleCard = ({
   setShowModal,
@@ -24,6 +25,7 @@ const ArticleCard = ({
   const [productItem, setProductItem] = useState(item);
   const global_user = useSelector((state) => state.user.global_user);
   const token = global_user?.token;
+  const user = useSelector((state) => state.user);
 
   const decodedToken = jwtDecode(token);
 
@@ -43,32 +45,25 @@ const ArticleCard = ({
       setIsDeletingProduct(false);
     }
   }, [isDeletingProduct]);
-
   return (
     <View
       style={{
         flex: 1,
         shadowRadius: 2,
         backgroundColor: darkMode.background,
-        borderWidth: 1,
+
         borderColor: darkMode.borderBox,
         marginRight: 2,
         marginLeft: 2,
         minWidth: "50%",
       }}
       className=" p-1"
-      onTouchEnd={() => {
-        dispatch(setSelectedProduct(productItem));
-      }}
     >
       <View
         style={{
           position: "relative",
           width: "100%",
-          height: 200,
-        }}
-        onTouchEnd={() => {
-          setShowModal(true);
+          height: "auto",
         }}
       >
         <Image
@@ -79,7 +74,7 @@ const ArticleCard = ({
           }}
           style={{
             width: "100%",
-            height: 200,
+            height: 250,
           }}
           resizeMode="cover"
         />
@@ -187,9 +182,9 @@ const ArticleCard = ({
         </View>
         <View className=" flex-row items-center justify-between space-x-2 my-1">
           <View>
-          <TouchableOpacity>
-             <Text  style={{color: '#06BCEE', fontSize:16}}> Detalles</Text>
-          </TouchableOpacity>
+            <TouchableOpacity>
+              <Text style={{ color: "#06BCEE", fontSize: 16 }}> Detalles</Text>
+            </TouchableOpacity>
           </View>
           <View className=" flex-row items-center justify-end space-x-2 my-1">
             <Entypo name="location" size={18} color="#06BCEE" />
@@ -205,6 +200,72 @@ const ArticleCard = ({
               {productItem?.productLocation.state}
             </Text>
           </View>
+        </View>
+        <View className="">
+          <View>
+            <Text
+              style={{
+                color: darkMode.text,
+              }}
+            >
+              {" "}
+              {productItem?.description}
+            </Text>
+          </View>
+        </View>
+        <View className=" flex-row mt-3 space-x-2">
+          <View className=" items-center">
+            <Image
+              source={{
+                uri: productItem?.user?.global_user.profile_img_url,
+              }}
+              style={{
+                width: 50,
+                height: 50,
+                borderRadius: 9999,
+              }}
+              resizeMode="cover"
+            />
+            <Text
+              style={{
+                color: darkMode.text,
+              }}
+            >
+              Vendedor
+            </Text>
+          </View>
+          <View className=" flex-row items-center  justify-between space-x-1 flex-1">
+            <View className=" flex-row items-center space-x-1">
+              <Text
+                style={{
+                  color: darkMode.text,
+                }}
+              >
+                {productItem?.user?.global_user.first_name}
+              </Text>
+              <Text
+                style={{
+                  color: darkMode.text,
+                }}
+              >
+                {productItem?.user?.global_user.last_name}
+              </Text>
+            </View>
+            <View>
+              <Text
+                style={{
+                  color: darkMode.text,
+                }}
+              >
+                {productItem?.productStatus}
+              </Text>
+            </View>
+          </View>
+        </View>
+
+        <View className=" flex-row  mt-3">
+          
+          <ModalInitialChat darkMode={darkMode}/>
         </View>
       </View>
     </View>

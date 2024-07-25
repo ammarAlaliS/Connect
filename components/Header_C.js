@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import { useNavigation } from "@react-navigation/native";
 import {
   View,
@@ -25,23 +25,59 @@ const HeaderC = ({ activeScreen, handlePress }) => {
   const dispatch = useDispatch();
   const darkMode = useSelector(selectTheme);
   const headerVisible = useSelector((state) => state.header.headerVisible);
+  const [tokenAsyc, setToken] = useState(null);
+
+  useEffect(() => {
+    const fetchToken = async () => {
+      try {
+        const storedToken = await AsyncStorage.getItem("token");
+        console.log("Token recuperado:", storedToken);
+
+        if (typeof storedToken === 'string') {
+          setToken(storedToken);
+        } else {
+          console.error("Token no es una cadena válida");
+        }
+      } catch (error) {
+        console.error("Error al recuperar el token:", error);
+      }
+    };
+
+    fetchToken();
+  }, []);
 
   const handleLogout = async () => {
     try {
-      await AsyncStorage.removeItem("userData");
-      dispatch(clearUser());
-      dispatch(clearBlogs());
+      console.log("Iniciando cierre de sesión");
+      if (typeof tokenAsyc === 'string') {
+        await AsyncStorage.removeItem("token");
+        dispatch(clearUser());
+        dispatch(clearBlogs());
+
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: "SignInForm" }],
+          })
+        );
+        console.log("Cierre de sesión completado y navegación reseteada");
+      } else {
+        console.error("Token inválido al intentar cerrar sesión:", tokenAsyc);
+      }
+    } catch (error) {
+      console.error("Error al cerrar sesión:", error);
+
       navigation.dispatch(
         CommonActions.reset({
           index: 0,
           routes: [{ name: "SignInForm" }],
         })
       );
-    } catch (error) {
-      console.error("Error al cerrar sesión:", error);
     }
   };
-
+  
+  
+  
   const toggleDarkModeHandler = () => {
     dispatch(toggleDarkMode());
   };
@@ -133,7 +169,7 @@ const styles = StyleSheet.create({
     fontFamily: "Eina01-BoldItalic",
     fontSize: 28,
     color: "#fff",
-    marginTop:10
+    marginTop: 10,
   },
 });
 

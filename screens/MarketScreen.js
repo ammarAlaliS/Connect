@@ -59,6 +59,8 @@ const MarketScreen = ({ darkMode }) => {
   const global_user = useSelector((state) => state.user.global_user);
   const token = global_user?.token;
 
+  console.log(token)
+
   const listClasifications = [
     { id: 1, name: "Todos" },
     { id: 2, name: "Coche" },
@@ -166,9 +168,10 @@ const MarketScreen = ({ darkMode }) => {
       >
         <View
           style={{
-            paddingBottom: 4,
+            paddingBottom: 8,
             borderBottomWidth: 1,
             borderColor: darkMode.borderBox,
+            backgroundColor: darkMode.background
           }}
         >
           <View
@@ -179,7 +182,7 @@ const MarketScreen = ({ darkMode }) => {
               zIndex: 100,
               paddingVertical: 10,
               paddingHorizontal: 4,
-              borderBottomWidth: 1,
+              // borderBottomWidth: 1,
             }}
           >
             <ScrollView
@@ -238,7 +241,6 @@ const MarketScreen = ({ darkMode }) => {
           <View className="flex-row">
             <View
               style={{
-                marginTop: 4,
                 marginBottom: 0,
                 marginLeft: 4,
                 marginRight: 0,
@@ -249,7 +251,7 @@ const MarketScreen = ({ darkMode }) => {
                 style={{
                   backgroundColor: darkMode.background,
                   alignItems: "center",
-                  borderRadius: 2,
+                  borderRadius: 9999,
                   paddingLeft: 10,
                   borderWidth: 1,
                   borderStyle: "solid",
@@ -273,11 +275,11 @@ const MarketScreen = ({ darkMode }) => {
                   style={{
                     backgroundColor: darkMode.background,
                     flex: 1,
-                    paddingTop: 10,
-                    paddingRight: 10,
-                    paddingBottom: 10,
+                    paddingTop: 8,
+                    paddingRight: 8,
+                    paddingBottom: 8,
                     paddingLeft: 0,
-                    borderRadius: 2,
+                    borderRadius: 9999,
                     fontFamily: "PlusJakartaSans-SemiBold",
                     color: darkMode.text,
                   }}
@@ -308,7 +310,7 @@ const MarketScreen = ({ darkMode }) => {
 
             <View
               style={{
-                marginTop: 4,
+                marginBottom: 2,
                 marginRight: 4,
                 marginLeft: 4,
                 borderRadius: 2,
@@ -321,9 +323,9 @@ const MarketScreen = ({ darkMode }) => {
                   borderColor: darkMode.borderBox,
                   backgroundColor: darkMode.background,
                   alignItems: "center",
-                  borderRadius: 2,
-                  paddingRight: 10,
-                  paddingLeft: 10,
+                  borderRadius: 9999,
+                  paddingRight: 14,
+                  paddingLeft: 14,
                 }}
                 className="d-flex flex-row"
               >
@@ -346,8 +348,8 @@ const MarketScreen = ({ darkMode }) => {
                 <TextInput
                   style={{
                     width: 0,
-                    paddingTop: 10,
-                    paddingBottom: 10,
+                    paddingTop: 8,
+                    paddingBottom: 8,
                     borderRadius: 2,
                   }}
                   onChangeText={(text) => setSearch(text)}
@@ -370,8 +372,6 @@ const MarketScreen = ({ darkMode }) => {
             style={[
               styles.articlesContainer,
               {
-                marginTop: 2,
-
                 backgroundColor: darkMode.backgroundDark,
               },
             ]}
