@@ -2,7 +2,7 @@ import { StyleSheet, View } from "react-native";
 import MapView, { Marker, Polyline } from "react-native-maps";
 import stylesMap from "./MapViewStyles";
 import { useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import SearchInput from "./SearchInput";
 import { selectTheme } from "../../globalState/themeSlice";
 import { Image } from "react-native";
@@ -10,18 +10,23 @@ import carImage from "../../assets/car.png";
 import QuickCarDetailsButtom from "./QuickCarDetailsButtom";
 import QuickCarsSearchesDetails from "./QuickCarsSearchesDetails";
 import SearchNearQuickCarButton from "./SearchNearQuickCarButton";
+import { setMapRegion } from "../../globalState/travelSlice";
+import { useMapRef } from "../../hooks/useMapRef";
 
 const TravelHome = () => {
-  const [region, setRegion] = useState({
-    latitude: 40.355594,
-    longitude: -3.702583,
-    latitudeDelta: 0.1522,
-    longitudeDelta: 0.221,
-    // latitude: 37.78825,
-    // longitude: -122.4324,
-    // latitudeDelta: 0.0922,
-    // longitudeDelta: 0.0421,
-  });
+  // const [region, setMapRegion] = useState({
+  //   latitude: 40.355594,
+  //   longitude: -3.702583,
+  //   latitudeDelta: 0.1522,
+  //   longitudeDelta: 0.221,
+  //   // latitude: 37.78825,
+  //   // longitude: -122.4324,
+  //   // latitudeDelta: 0.0922,
+  //   // longitudeDelta: 0.0421,
+  // });
+
+  // const { mapRef, setMapRef, animateToRegion } = useMapRef();
+  const mapRef = useRef(null);
 
   const [marker, setMarker] = useState(null);
   const [isFocused, setIsFocused] = useState(false);
@@ -29,6 +34,9 @@ const TravelHome = () => {
   const darkMode = useSelector(selectTheme);
   const placesSelected = useSelector((state) => state.travel.placesSelected);
   const quickCarsData = useSelector((state) => state.travel.quickCarsData);
+  const region = useSelector((state) => state.travel.region);
+  const tripOrigin = useSelector((state) => state.travel.tripOrigin);
+  const tripDestination = useSelector((state) => state.travel.tripDestination);
 
   useEffect(() => {
     console.log("El componente esta enfocado");
@@ -43,9 +51,53 @@ const TravelHome = () => {
     { latitude: 40.474495, longitude: -3.639607 },
   ];
 
+  const dispatch = useDispatch();
+
+  // useEffect(() => {
+  //   console.log("La region esta cambiando");
+  //   console.log(region);
+  // }, [region]);
+
+  const animateToRegion = (region) => {
+    if (mapRef.current) {
+      mapRef.current.animateCamera(
+        {
+          center: {
+            latitude: region.latitude,
+            longitude: region.longitude,
+          },
+          pitch: 2,
+          heading: 20,
+          altitude: 200,
+          zoom: 12,
+        },
+        { duration: 1000 }
+      );
+    }
+  };
+
+  useEffect(() => {
+    console.log("La region esta cambiando");
+    if (region) {
+      animateToRegion(region);
+    }
+  }, [region]);
+
+  useEffect(() => {
+    if (tripOrigin.latitude != 0 && tripOrigin.longitude != 0) {
+      animateToRegion(tripOrigin);
+    }
+  }, [tripOrigin]);
+
+  useEffect(() => {
+    if (tripDestination.latitude != 0 && tripDestination.longitude != 0) {
+      animateToRegion(tripDestination);
+    }
+  }, [tripDestination]);
+
   return (
     <View>
-      <SearchInput setRegion={setRegion} setMarker={setMarker}></SearchInput>
+      <SearchInput setMarker={setMarker}></SearchInput>
       {showQuickCarDetails && (
         <QuickCarsSearchesDetails
           setShowQuickCarDetails={setShowQuickCarDetails}
@@ -67,17 +119,23 @@ const TravelHome = () => {
           width: "100%",
           height: "100%",
         }}
-        region={region}
-        // initialRegion={{
-        //   latitude: 40.355594,
-        //   longitude: -3.702583,
-        //   latitudeDelta: 0.1522,
-        //   longitudeDelta: 0.221,
+        // region={region}
+        // onRegionChangeComplete={(newRegion) => {
+        //   console.log("Se esta intentando hacer el cambio");
+        //   dispatch(setMapRegion(newRegion));
         // }}
+        initialRegion={{
+          latitude: 40.355594,
+          longitude: -3.702583,
+          latitudeDelta: 0.1522,
+          longitudeDelta: 0.221,
+        }}
         // showsUserLocation={true}
+        ref={mapRef}
       >
         {marker && <Marker coordinate={marker} />}
-        {placesSelected &&
+        {quickCarsData &&
+          quickCarsData.length > 0 &&
           quickCarsData.map((item, index) => {
             return (
               <Marker coordinate={item.CurrentQuickCarLocation} key={index}>
@@ -96,8 +154,22 @@ const TravelHome = () => {
             strokeWidth={6} // Ancho de la línea
           />
         )} */}
-        {/* <Marker coordinate={polylineCoordinates[0]}></Marker>
-        <Marker coordinate={polylineCoordinates[3]}></Marker> */}
+        {!(tripOrigin.latitude == 0 && tripOrigin.longitude == 0) && (
+          <Marker
+            coordinate={{
+              latitude: tripOrigin.latitude,
+              longitude: tripOrigin.longitude,
+            }}
+          ></Marker>
+        )}
+        {!(tripDestination.latitude == 0 && tripDestination.longitude == 0) && (
+          <Marker
+            coordinate={{
+              latitude: tripDestination.latitude,
+              longitude: tripDestination.longitude,
+            }}
+          ></Marker>
+        )}
       </MapView>
     </View>
   );

@@ -29,7 +29,7 @@ import {
 } from "../../globalState/travelSlice";
 import ClockIcon from "../../icons/ClockIcon";
 
-const SearchInput = ({ setRegion, setMarker }) => {
+const SearchInput = ({ setMarker }) => {
   const dispatch = useDispatch();
 
   const GOOGLE_PLACES_API_KEY = "";
@@ -63,7 +63,7 @@ const SearchInput = ({ setRegion, setMarker }) => {
     dispatch(setTripDestination({ latitude: lat, longitude: lng }));
     dispatch(setTripDestinationName(data.description));
 
-    // setRegion({
+    // setMapRegion({
     //   latitude: lat,
     //   longitude: lng,
     //   latitudeDelta: 0.0922,
@@ -84,7 +84,7 @@ const SearchInput = ({ setRegion, setMarker }) => {
 
     // console.log(data);
     // console.log(details);
-    // setRegion({
+    // setMapRegion({
     //   latitude: lat,
     //   longitude: lng,
     //   latitudeDelta: 0.0922,
@@ -212,7 +212,7 @@ const SearchInput = ({ setRegion, setMarker }) => {
   };
 
   useEffect(() => {
-    if (!placesSelected) {
+    if (!placesSelected && !inputIsActive) {
       if (refInputAutoComplete.current) {
         refInputAutoComplete.current.clear();
         refInputAutoComplete.current.blur();

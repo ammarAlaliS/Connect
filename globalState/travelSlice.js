@@ -4,17 +4,23 @@ const initialState = {
   showInitialCard: true,
   isOriginAutoCompleteFocused: false,
   placesSelected: false,
-  quickCarsData: [],
+  quickCarsData: null,
   tripOrigin: { latitude: 0, longitude: 0 },
   tripOriginName: "",
   tripDestination: { latitude: 0, longitude: 0 },
   tripDestinationName: "",
-  quickCarsDistances: [],
+  quickCarsDistances: null,
   locationForegroundPermissions: "denied",
   userLocation: { latitude: 0, longitude: 0 },
   startTime: { hour: 0, minutes: 0 },
   seatRequested: 0,
   inputIsActive: false,
+  region: {
+    latitude: 40.355594,
+    longitude: -3.702583,
+    latitudeDelta: 0.1522,
+    longitudeDelta: 0.221,
+  },
 };
 
 export const travelSlice = createSlice({
@@ -63,6 +69,9 @@ export const travelSlice = createSlice({
     setIsInputActive: (state, action) => {
       state.inputIsActive = action.payload;
     },
+    setMapRegion: (state, action) => {
+      state.region = action.payload;
+    },
   },
 });
 
@@ -81,5 +90,6 @@ export const {
   setStartTime,
   setSeatRequested,
   setIsInputActive,
+  setMapRegion,
 } = travelSlice.actions;
 export default travelSlice.reducer;
