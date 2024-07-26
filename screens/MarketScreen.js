@@ -59,7 +59,7 @@ const MarketScreen = ({ darkMode }) => {
   const global_user = useSelector((state) => state.user.global_user);
   const token = global_user?.token;
 
-  console.log(token)
+  console.log(token);
 
   const listClasifications = [
     { id: 1, name: "Todos" },
@@ -157,87 +157,86 @@ const MarketScreen = ({ darkMode }) => {
         setShowAlert={setDeleteAlertModal}
         setDeleteProduct={setProductDeleting}
       ></DeleteAlertMessage>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        scrollEventThrottle={16}
-        
-        onScroll={(e) => {
-          ifScrollIsInTheEnd(e.nativeEvent);
+      <View
+        style={{
+          paddingBottom: 8,
+          borderBottomWidth: 1,
+          borderColor: darkMode.borderBox,
+          backgroundColor: darkMode.background,
         }}
-        ref={scrollViewRef}
       >
         <View
           style={{
-            paddingBottom: 8,
-            borderBottomWidth: 1,
+            backgroundColor: darkMode.background,
             borderColor: darkMode.borderBox,
-            backgroundColor: darkMode.background
+            color: darkMode.text,
+            zIndex: 100,
+            paddingVertical: 10,
+            paddingHorizontal: 4,
+            // borderBottomWidth: 1,
           }}
         >
-          <View
+          <ScrollView
+            horizontal={true}
+            showsHorizontalScrollIndicator={false}
+            className="flex-row"
             style={{
-              backgroundColor: darkMode.background,
-              borderColor: darkMode.borderBox,
-              color: darkMode.text,
-              zIndex: 100,
-              paddingVertical: 10,
-              paddingHorizontal: 4,
-              // borderBottomWidth: 1,
+              width: "100%",
             }}
           >
-            <ScrollView
-              horizontal={true}
-              showsHorizontalScrollIndicator={false}
-              stickyHeaderIndices={[1]}
-              className="flex-row"
-              style={{
-                width: "100%",
-              }}
-            >
-              {listClasifications.map((item, index) => {
-                return (
-                  <TouchableOpacity
-                    onPress={() => {
-                      dispatch(setResetProductList(true));
-                      dispatch(setSelectedclassification(item.name));
-                      dispatch(fetchProducts());
-                    }}
-                    key={index}
+            {listClasifications.map((item, index) => {
+              return (
+                <TouchableOpacity
+                  onPress={() => {
+                    dispatch(setResetProductList(true));
+                    dispatch(setSelectedclassification(item.name));
+                    dispatch(fetchProducts());
+                  }}
+                  key={index}
+                >
+                  <Text
+                    style={
+                      item.name == selectedclassification
+                        ? {
+                            paddingHorizontal: 8,
+                            paddingVertical: 5,
+                            marginRight: 10,
+                            borderRadius: 2,
+                            borderWidth: 1,
+                            backgroundColor: darkMode.backgroundCardList,
+                            borderColor: darkMode.borderBoxCardList,
+                            color: darkMode.colorTextCardList,
+                          }
+                        : {
+                            backgroundColor: darkMode.backgroundDark,
+                            borderColor: darkMode.borderBox,
+                            color: darkMode.text,
+                            paddingHorizontal: 8,
+                            paddingVertical: 5,
+                            marginRight: 10,
+                            borderRadius: 2,
+                            borderWidth: 1,
+                            color: darkMode.text,
+                          }
+                    }
                   >
-                    <Text
-                      style={
-                        item.name == selectedclassification
-                          ? {
-                              paddingHorizontal: 8,
-                              paddingVertical: 5,
-                              marginRight: 10,
-                              borderRadius: 2,
-                              borderWidth: 1,
-                              backgroundColor: darkMode.backgroundCardList,
-                              borderColor: darkMode.borderBoxCardList,
-                              color: darkMode.colorTextCardList,
-                            }
-                          : {
-                              backgroundColor: darkMode.backgroundDark,
-                              borderColor: darkMode.borderBox,
-                              color: darkMode.text,
-                              paddingHorizontal: 8,
-                              paddingVertical: 5,
-                              marginRight: 10,
-                              borderRadius: 2,
-                              borderWidth: 1,
-                              color: darkMode.text,
-                            }
-                      }
-                    >
-                      {item.name}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })}
-            </ScrollView>
-          </View>
+                    {item.name}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
+        </View>
 
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          scrollEventThrottle={16}
+          stickyHeaderIndices={[1]}
+          onScroll={(e) => {
+            ifScrollIsInTheEnd(e.nativeEvent);
+          }}
+          ref={scrollViewRef}
+        >
           <View className="flex-row">
             <View
               style={{
@@ -356,9 +355,60 @@ const MarketScreen = ({ darkMode }) => {
                 />
               </View>
             </View>
-          </View>
-        </View>
+            <View
+              style={{
+                marginBottom: 2,
+                marginRight: 4,
+                marginLeft: 4,
+                borderRadius: 2,
+              }}
+            >
+              <TouchableOpacity
+                onPress={() => {
+                  setIsNewProduct(true);
+                  setShowNewProductModal(true);
+                }}
+              >
+                <View
+                  style={{
+                    borderWidth: 1,
+                    borderStyle: "solid",
+                    borderColor: darkMode.borderBox,
+                    backgroundColor: darkMode.background,
+                    alignItems: "center",
+                    borderRadius: 9999,
+                    paddingRight: 14,
+                    paddingLeft: 14,
+                  }}
+                  className="d-flex flex-row"
+                >
+                  <Icon
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      borderRadius: 2,
+                    }}
+                    name="plus"
+                    size={20}
+                    color={darkMode.text}
+                  />
 
+                  <TextInput
+                    style={{
+                      width: 0,
+                      paddingTop: 8,
+                      paddingBottom: 8,
+                      borderRadius: 2,
+                    }}
+                    onChangeText={(text) => setSearch(text)}
+                  />
+                </View>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </ScrollView>
+      </View>
+      <ScrollView showsVerticalScrollIndicator={false}>
         {/* Cards de articulos */}
 
         <ScrollView
@@ -384,7 +434,6 @@ const MarketScreen = ({ darkMode }) => {
                   marginTop: 4,
                   marginBottom: 4,
                   backgroundColor: darkMode.backgroundDark,
-                  
                 },
               ]}
             >
@@ -427,10 +476,10 @@ const MarketScreen = ({ darkMode }) => {
       >
         <ArticleModal setShowModal={setShowModal}></ArticleModal>
       </Modal>
-      <BottomSellModal
+      {/*<BottomSellModal
         setShowNewProductModal={setShowNewProductModal}
         setIsNewProduct={setIsNewProduct}
-      ></BottomSellModal>
+     / > */}
       <Modal
         visible={showNewProductModal}
         animationType="slide"

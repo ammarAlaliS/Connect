@@ -26,6 +26,7 @@ const ArticleCard = ({
   const global_user = useSelector((state) => state.user.global_user);
   const token = global_user?.token;
   const user = useSelector((state) => state.user);
+  const [showProductDetails, setShowProductDetails] = useState(false);
 
   const decodedToken = jwtDecode(token);
 
@@ -45,6 +46,10 @@ const ArticleCard = ({
       setIsDeletingProduct(false);
     }
   }, [isDeletingProduct]);
+
+  const HandleShowProductDetails = () => {
+    setShowProductDetails(!showProductDetails);
+  };
   return (
     <View
       style={{
@@ -182,7 +187,7 @@ const ArticleCard = ({
         </View>
         <View className=" flex-row items-center justify-between space-x-2 my-1">
           <View>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={HandleShowProductDetails}>
               <Text style={{ color: "#06BCEE", fontSize: 16 }}> Detalles</Text>
             </TouchableOpacity>
           </View>
@@ -201,71 +206,73 @@ const ArticleCard = ({
             </Text>
           </View>
         </View>
-        <View className="">
+        {showProductDetails ? (
           <View>
-            <Text
-              style={{
-                color: darkMode.text,
-              }}
-            >
-              {" "}
-              {productItem?.description}
-            </Text>
-          </View>
-        </View>
-        <View className=" flex-row mt-3 space-x-2">
-          <View className=" items-center">
-            <Image
-              source={{
-                uri: productItem?.user?.global_user.profile_img_url,
-              }}
-              style={{
-                width: 50,
-                height: 50,
-                borderRadius: 9999,
-              }}
-              resizeMode="cover"
-            />
-            <Text
-              style={{
-                color: darkMode.text,
-              }}
-            >
-              Vendedor
-            </Text>
-          </View>
-          <View className=" flex-row items-center  justify-between space-x-1 flex-1">
-            <View className=" flex-row items-center space-x-1">
-              <Text
-                style={{
-                  color: darkMode.text,
-                }}
-              >
-                {productItem?.user?.global_user.first_name}
-              </Text>
-              <Text
-                style={{
-                  color: darkMode.text,
-                }}
-              >
-                {productItem?.user?.global_user.last_name}
-              </Text>
+            <View className="">
+              <View>
+                <Text
+                  style={{
+                    color: darkMode.text,
+                  }}
+                >
+                  {" "}
+                  {productItem?.description}
+                </Text>
+              </View>
             </View>
-            <View>
-              <Text
-                style={{
-                  color: darkMode.text,
-                }}
-              >
-                {productItem?.productStatus}
-              </Text>
+            <View className=" flex-row mt-3 space-x-2">
+              <View className=" items-center">
+                <Image
+                  source={{
+                    uri: productItem?.user?.global_user.profile_img_url,
+                  }}
+                  style={{
+                    width: 50,
+                    height: 50,
+                    borderRadius: 9999,
+                  }}
+                  resizeMode="cover"
+                />
+                <Text
+                  style={{
+                    color: darkMode.text,
+                  }}
+                >
+                  Vendedor
+                </Text>
+              </View>
+              <View className=" flex-row items-center  justify-between space-x-1 flex-1">
+                <View className=" flex-row items-center space-x-1">
+                  <Text
+                    style={{
+                      color: darkMode.text,
+                    }}
+                  >
+                    {productItem?.user?.global_user.first_name}
+                  </Text>
+                  <Text
+                    style={{
+                      color: darkMode.text,
+                    }}
+                  >
+                    {productItem?.user?.global_user.last_name}
+                  </Text>
+                </View>
+                <View>
+                  <Text
+                    style={{
+                      color: darkMode.text,
+                    }}
+                  >
+                    {productItem?.productStatus}
+                  </Text>
+                </View>
+              </View>
             </View>
           </View>
-        </View>
-
+        ) : null}
         <View className=" flex-row  mt-3">
-          
-          <ModalInitialChat darkMode={darkMode}/>
+          <ModalInitialChat darkMode={darkMode} />
         </View>
       </View>
     </View>
