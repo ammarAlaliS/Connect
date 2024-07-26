@@ -3,13 +3,98 @@ import { Text, View } from "react-native";
 import ArrowLeftIcon from "../../icons/ArrowLeftIcon";
 import { Image } from "react-native";
 import { TouchableOpacity } from "react-native";
-import ChevronUpDown from "../../icons/ChevronUpDownIcon";
-import CalendarIcon from "../../icons/CalendarIcon";
-import ClockIcon from "../../icons/ClockIcon";
 import QuickCarHeaderTravelDetails from "./QuickCarHeaderTravelDetails";
 import { ScrollView } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import useLocation from "../../hooks/useLocation";
+import { setQuickCarsDistances } from "../../globalState/travelSlice";
 
 const QuickCarsSearchesDetails = ({ setShowQuickCarDetails }) => {
+  const quickCarsData = useSelector((state) => state.travel.quickCarsData);
+
+  const tripOriginLocation = useSelector((state) => state.travel.tripOrigin);
+  const tripDestinationLocation = useSelector(
+    (state) => state.travel.tripDestination
+  );
+  const userLocation = useSelector((state) => state.travel.userLocation);
+  const quickCarsDistances = useSelector(
+    (state) => state.travel.quickCarsDistances
+  );
+  const seatRequested = useSelector((state) => state.travel.seatRequested);
+
+  const dispatch = useDispatch();
+
+  const { RequestLocationPermissions } = useLocation();
+
+  useEffect(() => {
+    RequestLocationPermissions();
+  }, []);
+
+  function deg2rad(deg) {
+    return deg * (Math.PI / 180);
+  }
+
+  function calculateDistance(lat1, lon1, loc2) {
+    const lat2 = loc2.latitude;
+    const lon2 = loc2.longitude;
+
+    const R = 6371;
+    const dLat = deg2rad(lat2 - lat1);
+    const dLon = deg2rad(lon2 - lon1);
+
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(deg2rad(lat1)) *
+        Math.cos(deg2rad(lat2)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = R * c;
+
+    return Math.round(distance * 100) / 100;
+  }
+
+  useEffect(() => {
+    let quickCarsDistances = [];
+
+    if (quickCarsData && quickCarsData.length > 0) {
+      for (let i = 0; i < quickCarsData.length; i++) {
+        let quickCarDistance = {
+          quickCarId: "",
+          toOriginDistance: 0,
+          toUserDistance: 0,
+        };
+
+        quickCarDistance.quickCarId = quickCarsData[i].id;
+
+        quickCarDistance.toOriginDistance = calculateDistance(
+          tripOriginLocation.latitude,
+          tripOriginLocation.longitude,
+          quickCarsData[i].CurrentQuickCarLocation
+        );
+
+        if (!(userLocation.latitude == 0 && userLocation.longitude == 0)) {
+          quickCarDistance.toUserDistance = calculateDistance(
+            userLocation.latitude,
+            userLocation.longitude,
+            quickCarsData[i].CurrentQuickCarLocation
+          );
+        } else {
+          quickCarDistance.toUserDistance = -1;
+        }
+
+        quickCarsDistances.push(quickCarDistance);
+      }
+      dispatch(setQuickCarsDistances(quickCarsDistances));
+    }
+  }, [quickCarsData, tripOriginLocation, userLocation]);
+
+  useEffect(() => {
+    console.log(quickCarsData[0]);
+  }, [quickCarsData]);
+
   return (
     <View
       style={{
@@ -61,12 +146,14 @@ const QuickCarsSearchesDetails = ({ setShowQuickCarDetails }) => {
         </Text>
       </View>
 
-      <QuickCarHeaderTravelDetails></QuickCarHeaderTravelDetails>
+      {seatRequested > 0 && (
+        <QuickCarHeaderTravelDetails></QuickCarHeaderTravelDetails>
+      )}
       <ScrollView>
-        {[1, 2, 3, 4, 5].map((item) => {
+        {quickCarsData.map((item, index) => {
           return (
             <View
-              key={item}
+              key={index}
               style={{
                 display: "flex",
                 flexDirection: "column",
@@ -75,6 +162,14 @@ const QuickCarsSearchesDetails = ({ setShowQuickCarDetails }) => {
                 borderBottomWidth: 1,
                 borderStyle: "solid",
                 borderColor: "#00000090",
+
+                borderBottomWidth: 1,
+                borderColor: "#00000010",
+                borderStyle: "solid",
+                shadowColor: "#000",
+                shadowOpacity: 0.1,
+                shadowRadius: 1,
+                elevation: 1,
               }}
             >
               <View
@@ -95,7 +190,9 @@ const QuickCarsSearchesDetails = ({ setShowQuickCarDetails }) => {
                 >
                   <Image
                     source={{
-                      uri: "https://www.shutterstock.com/image-photo/closeup-portrait-happy-indian-young-600nw-2278702239.jpg",
+                      uri: item.user?.driverImage
+                        ? item.user?.driverImage
+                        : "https://www.shutterstock.com/image-photo/closeup-portrait-happy-indian-young-600nw-2278702239.jpg",
                     }}
                     style={{
                       height: 65,
@@ -113,7 +210,7 @@ const QuickCarsSearchesDetails = ({ setShowQuickCarDetails }) => {
                         fontFamily: "PlusJakartaSans-Regular",
                       }}
                     >
-                      Roberto Carlos
+                      {item.user?.name + " " + item.user?.lastName}
                     </Text>
                     <View
                       style={{
@@ -147,16 +244,17 @@ const QuickCarsSearchesDetails = ({ setShowQuickCarDetails }) => {
                 </View>
                 <View
                   style={{
-                    // backgroundColor: "red",
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "flex-end",
                     marginRight: 15,
                   }}
                 >
-                  <Text style={{ fontSize: 17, fontWeight: "900" }}>$ 15</Text>
+                  <Text style={{ fontSize: 17, fontWeight: "900" }}>
+                    $ {item.pricePerSeat}
+                  </Text>
                   <Text style={{ fontSize: 13, color: "#00000090" }}>
-                    3 asientos libres
+                    {item.availableSeats} asientos libres
                   </Text>
                 </View>
               </View>
@@ -166,14 +264,15 @@ const QuickCarsSearchesDetails = ({ setShowQuickCarDetails }) => {
                   width: "100%",
                   display: "flex",
                   flexDirection: "row",
-                  justifyContent: "space-around",
-                  marginVertical: 5,
+                  justifyContent: "space-evenly",
+                  marginVertical: 2,
                 }}
               >
                 <Text
                   style={{
                     fontFamily: "PlusJakartaSans-SemiBold",
                     color: "#52535a",
+                    fontSize: 15.5,
                   }}
                 >
                   A{" "}
@@ -183,14 +282,27 @@ const QuickCarsSearchesDetails = ({ setShowQuickCarDetails }) => {
                       color: "#2b00b6",
                     }}
                   >
-                    2km
+                    {quickCarsDistances && quickCarsDistances.length > 0
+                      ? quickCarsDistances.filter(
+                          (el) => el.quickCarId == item.id
+                        )[0]?.toUserDistance + " km"
+                      : "? km"}
                   </Text>{" "}
-                  de tu ubicacion
+                  de ti
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 20,
+                    textAlign: "center",
+                  }}
+                >
+                  |
                 </Text>
                 <Text
                   style={{
                     fontFamily: "PlusJakartaSans-SemiBold",
                     color: "#52535a",
+                    fontSize: 15.5,
                   }}
                 >
                   A{" "}
@@ -200,9 +312,13 @@ const QuickCarsSearchesDetails = ({ setShowQuickCarDetails }) => {
                       color: "#2b00b6",
                     }}
                   >
-                    1km
+                    {quickCarsDistances && quickCarsDistances.length > 0
+                      ? quickCarsDistances.filter(
+                          (el) => el.quickCarId == item.id
+                        )[0]?.toOriginDistance + " km"
+                      : "? km"}
                   </Text>{" "}
-                  del punto de partida
+                  de tu salida
                 </Text>
               </View>
 
@@ -257,7 +373,7 @@ const QuickCarsSearchesDetails = ({ setShowQuickCarDetails }) => {
                       color: "#00000090",
                     }}
                   >
-                    Barcelona Barcelona
+                    {item.starLocation.startLocationName}
                   </Text>
                   <Text
                     style={{
@@ -267,7 +383,7 @@ const QuickCarsSearchesDetails = ({ setShowQuickCarDetails }) => {
                       color: "#00000090",
                     }}
                   >
-                    Madrid Madrid
+                    {item.endLocation.endLocationName}
                   </Text>
                 </View>
               </View>
@@ -292,7 +408,8 @@ const QuickCarsSearchesDetails = ({ setShowQuickCarDetails }) => {
                       fontWeight: "700",
                     }}
                   >
-                    10:00 am
+                    {item.startTime.hour + " " + item.startTime.minute}{" "}
+                    {item.startTime.hour > 11 ? " pm" : " am"}
                   </Text>
                 </View>
                 <View
@@ -312,7 +429,7 @@ const QuickCarsSearchesDetails = ({ setShowQuickCarDetails }) => {
                       fontWeight: "700",
                     }}
                   >
-                    Honda Civic / Black
+                    {item.vehicleModel} / Black
                   </Text>
                   <View>
                     <TouchableOpacity
@@ -333,7 +450,7 @@ const QuickCarsSearchesDetails = ({ setShowQuickCarDetails }) => {
                           marginHorizontal: 10,
                         }}
                       >
-                        {item % 2 == 0
+                        {seatRequested == 0
                           ? "Proponer Viaje"
                           : "Suscribirse al viaje"}
                       </Text>

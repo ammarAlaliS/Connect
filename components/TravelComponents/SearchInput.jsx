@@ -1,5 +1,7 @@
 import {
+  Alert,
   Keyboard,
+  Platform,
   StyleSheet,
   Text,
   TextInput,
@@ -12,26 +14,37 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useRef, useState } from "react";
 import Icon from "react-native-vector-icons/FontAwesome";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import CalendarIcon from "../../icons/CalendarIcon";
 import SquarePlusIcon from "../../icons/SquarePlusIcon";
 import { Entypo } from "@expo/vector-icons";
-import { setPlacesSelected } from "../../globalState/travelSlice";
+import {
+  setPlacesSelected,
+  setQuickarData,
+  setSeatRequested,
+  setStartTime,
+  setTripDestination,
+  setTripDestinationName,
+  setTripOrigin,
+  setTripOriginName,
+  setIsInputActive,
+} from "../../globalState/travelSlice";
+import ClockIcon from "../../icons/ClockIcon";
 
-const SearchInput = ({ setRegion, setMarker }) => {
+const SearchInput = ({ setMarker }) => {
   const dispatch = useDispatch();
 
   const GOOGLE_PLACES_API_KEY = "";
 
-  const [inputIsActive, setInputIsActive] = useState(false);
   const [originCleaning, setOriginCleaning] = useState(false);
   const [destininationCleaning, setDestininationCleaning] = useState(false);
-  const [originName, setOriginName] = useState("");
-  const [destinationName, setDestinationName] = useState("");
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [dateSelected, setDateSelected] = useState(null);
-  const [dateSelectedString, setDateSelectedString] = useState("");
+  const [dateTimeSelected, setDateTimeSelected] = useState(null);
+  const [dateTimeSelectedString, setDateTimeSelectedString] = useState("");
   const placesSelected = useSelector((state) => state.travel.placesSelected);
-  // const [placesSelected, setPlacesSelected] = useState(false);
+  const seatRequested = useSelector((state) => state.travel.seatRequested);
+  const tripOriginName = useSelector((state) => state.travel.tripOriginName);
+  const tripDestinationName = useSelector(
+    (state) => state.travel.tripDestinationName
+  );
 
   const refInputAutoComplete = useRef();
   const refInputAutoCompleteDestination = useRef();
@@ -40,14 +53,17 @@ const SearchInput = ({ setRegion, setMarker }) => {
   const isOriginAutoCompleteFocused = useSelector(
     (state) => state.travel.isOriginAutoCompleteFocused
   );
+  const startTime = useSelector((state) => state.travel.startTime);
+  const inputIsActive = useSelector((state) => state.travel.inputIsActive);
 
   const handleLocationSelectDestination = (data, details) => {
-    setInputIsActive(true);
+    dispatch(setIsInputActive(true));
     const { lat, lng } = details.geometry.location;
 
-    setDestinationName(data.description);
+    dispatch(setTripDestination({ latitude: lat, longitude: lng }));
+    dispatch(setTripDestinationName(data.description));
 
-    // setRegion({
+    // setMapRegion({
     //   latitude: lat,
     //   longitude: lng,
     //   latitudeDelta: 0.0922,
@@ -60,14 +76,15 @@ const SearchInput = ({ setRegion, setMarker }) => {
   };
 
   const handleLocationSelect = (data, details) => {
-    setInputIsActive(true);
+    dispatch(setIsInputActive(true));
     const { lat, lng } = details.geometry.location;
 
-    setDestinationName(data.description);
+    dispatch(setTripOrigin({ latitude: lat, longitude: lng }));
+    dispatch(setTripOriginName(data.description));
 
     // console.log(data);
     // console.log(details);
-    // setRegion({
+    // setMapRegion({
     //   latitude: lat,
     //   longitude: lng,
     //   latitudeDelta: 0.0922,
@@ -101,7 +118,7 @@ const SearchInput = ({ setRegion, setMarker }) => {
   }, []);
 
   const onAutocompleInputFocus = () => {
-    setInputIsActive(true);
+    dispatch(setIsInputActive(true));
     setOriginCleaning(false);
   };
 
@@ -110,33 +127,97 @@ const SearchInput = ({ setRegion, setMarker }) => {
   };
 
   const onAutoCompleteOriginChange = (text) => {
-    console.log("Se ejecuta mas de una ves " + originName);
     if (!originCleaning) {
-      setOriginName(text);
+      dispatch(setTripOriginName(text));
     }
   };
 
   const onAutoCompleteDestinationChange = (text) => {
     if (!destininationCleaning) {
-      setDestinationName(text);
+      dispatch(setTripDestinationName(text));
     }
   };
 
-  const onChange = (selectedDate, date) => {
+  const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
+    setShowDatePicker(Platform.OS === "ios");
+    setDateTimeSelected(currentDate);
 
-    setDateSelected(currentDate);
+    const hours = currentDate.getHours();
+    const minutes = currentDate.getMinutes();
+    const formattedTime = `${hours}:${minutes < 10 ? "0" : ""}${minutes}`;
+    setDateTimeSelectedString(formattedTime);
 
-    const formattedDate = `${currentDate.getDate()}/${
-      currentDate.getMonth() + 1
-    }/${currentDate.getFullYear()}`;
-    setDateSelectedString(formattedDate);
+    dispatch(setStartTime({ hour: hours, minutes: minutes }));
+  };
 
-    setShowDatePicker(false);
+  const tripOriginLocation = useSelector((state) => state.travel.tripOrigin);
+  const tripDestinationLocation = useSelector(
+    (state) => state.travel.tripDestination
+  );
+
+  const onSeatNumbersChanges = (text) => {
+    let numericValue = text.replace(/[^0-9]/g, "");
+    console.log(numericValue);
+    dispatch(setSeatRequested(numericValue));
+  };
+
+  const searchQuickCars = async () => {
+    if (tripOriginLocation.latitude == 0 && tripOriginLocation.longitude == 0) {
+      Alert.alert("Seleccione el origen");
+      return;
+    }
+
+    if (
+      tripDestinationLocation.latitude == 0 &&
+      tripDestinationLocation.longitude == 0
+    ) {
+      Alert.alert("Seleccione el destino");
+      return;
+    }
+
+    if (seatRequested > 4) {
+      Alert.alert("No puedes pedir mas de 4 asientos");
+      return;
+    }
+
+    if (seatRequested == 0) {
+      Alert.alert("Debes solicitar mas de 1 asiento");
+      return;
+    }
+
+    dispatch(setIsInputActive(false));
+    dispatch(setPlacesSelected(true));
+
+    try {
+      const data = await fetch(
+        "https://obbaramarket-backend.onrender.com/api/ObbaraMarket/drivers-nearby-trip-filters?starLocationLatitude=" +
+          tripOriginLocation.latitude +
+          "&starLocationLongitude=" +
+          tripOriginLocation.longitude +
+          "&endLocationLatitude=" +
+          tripDestinationLocation.latitude +
+          "&endLocationLongitude=" +
+          tripDestinationLocation.longitude +
+          "&starTimeHour=" +
+          startTime.hour +
+          "&starTimeMinutes=" +
+          startTime.minutes +
+          "&numberOfSeatRequested=" +
+          seatRequested
+      ).then((res) => res.json());
+
+      if (data && data.conductores && data.conductores[0]) {
+        dispatch(setQuickarData(data.conductores));
+      }
+    } catch (error) {
+      console.log("Ocurrio un error");
+      console.log(error);
+    }
   };
 
   useEffect(() => {
-    if (!placesSelected) {
+    if (!placesSelected && !inputIsActive) {
       if (refInputAutoComplete.current) {
         refInputAutoComplete.current.clear();
         refInputAutoComplete.current.blur();
@@ -154,7 +235,7 @@ const SearchInput = ({ setRegion, setMarker }) => {
         <View
           style={styles.backgroundContainer}
           onTouchEnd={() => {
-            setInputIsActive(false);
+            dispatch(setIsInputActive(false));
             refInputAutoComplete.current.clear();
             refInputAutoCompleteDestination.current.clear();
             refInputAutoComplete.current.blur();
@@ -189,7 +270,7 @@ const SearchInput = ({ setRegion, setMarker }) => {
                 ref={refInputAutoComplete}
                 minLength={3}
                 placeholder={
-                  inputIsActive ? "Origen del viaje" : "Busca un QuickCar"
+                  inputIsActive ? "Origen del viaje" : "A donde quieres ir?"
                 }
                 fetchDetails={true}
                 onPress={handleLocationSelect}
@@ -212,13 +293,13 @@ const SearchInput = ({ setRegion, setMarker }) => {
                   onChangeText: onAutoCompleteOriginChange,
                 }}
               />
-              {inputIsActive && originName?.length > 0 && (
+              {inputIsActive && tripOriginName?.length > 0 && (
                 <TouchableOpacity
                   style={{ marginTop: 9 }}
                   onPressOut={() => {
                     refInputAutoComplete.current.clear();
                     refInputAutoComplete.current.blur();
-                    setOriginName("");
+                    dispatch(setTripOriginName(""));
                     setOriginCleaning(true);
                   }}
                 >
@@ -239,7 +320,7 @@ const SearchInput = ({ setRegion, setMarker }) => {
                       size={21}
                       color={"#00000050"}
                       onPress={() => {
-                        setInputIsActive(true);
+                        dispatch(setIsInputActive(true));
                       }}
                     />
                   )}
@@ -250,10 +331,14 @@ const SearchInput = ({ setRegion, setMarker }) => {
                       color="#00000080"
                       style={{ marginRight: 4 }}
                       onPress={() => {
-                        setInputIsActive(false);
-                        setOriginName("");
-                        setDestinationName("");
+                        dispatch(setIsInputActive(true));
+                        dispatch(setTripOriginName(""));
+                        dispatch(setTripDestinationName(""));
                         dispatch(setPlacesSelected(false));
+                        dispatch(setTripOrigin({ latitude: 0, longitude: 0 }));
+                        dispatch(
+                          setTripDestination({ latitude: 0, longitude: 0 })
+                        );
                       }}
                     />
                   )}
@@ -289,13 +374,13 @@ const SearchInput = ({ setRegion, setMarker }) => {
                   }}
                 />
 
-                {inputIsActive && destinationName?.length > 0 && (
+                {inputIsActive && tripDestinationName?.length > 0 && (
                   <TouchableOpacity
                     style={{ marginTop: 9 }}
                     onPressOut={() => {
                       refInputAutoCompleteDestination.current.clear();
                       refInputAutoCompleteDestination.current.blur();
-                      setDestinationName("");
+                      dispatch(setTripDestinationName(""));
                       setDestininationCleaning(true);
                     }}
                   >
@@ -325,29 +410,23 @@ const SearchInput = ({ setRegion, setMarker }) => {
               alignItems: "center",
             }}
           >
-            <CalendarIcon
-              color={"#0000ff99"}
-              height={25}
-              width={30}
-            ></CalendarIcon>
+            <ClockIcon height={25} width={25} color={"#0000ff99"}></ClockIcon>
             <TextInput
-              style={{ width: "100%" }}
+              style={{ width: "100%", fontSize: 16, marginLeft: 10 }}
               onFocus={() => {
                 setShowDatePicker(true);
               }}
               showSoftInputOnFocus={false}
-              value={dateSelectedString}
+              value={dateTimeSelectedString}
               placeholder="Selecciona la hora"
             ></TextInput>
             {showDatePicker && (
               <DateTimePicker
                 value={new Date()}
-                mode="date"
+                mode="time"
                 display="default"
                 locale="es-ES"
-                onChange={(e, selectDate) => {
-                  onChange(selectDate, dateSelected);
-                }}
+                onChange={onChange}
               />
             )}
           </View>
@@ -375,6 +454,9 @@ const SearchInput = ({ setRegion, setMarker }) => {
             <TextInput
               style={{ width: "100%" }}
               placeholder="Numero de asientos"
+              onChangeText={onSeatNumbersChanges}
+              inputMode="numeric"
+              value={seatRequested == 0 ? "" : seatRequested}
             ></TextInput>
           </View>
         )}
@@ -398,7 +480,7 @@ const SearchInput = ({ setRegion, setMarker }) => {
                 borderRadius: 10,
               }}
               onPress={() => {
-                setInputIsActive(false);
+                setIsInputActive(false);
                 dispatch(setPlacesSelected(false));
                 refInputAutoComplete.current.blur();
                 refInputAutoCompleteDestination.current.blur();
@@ -416,8 +498,7 @@ const SearchInput = ({ setRegion, setMarker }) => {
                 borderRadius: 10,
               }}
               onPress={() => {
-                setInputIsActive(false);
-                dispatch(setPlacesSelected(true));
+                searchQuickCars();
               }}
             >
               <Text style={{ fontSize: 16, color: "#f4f5f6" }}>
