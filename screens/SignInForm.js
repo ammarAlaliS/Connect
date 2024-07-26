@@ -19,14 +19,13 @@ import Eyes from "../icons/Eyes";
 import UnEye from "../icons/UnEye";
 import useCustomFonts from "../fonts/useCustomFonts";
 import { useDispatch, useSelector } from "react-redux";
-import { toggleDarkMode, selectTheme } from "../globalState/themeSlice";
+import { selectDarkMode, selectTheme } from "../globalState/themeSlice";
 import { setUser } from "../globalState/userSlice";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import Toast from "react-native-toast-message";
 import * as Animatable from "react-native-animatable";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
 
 const SignInSchema = Yup.object().shape({
   email: Yup.string()
@@ -39,11 +38,13 @@ const SignInSchema = Yup.object().shape({
 
 const SignInForm = () => {
   const navigation = useNavigation();
+  const darkMode = useSelector(selectTheme);
+  const darkModeBolean = useSelector(selectDarkMode);
   const dispatch = useDispatch();
   const [passwordVisible, setPasswordVisible] = React.useState(false);
   const { fontsLoaded } = useCustomFonts();
   if (!fontsLoaded) {
-}
+  }
 
   const [buttonText, setButtonText] = React.useState(false);
   const [inputColor, setInputColor] = React.useState([
@@ -55,6 +56,11 @@ const SignInForm = () => {
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
   };
+  const getImageUri = (darkModeBolean) => {
+    return darkModeBolean
+      ? "https://storage.googleapis.com/quickcar-storage/quickcar.jpg"
+      : "https://storage.googleapis.com/quickcar-storage/quickcar-removebg-preview%20(1).png";
+  };
 
   return (
     <KeyboardAvoidingView
@@ -62,17 +68,33 @@ const SignInForm = () => {
       style={{ flex: 1 }}
     >
       <StatusBar
-        backgroundColor={Platform.OS === "android" ? "#FFFFFF" : "#000000"}
-        barStyle={Platform.OS === "android" ? "dark-content" : "light-content"}
+        backgroundColor={
+          Platform.OS === "android" ? '#000' : "#000000"
+        }
+        barStyle={
+          Platform.OS === "android" ? 'light-content' : "light-content"
+        }
         translucent={false}
       />
       <LinearGradient
-        colors={["#4F03D4", "#BA0EFF", "#FFCD57"]}
+        colors={["#000", "#000", "#fff1"]}
         start={{ x: 1, y: 0.5 }}
         end={{ x: 0, y: 0.1 }}
         style={{ flex: 1 }}
       >
-        <View style={styles.container}>
+        <View
+          style={[
+            styles.container,
+            {
+              backgroundColor: darkMode.singInBgColor,
+              borderLeftWidth: 1,
+              borderColor: darkMode.borderBox,
+              borderBottomWidth: 1,
+              borderRightWidth: 1,
+              borderTopWidth: 1,
+            },
+          ]}
+        >
           <ScrollView>
             <View className="  h-[700px] items-center justify-center py-10 px-4 ">
               <TouchableOpacity
@@ -85,9 +107,7 @@ const SignInForm = () => {
                     easing="ease-out"
                     iterationCount="infinite"
                     iterationDelay={1000}
-                    source={{
-                      uri: "https://quickcaronline.obbaramarket.com/wp-content/uploads/2024/05/cropped-quickcar-1-127x79.png",
-                    }}
+                    source={{ uri: getImageUri(darkModeBolean) }}
                     className="w-24 h-24"
                     resizeMode="contain"
                   />
@@ -95,8 +115,11 @@ const SignInForm = () => {
                     animation="pulse"
                     iterationDelay={1500}
                     iterationCount="infinite"
-                    className=" text-4xl text-[#3402BE]"
-                    style={{ fontFamily: "Eina01-BoldItalic" }}
+                    className=" text-4xl "
+                    style={{
+                      fontFamily: "Eina01-BoldItalic",
+                      color: darkMode.signInTextColor,
+                    }}
                   >
                     Quickcar
                   </Animatable.Text>
@@ -107,7 +130,12 @@ const SignInForm = () => {
                   animation="fadeInDown"
                   iterationCount={1}
                   iterationDelay={2000}
-                  style={styles.welcome}
+                  style={[
+                    styles.welcome,
+                    {
+                      color: darkMode.text,
+                    },
+                  ]}
                 >
                   Iniciar Sesion
                 </Animatable.Text>
@@ -130,12 +158,11 @@ const SignInForm = () => {
 
                     if (response.ok) {
                       const data = await response.json();
-                      // Persistir los datos del usuario en AsyncStorage
                       await AsyncStorage.setItem(
                         "userData",
                         JSON.stringify(data)
                       );
-                      // Actualizar el estado global con la información del usuario
+                      await AsyncStorage.setItem("token", data.token);
                       dispatch(
                         setUser({
                           global_user: {
@@ -200,41 +227,55 @@ const SignInForm = () => {
                 }) => (
                   <View className="flex w-full space-y-3">
                     <View
-                      style={
+                      style={[
                         styles[
                           inputColor.email ||
                             (touched.email && errors.email
                               ? "inputError"
                               : "input")
-                        ]
-                      }
+                        ],
+                        {
+                          backgroundColor: darkMode.singInInputBgColor,
+                          borderColor: darkMode.singInBorderColor,
+                        },
+                      ]}
                     >
-                      <Fontisto name="email" size={24} color="black" />
+                      <Fontisto name="email" size={24} color={darkMode.singInEmailIconColor} />
                       <TextInput
                         placeholder="Email"
                         onChangeText={handleChange("email")}
                         onBlur={handleBlur("email")}
                         value={values.email}
-                        style={styles.username}
+                        style={[
+                          styles.username,
+                          {
+                            color: darkMode.text,
+                          },
+                        ]}
+                        placeholderTextColor={darkMode.text}
                       />
                     </View>
                     {errors.email && touched.email ? (
                       <Text style={styles.error}>{errors.email}</Text>
                     ) : null}
                     <View
-                      style={
+                      style={[
                         styles[
-                          inputColor.password ||
-                            (touched.password && errors.password
+                          inputColor.email ||
+                            (touched.email && errors.email
                               ? "inputError"
                               : "input")
-                        ]
-                      }
+                        ],
+                        {
+                          backgroundColor: darkMode.singInInputBgColor,
+                          borderColor: darkMode.singInBorderColor,
+                        },
+                      ]}
                     >
                       <Ionicons
                         name="lock-closed-outline"
                         size={24}
-                        color="black"
+                        color={darkMode.singInPasswordIconColor}
                       />
                       <TextInput
                         placeholder="Contraseña"
@@ -242,14 +283,28 @@ const SignInForm = () => {
                         onBlur={handleBlur("password")}
                         value={values.password}
                         secureTextEntry={!passwordVisible}
-                        style={styles.username}
+                        style={[
+                          styles.username,
+                          {
+                            color: darkMode.text,
+                          },
+                        ]}
+                        placeholderTextColor={darkMode.text}
                       />
                       <TouchableOpacity onPress={togglePasswordVisibility}>
                         {values.password ? (
                           passwordVisible ? (
-                            <UnEye width={24} height={24} color="black" />
+                            <UnEye
+                              width={24}
+                              height={24}
+                              color={darkMode.text}
+                            />
                           ) : (
-                            <Eyes width={24} height={24} color="black" />
+                            <Eyes
+                              width={24}
+                              height={24}
+                              color={darkMode.text}
+                            />
                           )
                         ) : null}
                       </TouchableOpacity>
@@ -268,9 +323,19 @@ const SignInForm = () => {
                       <TouchableOpacity
                         onPress={() => navigation.navigate("Register")}
                       >
-                        <Text style={styles.text}>Regístrate</Text>
+                        <Text style={[
+                          styles.text,
+                          {
+                            color: darkMode.singInRegisterTextColor
+                          }
+                        ]}>Regístrate</Text>
                       </TouchableOpacity>
-                      <Text style={styles.text_password}>
+                      <Text style={[
+                        styles.text_password,
+                        {
+                          color: darkMode.singInForgotPtextColor
+                        }
+                      ]}>
                         ¿Olvidaste la Contraseña?
                       </Text>
                     </View>
@@ -287,22 +352,32 @@ const SignInForm = () => {
                       }
                     >
                       <LinearGradient
-                        colors={["#060097", "#8204ff", "#c10fff"]}
+                        colors={["#060097", "#06BCEE", "#c10fff"]}
                         start={{ x: 0.2, y: 0.6 }}
                         end={{ x: 1.5, y: 0 }}
                         style={{
                           paddingVertical: 12,
                           paddingHorizontal: 24,
                           alignItems: "center",
-                          borderRadius: 5,
+                          borderRadius: 2,
                         }}
                       >
                         <View>
                           {!buttonText ? (
-                            <Text style={styles.buttom}>INICIAR SESION</Text>
+                            <Text style={[
+                              styles.buttom,
+                              {
+                                color: darkMode.singInButtonTextColor
+                              }
+                            ]}>INICIAR SESION</Text>
                           ) : (
                             <View className="flex-row items-center space-x-4">
-                              <Text style={styles.buttom}>INICIANDO ...</Text>
+                              <Text style={[
+                                styles.buttom,
+                                {
+                                  color: darkMode.singInButtonTextColor
+                                }
+                              ]}>INICIANDO ...</Text>
                               <ActivityIndicator size="small" color="#FFF" />
                             </View>
                           )}
@@ -323,12 +398,9 @@ const SignInForm = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginHorizontal: 20,
-    marginVertical: 20,
-    backgroundColor: "#fff",
-    borderRadius: 5,
-    borderWidth: 2,
-    borderColor: "rgba(200, 200, 200, 0.5)",
+    marginHorizontal: 10,
+    marginVertical: 10,
+    borderRadius: 2,
     shadowColor: "#000000",
     shadowOffset: { width: 20, height: 20 },
     shadowRadius: 10,
@@ -341,9 +413,7 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     paddingRight: 10,
     borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 5,
-    backgroundColor: "rgba(173, 216, 230, 0.09)",
+    borderRadius: 2,
     flexDirection: "row",
     alignItems: "center",
     gap: 10,
@@ -369,24 +439,23 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   text: {
-    fontFamily: "PlusJakartaSans-Regular",
+    fontFamily: "PlusJakartaSans-SemiBold",
     color: "blue",
     fontSize: 16,
   },
   text_password: {
-    fontFamily: "PlusJakartaSans-Regular",
+    fontFamily: "PlusJakartaSans-SemiBold",
     color: "blue",
     fontSize: 16,
   },
   welcome: {
     fontFamily: "PlusJakartaSans-Bold",
-    fontSize: 24,
+    fontSize: 28,
     marginBottom: 20,
     textAlign: "center",
   },
   buttom: {
     fontFamily: "PlusJakartaSans-SemiBold",
-    color: "#FFF",
   },
   error: {
     fontFamily: "PlusJakartaSans-Regular",

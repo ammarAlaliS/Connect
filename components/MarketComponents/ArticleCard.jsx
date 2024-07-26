@@ -1,5 +1,4 @@
-import { Image, StyleSheet, Text, View } from "react-native";
-import { TouchableOpacity } from "react-native";
+import { Image, Text, View, TouchableOpacity } from "react-native";
 import ContactIcon from "../../icons/ContactIcon";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -7,6 +6,8 @@ import { jwtDecode } from "jwt-decode";
 import EditIcon from "../../icons/EditIcon";
 import TrashIcon from "../../icons/TrashIcon";
 import { setSelectedProduct } from "../../globalState/marketSlice";
+import { Entypo } from "@expo/vector-icons";
+import ModalInitialChat from "./ModalInitialChat";
 
 const ArticleCard = ({
   setShowModal,
@@ -16,6 +17,7 @@ const ArticleCard = ({
   showModal,
   setIsNewProduct,
   setDeleteAlertModal,
+  darkMode,
 }) => {
   const dispatch = useDispatch();
   const [userId, setUserId] = useState("");
@@ -23,6 +25,7 @@ const ArticleCard = ({
   const [productItem, setProductItem] = useState(item);
   const global_user = useSelector((state) => state.user.global_user);
   const token = global_user?.token;
+  const user = useSelector((state) => state.user);
 
   const decodedToken = jwtDecode(token);
 
@@ -42,18 +45,25 @@ const ArticleCard = ({
       setIsDeletingProduct(false);
     }
   }, [isDeletingProduct]);
-
   return (
     <View
-      style={styles.container}
-      onTouchEnd={() => {
-        dispatch(setSelectedProduct(productItem));
+      style={{
+        flex: 1,
+        shadowRadius: 2,
+        backgroundColor: darkMode.background,
+
+        borderColor: darkMode.borderBox,
+        marginRight: 2,
+        marginLeft: 2,
+        minWidth: "50%",
       }}
+      className=" p-1"
     >
       <View
-        style={styles.secondContainer}
-        onTouchEnd={() => {
-          setShowModal(true);
+        style={{
+          position: "relative",
+          width: "100%",
+          height: "auto",
         }}
       >
         <Image
@@ -62,126 +72,204 @@ const ArticleCard = ({
               ? productItem?.image[0]
               : "https://noticias.coches.com/wp-content/uploads/2019/12/Recirculacion-de-Aire-2-859x483.jpg",
           }}
-          style={styles.imageContainer}
+          style={{
+            width: "100%",
+            height: 250,
+          }}
           resizeMode="cover"
         />
 
         <TouchableOpacity
-          className="d-flex flex-row"
-          style={styles.messageContainer}
+          style={{
+            position: "absolute",
+            bottom: 5,
+            right: 5,
+            backgroundColor: "#0D1117",
+            height: 36,
+            width: 36,
+            borderRadius: 9999,
+            alignItems: "center",
+            justifyContent: "center",
+            borderWidth: 1,
+            borderColor: darkMode.borderBox,
+          }}
           onPress={(e) => {
             e.stopPropagation();
-            if (userId == decodedToken.id) {
+            if (userId === decodedToken.id) {
               setIsNewProduct(false);
               setShowNewProductModal(true);
             }
           }}
         >
-          {userId != decodedToken.id && (
-            <ContactIcon width={25} height={30} color="#3725dd" />
-          )}
-          {userId == decodedToken.id && (
-            <EditIcon width={25} height={30} color="#3725dd" />
+          {userId !== decodedToken.id ? (
+            <ContactIcon width={25} height={30} color="#008000" />
+          ) : (
+            <EditIcon width={25} height={30} color="#008000" />
           )}
         </TouchableOpacity>
-        {userId == decodedToken.id && (
+        {userId === decodedToken.id && (
           <TouchableOpacity
-            style={styles.trashContainer}
+            style={{
+              position: "absolute",
+              bottom: 5,
+              right: 44,
+              backgroundColor: "#0D1117",
+              height: 36,
+              width: 36,
+              borderRadius: 9999,
+              alignItems: "center",
+              justifyContent: "center",
+              borderWidth: 1,
+              borderColor: darkMode.borderBox,
+            }}
             onPress={(e) => {
               e.stopPropagation();
               setIsDeletingProduct(true);
               setDeleteAlertModal(true);
             }}
           >
-            <TrashIcon width={25} height={30} color="#3725dd" />
+            <TrashIcon width={25} height={30} color="#F6001B" />
           </TouchableOpacity>
         )}
       </View>
-      <View style={styles.descriptionContainer}>
+      <View style={{ padding: 5 }}>
         <Text
           style={{
             fontSize: 19,
-            paddingLeft: 5,
-            fontFamily: "PlusJakartaSans-Bold",
+            fontFamily: "PlusJakartaSans-SemiBold",
+            color: darkMode.text,
           }}
         >
           {productItem?.productName}
         </Text>
-        <Text style={styles.detailTextStyle}>€ {productItem?.price}</Text>
-        <Text style={styles.detailTextStyle}>
-          {productItem?.stock} disponibles
-        </Text>
-        <Text style={styles.location}>
-          {productItem?.productLocation.state}
-        </Text>
+        <View className=" flex-row items-center justify-between">
+          <Text
+            style={{
+              color: "#000",
+              fontFamily: "PlusJakartaSans-SemiBold",
+              fontSize: 14,
+              color: darkMode.text,
+            }}
+          >
+            <Text
+              style={{
+                color: "#008000",
+              }}
+            >
+              Precio €:
+            </Text>{" "}
+            {productItem?.price}
+          </Text>
+          <Text
+            style={{
+              color: "#000",
+              fontFamily: "PlusJakartaSans-Bold",
+              fontSize: 14,
+              color: "#06BCEE",
+            }}
+          >
+            <Text
+              style={{
+                color: darkMode.text,
+                fontFamily: "PlusJakartaSans-SemiBold",
+              }}
+            >
+              {" "}
+              disponibles:
+            </Text>
+            {productItem?.stock}{" "}
+          </Text>
+        </View>
+        <View className=" flex-row items-center justify-between space-x-2 my-1">
+          <View>
+            <TouchableOpacity>
+              <Text style={{ color: "#06BCEE", fontSize: 16 }}> Detalles</Text>
+            </TouchableOpacity>
+          </View>
+          <View className=" flex-row items-center justify-end space-x-2 my-1">
+            <Entypo name="location" size={18} color="#06BCEE" />
+            <Text
+              style={{
+                color: darkMode.text,
+                fontFamily: "PlusJakartaSans-SemiBold",
+                fontSize: 14,
+                fontWeight: "700",
+                textAlign: "end",
+              }}
+            >
+              {productItem?.productLocation.state}
+            </Text>
+          </View>
+        </View>
+        <View className="">
+          <View>
+            <Text
+              style={{
+                color: darkMode.text,
+              }}
+            >
+              {" "}
+              {productItem?.description}
+            </Text>
+          </View>
+        </View>
+        <View className=" flex-row mt-3 space-x-2">
+          <View className=" items-center">
+            <Image
+              source={{
+                uri: productItem?.user?.global_user.profile_img_url,
+              }}
+              style={{
+                width: 50,
+                height: 50,
+                borderRadius: 9999,
+              }}
+              resizeMode="cover"
+            />
+            <Text
+              style={{
+                color: darkMode.text,
+              }}
+            >
+              Vendedor
+            </Text>
+          </View>
+          <View className=" flex-row items-center  justify-between space-x-1 flex-1">
+            <View className=" flex-row items-center space-x-1">
+              <Text
+                style={{
+                  color: darkMode.text,
+                }}
+              >
+                {productItem?.user?.global_user.first_name}
+              </Text>
+              <Text
+                style={{
+                  color: darkMode.text,
+                }}
+              >
+                {productItem?.user?.global_user.last_name}
+              </Text>
+            </View>
+            <View>
+              <Text
+                style={{
+                  color: darkMode.text,
+                }}
+              >
+                {productItem?.productStatus}
+              </Text>
+            </View>
+          </View>
+        </View>
+
+        <View className=" flex-row  mt-3">
+          
+          <ModalInitialChat darkMode={darkMode}/>
+        </View>
       </View>
     </View>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    width: "45%",
-    borderBottomLeftRadius: 10,
-    borderBottomRightRadius: 10,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 1.5,
-    marginTop: 14,
-  },
-  imageContainer: {
-    width: "100%",
-    height: 150,
-    borderTopRightRadius: 6,
-    borderTopLeftRadius: 6,
-  },
-  messageContainer: {
-    position: "absolute",
-    bottom: 5,
-    right: 5,
-    backgroundColor: "#f1f1f1",
-    height: 29,
-    width: 29,
-    borderRadius: 5,
-    alignItems: "center",
-    alignSelf: "center",
-    justifyContent: "center",
-  },
-  secondContainer: { position: "relative", width: "100%", height: 150 },
-  descriptionContainer: {
-    borderTopWidth: 0,
-    borderWidth: 1.5,
-    borderColor: "#ccc",
-    borderStyle: "solid",
-    borderBottomLeftRadius: 10,
-    borderBottomRightRadius: 10,
-  },
-  detailTextStyle: {
-    color: "#000",
-    fontFamily: "PlusJakartaSans-SemiBold",
-    fontSize: 14,
-    paddingLeft: 10,
-  },
-  location: {
-    color: "#000",
-    fontFamily: "PlusJakartaSans-SemiBold",
-    fontSize: 12,
-    paddingLeft: 10,
-    fontWeight: "700",
-    paddingBottom: 10,
-  },
-  trashContainer: {
-    position: "absolute",
-    bottom: 5,
-    right: 39,
-    backgroundColor: "#f1f1f1",
-    height: 29,
-    width: 29,
-    borderRadius: 5,
-    alignItems: "center",
-    alignSelf: "center",
-    justifyContent: "center",
-  },
-});
 export default ArticleCard;

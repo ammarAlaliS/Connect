@@ -14,17 +14,13 @@ const Card = ({ darkMode, handlePress, activeScreen }) => {
   }
 
   return (
-    <View
-      className=" px-6 py-2 "
-      style={{
-        width: "100%",
-        marginTop: 4,
-        backgroundColor: darkMode.background,
-        borderBottomWidth: 1,
-        borderTopWidth: 1,
-        borderColor: darkMode.borderBox,
-      }}
-    >
+    <View className=" px-6 py-2  space-y-1 bg-red-500" style={{
+      width: '100%',
+   
+      backgroundColor: darkMode.background,
+      borderBottomWidth: 1,
+      borderColor: darkMode.borderBox
+    }}>
       <View className="flex-row space-x-2 items-center">
         <View className="flex items-center">
           {user && user.global_user && user.global_user.profile_img_url ? (

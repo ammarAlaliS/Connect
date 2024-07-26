@@ -36,15 +36,15 @@ const HomeAppScreen = () => {
   const renderContent = () => {
     switch (activeScreen) {
       case "Store":
-        return <MarketScreen />;
+        return <MarketScreen darkMode={darkMode} />;
       case "Travel":
         return <TravelScreen />;
       case "Blog":
-        return <BlogScreen />;
+        return <BlogScreen darkMode={darkMode} />;
       case "Profile":
         return <ProfileScreen />;
       case "Contact":
-        return <ContactScreen />;
+        return <ContactScreen darkMode={darkMode} />;
       case "Card":
       default:
         return (

@@ -130,7 +130,7 @@ export default function AdviseMessage() {
 
   return (
     <SafeAreaView
-      style={[styles.container, { backgroundColor: darkMode.background }]}
+      style={[styles.container, { backgroundColor: darkMode.PreBgColor}]}
     >
       <ScrollView contentContainerStyle={styles.scrollView}>
         <View style={styles.content}>

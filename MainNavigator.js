@@ -12,6 +12,8 @@ import SignInForm from './screens/SignInForm';
 import HomeAppScreen from './screens/HomeAppScreen';
 import ArticleScreen from './screens/ArticleScreen';
 import AdviseMessage from './screens/AdviseMessage';
+import MessageScreen from './screens/MessageScreen';
+import ContactScreen from './screens/ContactScreen';
 
 
 const Stack = createNativeStackNavigator();
@@ -46,6 +48,8 @@ export default function MainNavigator() {
   return (
 
     <Stack.Navigator screenOptions={{ headerShown: false }}>
+    
+     
       <Stack.Screen name="Home" component={AdviseMessage} options={{ headerShown: false }} />
       <Stack.Screen name="Register" component={Register} options={{ headerShown: false }} />
       <Stack.Screen name="Market" component={MarketScreen} options={{ headerShown: false }} />
@@ -54,6 +58,8 @@ export default function MainNavigator() {
       <Stack.Screen name="SignInForm" component={SignInForm} options={{ headerShown: false }} />
       <Stack.Screen name="MainScreen" component={HomeAppScreen} />
       <Stack.Screen name="ArticleScreen" component={ArticleScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="Contact" component={ContactScreen} options={{ headerShown: false }} />
+
     </Stack.Navigator>
 
   );

@@ -34,6 +34,7 @@ const BlogCard = ({
   time,
   blogId,
   sections,
+  darkMode,
 }) => {
   const navigation = useNavigation();
   const [likes, setLikes] = useState();
@@ -130,8 +131,17 @@ const BlogCard = ({
   getTotalComment();
   return (
     <View
-      style={styles.card}
-      className="px-4 pt-4 border-2 border-gray-400/10 z-50"
+      style={{
+        backgroundColor: darkMode.background,
+        borderRadius: 0,
+        shadowColor: "#f1f1f1",
+        shadowOpacity: 0.1,
+        shadowRadius: 5,
+        elevation: 3,
+        borderLeftWight: 1,
+        borderColor: darkMode.borderBox,
+      }}
+      className="px-2 pt-3  z-50"
     >
       {image_url.map((image, index) => (
         <Image
@@ -144,39 +154,74 @@ const BlogCard = ({
       ))}
 
       <View className="space-y-2">
-        <Text style={styles.title}>{blog_title}</Text>
-        <View className="w2esc  flex-row flex-wrap items-center justify-start space-y-2 ">
+        <Text
+          style={{
+            fontSize: 20,
+            fontFamily: "PlusJakartaSans-Bold",
+            color: darkMode.text,
+          }}
+        >
+          {blog_title}
+        </Text>
+        <View className="flex-row flex-wrap items-center justify-start space-y-[4px] ">
           {blog_tag.map((tag, index) => (
             <Text
               key={index}
-              style={styles.tag}
-              className="px-2 mr-2 py-[5px] rounded-[5px]"
+              style={{
+                backgroundColor: darkMode.backgroundCardList,
+                borderColor: darkMode.borderBoxCardList,
+                color: darkMode.colorTextCardList,
+                fontFamily: "PlusJakartaSans-SemiBold",
+                fontSize: 13,
+                paddingHorizontal: 8,
+                paddingVertical: 5,
+                marginRight: 4,
+                borderRadius: 2,
+                borderWidth: 1,
+              }}
             >
               {tag}
             </Text>
           ))}
         </View>
-        <Text style={styles.description}>
+        <Text
+          style={{
+            fontSize: 16,
+            color: darkMode.text,
+          }}
+        >
           {showMore ? blog_description : `${blog_description.slice(0, 120)}...`}
         </Text>
 
         <View className=" flex-row justify-between items-center">
           <TouchableOpacity onPress={toggleShowMore}>
             <View>
-              <Text style={styles.showMoreText} className="">
+              <Text
+                style={{
+                  color: darkMode.showText,
+                  fontSize: 16,
+                }}
+                className=""
+              >
                 {showMore ? "Leer menos" : "Leer más"}
               </Text>
             </View>
           </TouchableOpacity>
           <View>
             <Text
-              style={{ fontFamily: "PlusJakartaSans-Bold" }}
+              style={{
+                fontFamily: "PlusJakartaSans-Bold",
+                color: darkMode.text,
+              }}
               className=" text-sm "
             >
               {author_name} {author_last_name}
             </Text>
             <Text
-              style={{ fontFamily: "PlusJakartaSans-Bold" }}
+              style={{
+                fontFamily: "PlusJakartaSans-Bold",
+                color: darkMode.text,
+              }}
               className=" text-[12px]"
             >
               {time}
@@ -184,29 +229,16 @@ const BlogCard = ({
           </View>
         </View>
         <View className=" w-full flex-row justify-between py-2 items-center ">
-          <View className="flex-row  space-x-[4px]">
-            <View className=" bg-[#080099] h-[28px] w-[28px] items-center justify-center rounded-full">
-              <EvilIcons
-                name="comment"
-                size={24}
-                color="white"
-                style={styles.iconMessageContent}
-              />
-            </View>
-            <Text
-              style={{ fontFamily: "PlusJakartaSans-Bold" }}
-              className=" mt-[3px]"
-            >
-              {totalComment}
-            </Text>
-          </View>
-
           <View className=" flex-row space-x-[4px]">
             <View
               style={[
                 likes === 0
-                  ? styles.likeContentDisable
-                  : styles.likeContentActive,
+                  ? {
+                      backgroundColor: "rgba(128, 128, 128, 0.4)",
+                    }
+                  : {
+                      backgroundColor: "#FFCBCB",
+                    },
               ]}
               className="  h-[28px] w-[28px] items-center justify-center rounded-full"
             >
@@ -215,29 +247,80 @@ const BlogCard = ({
                 size={24}
                 style={[
                   likes === 0
-                    ? styles.iconLikeContentDisable
-                    : styles.iconLikeContentActive,
+                    ? {
+                        marginBottom: 5,
+                        color: "#fff",
+                      }
+                    : {
+                        marginBottom: 5,
+                        color: darkMode.textColorLikeButton,
+                      },
                 ]}
               />
             </View>
             <Text
-              style={{ fontFamily: "PlusJakartaSans-Bold" }}
+              style={{
+                fontFamily: "PlusJakartaSans-Bold",
+                color: darkMode.text,
+              }}
               className="mt-[3px] "
             >
               {likes}
             </Text>
           </View>
+          <View className="flex-row  space-x-[4px]">
+            <View className=" bg-[#1E90FF] h-[28px] w-[28px] items-center justify-center rounded-full">
+              <EvilIcons
+                name="comment"
+                size={24}
+                color="white"
+                style={styles.iconMessageContent}
+              />
+            </View>
+            <Text
+              style={{
+                fontFamily: "PlusJakartaSans-Bold",
+                color: darkMode.text,
+              }}
+              className=" mt-[3px]"
+            >
+              {totalComment}
+            </Text>
+          </View>
+          <View className="flex-row  space-x-[4px]">
+            <View className=" bg-[#1E90FF] h-[28px] w-[28px] items-center justify-center rounded-full">
+              <AntDesign name="save" size={18} color={darkMode.text} />
+            </View>
+            <Text
+              style={{
+                fontFamily: "PlusJakartaSans-Bold",
+                color: darkMode.text,
+              }}
+              className=" mt-[3px]"
+            >
+              0
+            </Text>
+          </View>
         </View>
 
-        <View className="border-t-[1px] border-gray-400/20 py-4  space-y-2  ">
+        <View
+          className="border-t-[1px] py-4  space-y-2  "
+          style={{ borderColor: darkMode.borderBox }}
+        >
           <View className="flex-row space-x-[6px] justify-between">
             <TouchableOpacity
-              className="  py-2 px-4 rounded-md border-[1px] border-black/10"
+              className="  py-2 px-4 rounded-[2px] border-[1px]"
               onPress={handleLikePost}
               style={[
                 likeSubcribe
-                  ? styles.molaButtonActive
-                  : styles.molaButtonDisable,
+                  ? {
+                      backgroundColor: darkMode.backgroundCardList,
+                      borderColor: darkMode.textColorLikeButton,
+                    }
+                  : {
+                      backgroundColor: darkMode.backgroundDark,
+                      borderColor: darkMode.borderBox,
+                    },
               ]}
             >
               <View className=" flex-row space-x-[2px] items-center justify-center">
@@ -246,15 +329,27 @@ const BlogCard = ({
                   size={24}
                   style={[
                     likeSubcribe
-                      ? styles.molaIconActive
-                      : styles.molaIconDisable,
+                      ? {
+                          color: darkMode.textColorLikeButton,
+                        }
+                      : {
+                          color: darkMode.text,
+                        },
                   ]}
                 />
                 <Text
                   style={[
                     likeSubcribe
-                      ? styles.molaIconActive
-                      : styles.molaIconDisable,
+                      ? {
+                          marginBottom: 3,
+                          fontFamily: "PlusJakartaSans-Bold",
+                          color: darkMode.textColorLikeButton,
+                        }
+                      : {
+                          marginBottom: 3,
+                          fontFamily: "PlusJakartaSans-Bold",
+                          color: darkMode.text,
+                        },
                   ]}
                   className=" text-[14px] text-white"
                 >
@@ -263,24 +358,44 @@ const BlogCard = ({
               </View>
             </TouchableOpacity>
             <TouchableOpacity
-              className=" bg-gray-500/10 py-2 px-2 rounded-md border-[1px] border-black/10  flex-1"
+              className=" py-2 px-2 rounded-[2px] border-[1px]  flex-1"
+              style={{
+                borderColor: darkMode.textCommentButton,
+                backgroundColor: darkMode.backgroundComment,
+              }}
               onPress={() => setModalVisible(true)}
             >
               <View className=" flex-row space-x-[2px] items-center justify-center">
-                <EvilIcons name="comment" size={24} color="black" />
+                <EvilIcons
+                  name="comment"
+                  size={24}
+                  color={darkMode.textCommentButton}
+                />
                 <Text
-                  style={{ fontFamily: "PlusJakartaSans-Bold" }}
+                  style={{
+                    fontFamily: "PlusJakartaSans-Bold",
+                    color: darkMode.textCommentButton,
+                  }}
                   className=" text-[14px]"
                 >
                   Comentar
                 </Text>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity className=" bg-gray-500/10 py-2 px-2 rounded-md border-[1px] border-black/10  ">
+            <TouchableOpacity
+              className=" py-2 px-2 rounded-[2px] border-[1px] "
+              style={{
+                borderColor: darkMode.borderBox,
+                backgroundColor: darkMode.backgroundCardList,
+              }}
+            >
               <View className=" flex-row space-x-[2px] items-center justify-center">
-                <AntDesign name="save" size={20} color="black" />
+                <AntDesign name="save" size={20} color={darkMode.text} />
                 <Text
-                  style={{ fontFamily: "PlusJakartaSans-Bold" }}
+                  style={{
+                    fontFamily: "PlusJakartaSans-Bold",
+                    color: darkMode.text,
+                  }}
                   className=" text-[14px]"
                 >
                   Guardar
@@ -305,21 +420,25 @@ const BlogCard = ({
                 })
               }
             >
-              <LinearGradient
-                colors={["#060097", "#8204ff", "#c10fff"]}
-                start={{ x: 0.2, y: 0.6 }}
-                end={{ x: 1.5, y: 0 }}
-                className=" items-center py-2 rounded-md"
+              <View
+                className=" items-center py-2 rounded-[2px] "
+                style={{
+                  borderWidth:1,
+                  borderColor: darkMode.colorTextCardList,
+                  backgroundColor: darkMode.backgroundCardList,
+                }}
               >
-                <View>
-                  <Text
-                    style={{ fontFamily: "PlusJakartaSans-SemiBold" }}
-                    className="text-white text-base mb-[3px]"
-                  >
-                    Leer articulo
-                  </Text>
-                </View>
-              </LinearGradient>
+                <Text
+                  style={{
+                     fontFamily: "PlusJakartaSans-SemiBold",
+                     color: darkMode.colorTextCardList
+
+                  }}
+                  className="text-white text-base mb-[3px]"
+                >
+                  Leer articulo
+                </Text>
+              </View>
             </TouchableOpacity>
           </View>
         </View>
@@ -348,59 +467,8 @@ const styles = StyleSheet.create({
     height: 200,
     borderRadius: 2,
   },
-  title: {
-    fontSize: 20,
-    fontFamily: "PlusJakartaSans-Bold",
-  },
-
-  tag: {
-    backgroundColor: "#8504FF",
-    color: "#fff",
-    fontFamily: "PlusJakartaSans-SemiBold",
-    fontSize: 13,
-  },
-  description: {
-    fontSize: 16,
-    color: "#666",
-  },
-  showMoreText: {
-    color: "blue",
-    fontSize: 16,
-  },
-
-  likeContentActive: {
-    backgroundColor: "#ff226e",
-  },
-  likeContentDisable: {
-    backgroundColor: "rgba(107, 114, 128, 0.3)",
-  },
-
-  iconLikeContentActive: {
-    marginBottom: 5,
-    color: "#fff",
-  },
-  iconLikeContentDisable: {
-    marginBottom: 5,
-    color: "#000",
-  },
   iconMessageContent: {
     marginBottom: 5,
-  },
-  molaButtonDisable: {
-    backgroundColor: "rgba(107, 114, 128, 0.1)",
-  },
-  molaButtonActive: {
-    backgroundColor: "#ff226e",
-  },
-  molaIconActive: {
-    color: "#fff",
-    marginBottom: 3,
-    fontFamily: "PlusJakartaSans-Bold",
-  },
-  molaIconDisable: {
-    color: "#000",
-    marginBottom: 3,
-    fontFamily: "PlusJakartaSans-Bold",
   },
 });
 
