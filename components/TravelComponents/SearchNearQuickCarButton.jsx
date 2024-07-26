@@ -13,9 +13,10 @@ import {
   setTripOriginName,
   setQuickarData,
   setMapRegion,
+  setSeatRequested,
+  setStartTime,
 } from "../../globalState/travelSlice";
 import useLocation from "../../hooks/useLocation";
-import { useMapRef } from "../../hooks/useMapRef";
 
 const SearchNearQuickCarButton = () => {
   const widthAnim = useRef(new Animated.Value(250)).current;
@@ -73,6 +74,8 @@ const SearchNearQuickCarButton = () => {
     dispatch(setPlacesSelected(false));
     dispatch(setTripOrigin({ latitude: 0, longitude: 0 }));
     dispatch(setTripDestination({ latitude: 0, longitude: 0 }));
+    dispatch(setSeatRequested(0));
+    dispatch(setStartTime({ hour: 0, minutes: 0 }));
 
     try {
       const data = await fetch(
@@ -84,7 +87,7 @@ const SearchNearQuickCarButton = () => {
 
       if (data && data.conductores && data.conductores[0]) {
         console.log("Se cambio la region");
-        dispatch(setQuickarData([data.conductores[0]]));
+        dispatch(setQuickarData(data.conductores));
 
         dispatch(
           setMapRegion({
@@ -100,42 +103,6 @@ const SearchNearQuickCarButton = () => {
       console.log(error);
     }
   };
-
-  useEffect(() => {
-    console.log("INICIO DEL DESPLIEGUE DE INFO");
-    // console.log(showInitialCard);
-    // console.log(isOriginAutoCompleteFocused);
-    // console.log(placesSelected);
-    // console.log(quickCarsData);
-    // console.log(tripOrigin);
-    // console.log(tripOriginName);
-    // console.log(tripDestination);
-    // console.log(tripDestinationName);
-    // console.log(quickCarsDistances);
-    // console.log(locationForegroundPermissions);
-    // console.log(userLocation);
-    // console.log(startTime);
-    // console.log(seatRequested);
-    // console.log(inputIsActive);
-    console.log(region);
-    console.log("FIN DEL DESPLIEGUE DE INFO");
-  }, [
-    // showInitialCard,
-    // isOriginAutoCompleteFocused,
-    // placesSelected,
-    // quickCarsData,
-    // tripOrigin,
-    // tripOriginName,
-    // tripDestination,
-    // tripDestinationName,
-    // quickCarsDistances,
-    // locationForegroundPermissions,
-    // userLocation,
-    // startTime,
-    // seatRequested,
-    // inputIsActive,
-    region,
-  ]);
 
   return (
     <TouchableOpacity

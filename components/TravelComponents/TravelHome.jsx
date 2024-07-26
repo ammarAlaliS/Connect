@@ -7,25 +7,21 @@ import SearchInput from "./SearchInput";
 import { selectTheme } from "../../globalState/themeSlice";
 import { Image } from "react-native";
 import carImage from "../../assets/car.png";
+import userLocationImage from "../../assets/userLocationIcon.png";
+import destinationLocationImage from "../../assets/destinationLocationIcon.png";
+import originLocationImage from "../../assets/originLocationIcon.png";
 import QuickCarDetailsButtom from "./QuickCarDetailsButtom";
 import QuickCarsSearchesDetails from "./QuickCarsSearchesDetails";
 import SearchNearQuickCarButton from "./SearchNearQuickCarButton";
-import { setMapRegion } from "../../globalState/travelSlice";
-import { useMapRef } from "../../hooks/useMapRef";
+import { io } from "socket.io-client";
+
+const API_BASE_URL =
+  "https://obbaramarket-backend.onrender.com/api/ObbaraMarket";
+const socket = io(API_BASE_URL, {
+  transports: ["websocket"],
+});
 
 const TravelHome = () => {
-  // const [region, setMapRegion] = useState({
-  //   latitude: 40.355594,
-  //   longitude: -3.702583,
-  //   latitudeDelta: 0.1522,
-  //   longitudeDelta: 0.221,
-  //   // latitude: 37.78825,
-  //   // longitude: -122.4324,
-  //   // latitudeDelta: 0.0922,
-  //   // longitudeDelta: 0.0421,
-  // });
-
-  // const { mapRef, setMapRef, animateToRegion } = useMapRef();
   const mapRef = useRef(null);
 
   const [marker, setMarker] = useState(null);
@@ -37,26 +33,16 @@ const TravelHome = () => {
   const region = useSelector((state) => state.travel.region);
   const tripOrigin = useSelector((state) => state.travel.tripOrigin);
   const tripDestination = useSelector((state) => state.travel.tripDestination);
+  const userLocation = useSelector((state) => state.travel.userLocation);
 
-  useEffect(() => {
-    console.log("El componente esta enfocado");
-    console.log(isFocused);
-    console.log(!isFocused ?? 46);
-  }, [isFocused]);
-
-  const polylineCoordinates = [
-    { latitude: 40.479112, longitude: -3.573604 },
-    { latitude: 40.472, longitude: -3.58 }, // Punto adicional
-    { latitude: 40.47, longitude: -3.59 }, // Punto adicional
-    { latitude: 40.474495, longitude: -3.639607 },
-  ];
+  // const polylineCoordinates = [
+  //   { latitude: 40.479112, longitude: -3.573604 },
+  //   { latitude: 40.472, longitude: -3.58 }, // Punto adicional
+  //   { latitude: 40.47, longitude: -3.59 }, // Punto adicional
+  //   { latitude: 40.474495, longitude: -3.639607 },
+  // ];
 
   const dispatch = useDispatch();
-
-  // useEffect(() => {
-  //   console.log("La region esta cambiando");
-  //   console.log(region);
-  // }, [region]);
 
   const animateToRegion = (region) => {
     if (mapRef.current) {
@@ -78,7 +64,7 @@ const TravelHome = () => {
 
   useEffect(() => {
     console.log("La region esta cambiando");
-    if (region) {
+    if (region && region.latitude && region.longitude) {
       animateToRegion(region);
     }
   }, [region]);
@@ -95,6 +81,25 @@ const TravelHome = () => {
     }
   }, [tripDestination]);
 
+  useEffect(() => {
+    if (quickCarsData && quickCarsData.length > 0) {
+      for (let i = 0; i < quickCarsData.length; i++) {
+        socket.emit("joinDriverRoom", quickCarsData[i].id);
+      }
+
+      socket.on("reciveDriverLocation", (driverLocation) => {
+        console.log("Connected to server");
+        console.log("La ubicacion recibida es: ");
+        console.log(location);
+      });
+    }
+
+    // Clean up the socket connection on component unmount
+    return () => {
+      socket.off("reciveDriverLocation");
+    };
+  }, [quickCarsData]);
+
   return (
     <View>
       <SearchInput setMarker={setMarker}></SearchInput>
@@ -104,7 +109,7 @@ const TravelHome = () => {
         ></QuickCarsSearchesDetails>
       )}
 
-      {placesSelected && (
+      {quickCarsData && quickCarsData.length > 0 && (
         <QuickCarDetailsButtom
           setShowQuickCarDetails={setShowQuickCarDetails}
         ></QuickCarDetailsButtom>
@@ -119,18 +124,12 @@ const TravelHome = () => {
           width: "100%",
           height: "100%",
         }}
-        // region={region}
-        // onRegionChangeComplete={(newRegion) => {
-        //   console.log("Se esta intentando hacer el cambio");
-        //   dispatch(setMapRegion(newRegion));
-        // }}
         initialRegion={{
           latitude: 40.355594,
           longitude: -3.702583,
           latitudeDelta: 0.1522,
           longitudeDelta: 0.221,
         }}
-        // showsUserLocation={true}
         ref={mapRef}
       >
         {marker && <Marker coordinate={marker} />}
@@ -147,20 +146,38 @@ const TravelHome = () => {
               </Marker>
             );
           })}
-        {/* {placesSelected && (
-          <Polyline
-            coordinates={polylineCoordinates}
-            strokeColor="#2b00b6" // Color de la línea
-            strokeWidth={6} // Ancho de la línea
-          />
-        )} */}
+        {!(tripOrigin.latitude == 0 && tripOrigin.longitude == 0) &&
+          !(
+            tripDestination.latitude == 0 && tripDestination.longitude == 0
+          ) && (
+            <Polyline
+              coordinates={[
+                {
+                  latitude: tripOrigin.latitude,
+                  longitude: tripOrigin.longitude,
+                },
+                {
+                  latitude: tripDestination.latitude,
+                  longitude: tripDestination.longitude,
+                },
+              ]}
+              strokeColor="#2b00b6" // Color de la línea
+              strokeWidth={6} // Ancho de la línea
+            />
+          )}
         {!(tripOrigin.latitude == 0 && tripOrigin.longitude == 0) && (
           <Marker
             coordinate={{
               latitude: tripOrigin.latitude,
               longitude: tripOrigin.longitude,
             }}
-          ></Marker>
+          >
+            <Image
+              source={originLocationImage}
+              style={{ height: 60, width: 20 }}
+              resizeMode="contain"
+            ></Image>
+          </Marker>
         )}
         {!(tripDestination.latitude == 0 && tripDestination.longitude == 0) && (
           <Marker
@@ -168,7 +185,27 @@ const TravelHome = () => {
               latitude: tripDestination.latitude,
               longitude: tripDestination.longitude,
             }}
-          ></Marker>
+          >
+            <Image
+              source={destinationLocationImage}
+              style={{ height: 60, width: 20 }}
+              resizeMode="contain"
+            ></Image>
+          </Marker>
+        )}
+        {!(userLocation.latitude == 0 && userLocation.longitude == 0) && (
+          <Marker
+            coordinate={{
+              latitude: userLocation.latitude,
+              longitude: userLocation.longitude,
+            }}
+          >
+            <Image
+              source={userLocationImage}
+              style={{ height: 70, width: 20 }}
+              resizeMode="contain"
+            ></Image>
+          </Marker>
         )}
       </MapView>
     </View>

@@ -17,8 +17,10 @@ const useLocation = () => {
 
       dispatch(
         setUserLocation({
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
+          // latitude: location.coords.latitude,
+          latitude: 40.391275,
+          // longitude: location.coords.longitude,
+          longitude: -3.739357,
         })
       );
     }

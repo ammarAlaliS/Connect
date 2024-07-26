@@ -21,6 +21,7 @@ const QuickCarsSearchesDetails = ({ setShowQuickCarDetails }) => {
   const quickCarsDistances = useSelector(
     (state) => state.travel.quickCarsDistances
   );
+  const seatRequested = useSelector((state) => state.travel.seatRequested);
 
   const dispatch = useDispatch();
 
@@ -145,7 +146,9 @@ const QuickCarsSearchesDetails = ({ setShowQuickCarDetails }) => {
         </Text>
       </View>
 
-      <QuickCarHeaderTravelDetails></QuickCarHeaderTravelDetails>
+      {seatRequested > 0 && (
+        <QuickCarHeaderTravelDetails></QuickCarHeaderTravelDetails>
+      )}
       <ScrollView>
         {quickCarsData.map((item, index) => {
           return (
@@ -207,7 +210,7 @@ const QuickCarsSearchesDetails = ({ setShowQuickCarDetails }) => {
                         fontFamily: "PlusJakartaSans-Regular",
                       }}
                     >
-                      {item.user.name + " " + item.user.lastName}
+                      {item.user?.name + " " + item.user?.lastName}
                     </Text>
                     <View
                       style={{
@@ -447,7 +450,7 @@ const QuickCarsSearchesDetails = ({ setShowQuickCarDetails }) => {
                           marginHorizontal: 10,
                         }}
                       >
-                        {item % 2 == 0
+                        {seatRequested == 0
                           ? "Proponer Viaje"
                           : "Suscribirse al viaje"}
                       </Text>

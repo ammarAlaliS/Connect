@@ -181,6 +181,11 @@ const SearchInput = ({ setMarker }) => {
       return;
     }
 
+    if (seatRequested == 0) {
+      Alert.alert("Debes solicitar mas de 1 asiento");
+      return;
+    }
+
     dispatch(setIsInputActive(false));
     dispatch(setPlacesSelected(true));
 
