@@ -14,18 +14,16 @@ import QuickCarDetailsButtom from "./QuickCarDetailsButtom";
 import QuickCarsSearchesDetails from "./QuickCarsSearchesDetails";
 import SearchNearQuickCarButton from "./SearchNearQuickCarButton";
 import { io } from "socket.io-client";
+import { setQuickarData } from "../../globalState/travelSlice";
 
-const API_BASE_URL =
-  "https://obbaramarket-backend.onrender.com/api/ObbaraMarket";
-const socket = io(API_BASE_URL, {
-  transports: ["websocket"],
-});
+const API_BASE_URL = "https://obbaramarket-backend.onrender.com/";
+const socket = io(API_BASE_URL);
 
 const TravelHome = () => {
   const mapRef = useRef(null);
 
   const [marker, setMarker] = useState(null);
-  const [isFocused, setIsFocused] = useState(false);
+  // const [isFocused, setIsFocused] = useState(false);
   const [showQuickCarDetails, setShowQuickCarDetails] = useState(false);
   const darkMode = useSelector(selectTheme);
   const placesSelected = useSelector((state) => state.travel.placesSelected);
@@ -34,6 +32,7 @@ const TravelHome = () => {
   const tripOrigin = useSelector((state) => state.travel.tripOrigin);
   const tripDestination = useSelector((state) => state.travel.tripDestination);
   const userLocation = useSelector((state) => state.travel.userLocation);
+  const inputIsActive = useSelector((state) => state.travel.inputIsActive);
 
   // const polylineCoordinates = [
   //   { latitude: 40.479112, longitude: -3.573604 },
@@ -81,24 +80,76 @@ const TravelHome = () => {
     }
   }, [tripDestination]);
 
-  useEffect(() => {
+  const updateQuickCarData = (driverLocation, quickCarsData) => {
+    let quickCarsUpdated = quickCarsData.map((item) => {
+      if (driverLocation.longitude == item.CurrentQuickCarLocation.longitude) {
+        return {
+          ...item,
+          CurrentQuickCarLocation: {
+            latitude: driverLocation.latitude,
+            longitude: driverLocation.longitude,
+          },
+        };
+      } else {
+        return item;
+      }
+    });
+    dispatch(setQuickarData(quickCarsUpdated));
+  };
+
+  const joinToCarRooms = () => {
     if (quickCarsData && quickCarsData.length > 0) {
       for (let i = 0; i < quickCarsData.length; i++) {
         socket.emit("joinDriverRoom", quickCarsData[i].id);
+        console.log("Se unio a la sala" + quickCarsData[i].id);
       }
-
-      socket.on("reciveDriverLocation", (driverLocation) => {
-        console.log("Connected to server");
-        console.log("La ubicacion recibida es: ");
-        console.log(location);
-      });
     }
+  };
+
+  useEffect(() => {
+    joinToCarRooms();
+
+    socket.on("reciveDriverLocation", (driverLocation) => {
+      console.log("Connected to server");
+      console.log("La ubicacion recibida es: ");
+      console.log(driverLocation);
+
+      updateQuickCarData(driverLocation, quickCarsData);
+    });
 
     // Clean up the socket connection on component unmount
     return () => {
       socket.off("reciveDriverLocation");
     };
   }, [quickCarsData]);
+
+  const emitToAllQuickCars = () => {
+    if (quickCarsData && quickCarsData.length > 0) {
+      for (let i = 0; i < quickCarsData.length; i++) {
+        let room = quickCarsData[i].id;
+        let driverLocation = {
+          latitude:
+            quickCarsData[i].CurrentQuickCarLocation.latitude +
+            new Date().getSeconds() * 0.0005,
+          longitude: quickCarsData[i].CurrentQuickCarLocation.longitude,
+        };
+        socket.emit("sendDriverLocation", { room, driverLocation });
+      }
+    }
+  };
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      console.log(new Date().getSeconds());
+      emitToAllQuickCars();
+    }, 6000);
+
+    // Cleanup function to clear the interval when the component unmounts
+    return () => {
+      clearInterval(intervalId);
+      console.log("Interval cleared");
+    };
+  }, []);
 
   return (
     <View>
@@ -133,7 +184,8 @@ const TravelHome = () => {
         ref={mapRef}
       >
         {marker && <Marker coordinate={marker} />}
-        {quickCarsData &&
+        {!inputIsActive &&
+          quickCarsData &&
           quickCarsData.length > 0 &&
           quickCarsData.map((item, index) => {
             return (

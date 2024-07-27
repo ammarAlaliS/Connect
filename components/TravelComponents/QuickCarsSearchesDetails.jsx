@@ -92,7 +92,7 @@ const QuickCarsSearchesDetails = ({ setShowQuickCarDetails }) => {
   }, [quickCarsData, tripOriginLocation, userLocation]);
 
   useEffect(() => {
-    console.log(quickCarsData[0]);
+    console.log(quickCarsData[1]);
   }, [quickCarsData]);
 
   return (
