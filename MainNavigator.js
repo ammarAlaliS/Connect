@@ -14,6 +14,7 @@ import ArticleScreen from './screens/ArticleScreen';
 import AdviseMessage from './screens/AdviseMessage';
 import MessageScreen from './screens/MessageScreen';
 import ContactScreen from './screens/ContactScreen';
+import CommentsScreen from './screens/CommentScreen';
 
 
 const Stack = createNativeStackNavigator();
@@ -59,6 +60,7 @@ export default function MainNavigator() {
       <Stack.Screen name="MainScreen" component={HomeAppScreen} />
       <Stack.Screen name="ArticleScreen" component={ArticleScreen} options={{ headerShown: false }} />
       <Stack.Screen name="Contact" component={ContactScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="commentScreen" component={CommentsScreen} options={{ headerShown: false }} />
 
     </Stack.Navigator>
 

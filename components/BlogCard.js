@@ -15,7 +15,6 @@ import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import EvilIcons from "@expo/vector-icons/EvilIcons";
 import { AntDesign } from "@expo/vector-icons";
-import CommentsModal_C from "./CommentsModal _C";
 
 const API_BASE_URL =
   "https://obbaramarket-backend.onrender.com/api/ObbaraMarket";
@@ -40,7 +39,6 @@ const BlogCard = ({
   const [likes, setLikes] = useState();
   const [totalComment, setTotalComment] = useState();
   const [showMore, setShowMore] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
   const [likeSubcribe, setLikeSubcribe] = useState();
   const global_user = useSelector((state) => state.user.global_user);
   const token = global_user?.token;
@@ -392,7 +390,13 @@ const BlogCard = ({
                 borderColor: darkMode.borderBox,
                 backgroundColor: darkMode.backgroundDark,
               }}
-              onPress={() => setModalVisible(true)}
+              onPress={() =>
+                navigation.navigate('commentScreen', {
+                  blogId,
+                  token,
+                  darkMode,
+                })
+              }
             >
               <View className=" flex-row space-x-[2px] items-center justify-center">
                 <EvilIcons name="comment" size={24} color={darkMode.text} />
@@ -447,6 +451,7 @@ const BlogCard = ({
                   time,
                   blogId,
                   sections,
+                  darkMode
                 })
               }
             >
@@ -472,12 +477,6 @@ const BlogCard = ({
           </View>
         </View>
       </View>
-      <CommentsModal_C
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
-        blogId={blogId}
-        token={token}
-      />
     </View>
   );
 };
