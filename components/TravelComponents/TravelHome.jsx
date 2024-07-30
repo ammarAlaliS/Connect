@@ -14,15 +14,23 @@ import QuickCarDetailsButtom from "./QuickCarDetailsButtom";
 import QuickCarsSearchesDetails from "./QuickCarsSearchesDetails";
 import SearchNearQuickCarButton from "./SearchNearQuickCarButton";
 import { io } from "socket.io-client";
-import { setQuickarData } from "../../globalState/travelSlice";
+import {
+  setQuickarData,
+  updateIndividualQuickCarLocations,
+  updateAllQuickCarCurrentLocation,
+  receiveDataFromQuickarSocketLocations,
+  setRoomsJoined,
+} from "../../globalState/travelSlice";
 
 const API_BASE_URL = "https://obbaramarket-backend.onrender.com/";
-const socket = io(API_BASE_URL);
 
 const TravelHome = () => {
   const mapRef = useRef(null);
 
+  const socket = useRef(null);
+
   const [marker, setMarker] = useState(null);
+  const [activeSocket, setActiveSocket] = useState(0);
   // const [isFocused, setIsFocused] = useState(false);
   const [showQuickCarDetails, setShowQuickCarDetails] = useState(false);
   const darkMode = useSelector(selectTheme);
@@ -33,6 +41,7 @@ const TravelHome = () => {
   const tripDestination = useSelector((state) => state.travel.tripDestination);
   const userLocation = useSelector((state) => state.travel.userLocation);
   const inputIsActive = useSelector((state) => state.travel.inputIsActive);
+  const roomsJoined = useSelector((state) => state.travel.roomsJoined);
 
   // const polylineCoordinates = [
   //   { latitude: 40.479112, longitude: -3.573604 },
@@ -80,51 +89,65 @@ const TravelHome = () => {
     }
   }, [tripDestination]);
 
-  const updateQuickCarData = (driverLocation, quickCarsData) => {
-    let quickCarsUpdated = quickCarsData.map((item) => {
-      if (driverLocation.longitude == item.CurrentQuickCarLocation.longitude) {
-        return {
-          ...item,
-          CurrentQuickCarLocation: {
-            latitude: driverLocation.latitude,
-            longitude: driverLocation.longitude,
-          },
-        };
-      } else {
-        return item;
-      }
-    });
-    dispatch(setQuickarData(quickCarsUpdated));
+  const updateQuickCarData = (driverLocation) => {
+    console.log("Se manda a llamar a la funcion");
+
+    dispatch(
+      receiveDataFromQuickarSocketLocations({
+        id: quickCarsData.filter(
+          (el) =>
+            el.CurrentQuickCarLocation.longitude == driverLocation.longitude
+        )[0].id,
+        ...driverLocation,
+      })
+    );
   };
 
   const joinToCarRooms = () => {
-    if (quickCarsData && quickCarsData.length > 0) {
-      for (let i = 0; i < quickCarsData.length; i++) {
-        socket.emit("joinDriverRoom", quickCarsData[i].id);
-        console.log("Se unio a la sala" + quickCarsData[i].id);
+    if (quickCarsData && quickCarsData.length > 0 && socket.current) {
+      let roomsJoinedTemporal = [...roomsJoined];
+
+      let quickCarDateFilter = quickCarsData.filter(
+        (el) => roomsJoinedTemporal.filter((ell) => ell == el.id).length == 0
+      );
+
+      for (let i = 0; i < quickCarDateFilter.length; i++) {
+        roomsJoinedTemporal.push(quickCarDateFilter[i].id);
+        socket.current.emit("joinDriverRoom", quickCarDateFilter[i].id);
+        console.log("Se unio a la sala" + quickCarDateFilter[i].id);
+      }
+      if (quickCarDateFilter.length > 0) {
+        dispatch(setRoomsJoined(roomsJoinedTemporal));
       }
     }
   };
 
   useEffect(() => {
-    joinToCarRooms();
-
-    socket.on("reciveDriverLocation", (driverLocation) => {
-      console.log("Connected to server");
-      console.log("La ubicacion recibida es: ");
-      console.log(driverLocation);
-
-      updateQuickCarData(driverLocation, quickCarsData);
+    socket.current = io(API_BASE_URL, {
+      transports: ["websocket"],
     });
+
+    socket.current.on("reciveDriverLocation", (driverLocation) => {
+      console.log("Se reciben datos");
+      console.log("yes");
+      updateQuickCarData(driverLocation);
+    });
+    console.log("Mierdaa");
 
     // Clean up the socket connection on component unmount
     return () => {
-      socket.off("reciveDriverLocation");
+      socket.current.off("reciveDriverLocation");
+      socket.current.disconnect();
     };
+  }, []);
+
+  useEffect(() => {
+    joinToCarRooms();
   }, [quickCarsData]);
 
   const emitToAllQuickCars = () => {
-    if (quickCarsData && quickCarsData.length > 0) {
+    if (quickCarsData && quickCarsData.length > 0 && socket.current) {
+      setActiveSocket(activeSocket + 1);
       for (let i = 0; i < quickCarsData.length; i++) {
         let room = quickCarsData[i].id;
         let driverLocation = {
@@ -133,7 +156,7 @@ const TravelHome = () => {
             new Date().getSeconds() * 0.0005,
           longitude: quickCarsData[i].CurrentQuickCarLocation.longitude,
         };
-        socket.emit("sendDriverLocation", { room, driverLocation });
+        socket.current.emit("sendDriverLocation", { room, driverLocation });
       }
     }
   };
@@ -148,6 +171,19 @@ const TravelHome = () => {
     return () => {
       clearInterval(intervalId);
       console.log("Interval cleared");
+    };
+  }, []);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      console.log("Se pidio la actualizacion");
+      dispatch(updateAllQuickCarCurrentLocation());
+    }, 10000);
+
+    // Cleanup function to clear the interval when the component unmounts
+    return () => {
+      clearInterval(intervalId);
+      console.log("Interval cleared update all quickcar locations");
     };
   }, []);
 

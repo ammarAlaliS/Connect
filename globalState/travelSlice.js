@@ -21,6 +21,8 @@ const initialState = {
     latitudeDelta: 0.1522,
     longitudeDelta: 0.221,
   },
+  quickCarDataReceivedForUpdate: [],
+  roomsJoined: [],
 };
 
 export const travelSlice = createSlice({
@@ -72,6 +74,94 @@ export const travelSlice = createSlice({
     setMapRegion: (state, action) => {
       state.region = action.payload;
     },
+    setRoomsJoined: (state, action) => {
+      state.roomsJoined = action.payload;
+    },
+    updateIndividualQuickCarLocations: (state, action) => {
+      state.quickCarsData = state.quickCarsData.map((el, index) => {
+        if (el.id == action.id) {
+          return {
+            ...el,
+            CurrentQuickCarLocation: {
+              latitude: action.latitude,
+              longitude: action.longitude,
+            },
+          };
+        } else {
+          return el;
+        }
+      });
+    },
+    receiveDataFromQuickarSocketLocations: (state, action) => {
+      console.log("SE PIDIO UNA ACTUALIZACION DE LOS DATOS CON LA ACCION");
+      console.log(action);
+
+      if (
+        state.quickCarDataReceivedForUpdate.filter(
+          (el) => el.id == action.payload.id
+        ).length > 0
+      ) {
+        state.quickCarDataReceivedForUpdate =
+          state.quickCarDataReceivedForUpdate.map((el, index) => {
+            if (el.id == action.payload.id) {
+              return {
+                ...el,
+                CurrentQuickCarLocation: {
+                  latitude: action.payload.latitude,
+                  longitude: action.payload.longitude,
+                },
+              };
+            } else {
+              return el;
+            }
+          });
+      } else {
+        state.quickCarDataReceivedForUpdate = [
+          ...state.quickCarDataReceivedForUpdate,
+          {
+            id: action.payload.id,
+            CurrentQuickCarLocation: {
+              latitude: action.payload.latitude,
+              longitude: action.payload.longitude,
+            },
+          },
+        ];
+      }
+    },
+    updateAllQuickCarCurrentLocation: (state) => {
+      console.log("Se trabaja en la actualizacion");
+      console.log(state.quickCarsData?.length);
+
+      state.quickCarsData = state.quickCarsData
+        ? state.quickCarsData.map((el, index) => {
+            let currentLocation = state.quickCarDataReceivedForUpdate.filter(
+              (location) => location.id == el.id
+            );
+
+            console.log(
+              "La cantidad de elamentos encontrados fueron: " +
+                currentLocation.length
+            );
+
+            if (currentLocation.length > 0) {
+              console.log("Intento actualizarse la MIERDA");
+              console.log(currentLocation[0]);
+              console.log(el.CurrentQuickCarLocation);
+              return {
+                ...el,
+                CurrentQuickCarLocation: {
+                  latitude: currentLocation[0].CurrentQuickCarLocation.latitude,
+                  longitude:
+                    currentLocation[0].CurrentQuickCarLocation.longitude,
+                },
+              };
+            } else {
+              return el;
+            }
+          })
+        : [];
+      state.quickCarDataReceivedForUpdate = [];
+    },
   },
 });
 
@@ -91,5 +181,9 @@ export const {
   setSeatRequested,
   setIsInputActive,
   setMapRegion,
+  updateIndividualQuickCarLocations,
+  updateAllQuickCarCurrentLocation,
+  receiveDataFromQuickarSocketLocations,
+  setRoomsJoined,
 } = travelSlice.actions;
 export default travelSlice.reducer;
