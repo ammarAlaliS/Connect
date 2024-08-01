@@ -183,6 +183,8 @@ const IndividualQuickCarDetails = ({
             </Text>
           </View>
         </View>
+
+        {/* Primer linea divisora */}
         <View
           style={{
             width: "100%",
@@ -203,10 +205,260 @@ const IndividualQuickCarDetails = ({
             flexDirection: "row",
             justifyContent: "space-between",
             paddingHorizontal: 30,
+            alignItems: "center",
           }}
         >
-          <Text>Origen/Destino</Text>
-          <Text>Ver en el mapa</Text>
+          <Text style={{ marginBottom: 10, color: "#00000090", fontSize: 14 }}>
+            Origen / Destino
+          </Text>
+          <Text
+            style={{
+              marginBottom: 10,
+              fontFamily: "PlusJakartaSans-Bold",
+              fontSize: 15,
+              color: "#2b00b6",
+            }}
+          >
+            Ver en el mapa
+          </Text>
+        </View>
+
+        <View
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            width: "100%",
+          }}
+        >
+          <View
+            style={{
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginLeft: 43,
+              paddingVertical: 5,
+              marginRight: 43,
+            }}
+          >
+            <View
+              style={{
+                height: 12,
+                width: 12,
+                backgroundColor: "#2b00b6",
+                borderRadius: 10,
+              }}
+            ></View>
+            <View
+              style={{
+                flex: 1,
+                width: 0,
+                borderWidth: 0.5,
+                borderColor: "#00000090",
+                borderStyle: "dashed",
+              }}
+            ></View>
+            <View
+              style={{
+                height: 12,
+                width: 12,
+                backgroundColor: "#ffbb1c",
+                borderRadius: 10,
+              }}
+            ></View>
+          </View>
+          <View>
+            <Text
+              style={{
+                fontSize: 13.5,
+                fontFamily: "PlusJakartaSans-Regular",
+                padding: 1,
+                color: "#00000090",
+              }}
+            >
+              {quickCarInfo.starLocation.startLocationName}
+            </Text>
+            <Text
+              style={{
+                fontSize: 13.5,
+                fontFamily: "PlusJakartaSans-Regular",
+                padding: 1,
+                color: "#00000090",
+              }}
+            >
+              {quickCarInfo.endLocation.endLocationName}
+            </Text>
+          </View>
+        </View>
+
+        {/* Horarios */}
+
+        <View
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            marginTop: 10,
+            width: "100%",
+            marginBottom: 15,
+          }}
+        >
+          <View style={{ width: "33%" }}>
+            <Text style={{ color: "#00000090", textAlign: "center" }}>
+              Salida
+            </Text>
+            <Text
+              style={{
+                fontFamily: "PlusJakartaSans-Bold",
+                fontSize: 15,
+                color: "#2b00b6",
+                textAlign: "center",
+              }}
+            >
+              {quickCarInfo.startTime.hour +
+                ": " +
+                (quickCarInfo.startTime.minute == 0
+                  ? "00"
+                  : quickCarInfo.startTime.minute)}{" "}
+              {quickCarInfo.startTime.hour > 11 ? " pm" : " am"}
+            </Text>
+          </View>
+          <View style={{ width: "34%" }}>
+            <Text style={{ color: "#00000090", textAlign: "center" }}>
+              Llegada
+            </Text>
+            <Text
+              style={{
+                fontFamily: "PlusJakartaSans-Bold",
+                fontSize: 15,
+                color: "#2b00b6",
+                textAlign: "center",
+              }}
+            >
+              {quickCarInfo.endTime.hour +
+                ": " +
+                (quickCarInfo.endTime.minute == 0
+                  ? "00"
+                  : quickCarInfo.endTime.minute)}{" "}
+              {quickCarInfo.endTime.hour > 11 ? " pm" : " am"}
+            </Text>
+          </View>
+          <View style={{ width: "33%" }}>
+            <Text style={{ color: "#00000090", textAlign: "center" }}>
+              Tipo de Vehiculo
+            </Text>
+            <Text
+              style={{
+                fontFamily: "PlusJakartaSans-Bold",
+                fontSize: 15,
+                color: "#2b00b6",
+                textAlign: "center",
+              }}
+            >
+              {quickCarInfo.vehicleModel}
+            </Text>
+          </View>
+        </View>
+
+        {/*Segunda linea divisoria  */}
+        <View
+          style={{
+            width: "100%",
+            height: 0,
+            borderColor: "#c3c3c3",
+            borderWidth: 1.5,
+            borderStyle: "solid",
+            shadowColor: "#000",
+            shadowOpacity: 0.1,
+            shadowRadius: 4,
+            elevation: 4,
+          }}
+        ></View>
+
+        {/*Detalles de los asientos  */}
+
+        <View
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            marginTop: 15,
+            width: "100%",
+            marginBottom: 15,
+          }}
+        >
+          <View style={{ width: "50%" }}>
+            <Text style={{ color: "#00000090", textAlign: "center" }}>
+              Asientos libres
+            </Text>
+            <Text
+              style={{
+                fontFamily: "PlusJakartaSans-Bold",
+                fontSize: 15,
+                color: "#2b00b6",
+                textAlign: "center",
+              }}
+            >
+              {quickCarInfo.availableSeats} asientos
+            </Text>
+          </View>
+          <View style={{ width: "50%" }}>
+            <Text style={{ color: "#00000090", textAlign: "center" }}>
+              Precio por asiento
+            </Text>
+            <Text
+              style={{
+                fontFamily: "PlusJakartaSans-Bold",
+                fontSize: 15,
+                color: "#2b00b6",
+                textAlign: "center",
+              }}
+            >
+              $ {quickCarInfo.pricePerSeat}
+            </Text>
+          </View>
+        </View>
+
+        {/*Tercer linea divisoria  */}
+        <View
+          style={{
+            width: "100%",
+            height: 0,
+            borderColor: "#c3c3c3",
+            borderWidth: 1.5,
+            borderStyle: "solid",
+            shadowColor: "#000",
+            shadowOpacity: 0.1,
+            shadowRadius: 4,
+            elevation: 4,
+          }}
+        ></View>
+
+        <View
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            width: "100%",
+            height: 100,
+          }}
+        >
+          <View style={{ width: "33%" }}>
+            <Text>Lunes</Text>
+          </View>
+          <View style={{ width: "33%" }}>
+            <Text>Lunes</Text>
+          </View>
+          <View style={{ width: "33%" }}>
+            <Text>Lunes</Text>
+          </View>
+          <View style={{ width: "33%" }}>
+            <Text>Lunes</Text>
+          </View>
+          <View style={{ width: "33%" }}>
+            <Text>Lunes</Text>
+          </View>
+          <View style={{ width: "33%" }}>
+            <Text>Lunes</Text>
+          </View>
+          <View style={{ width: "33%" }}>
+            <Text>Lunes</Text>
+          </View>
         </View>
       </ScrollView>
     </View>
