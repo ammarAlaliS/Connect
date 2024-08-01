@@ -105,46 +105,46 @@ const TravelHome = () => {
     );
   };
 
-  // useEffect(() => {
-  //   let roomsJoinedTemporal = [...roomsJoined];
+  useEffect(() => {
+    let roomsJoinedTemporal = [...roomsJoined];
 
-  //   if (quickCarsData && quickCarsData.length > 0) {
-  //     let quickCarDateFilter = quickCarsData.filter(
-  //       (el) => roomsJoinedTemporal.filter((ell) => ell == el.id).length == 0
-  //     );
+    if (quickCarsData && quickCarsData.length > 0) {
+      let quickCarDateFilter = quickCarsData.filter(
+        (el) => roomsJoinedTemporal.filter((ell) => ell == el.id).length == 0
+      );
 
-  //     for (let i = 0; i < quickCarDateFilter.length; i++) {
-  //       roomsJoinedTemporal.push(quickCarDateFilter[i].id);
-  //       socket.emit("joinDriverRoom", quickCarDateFilter[i].id);
-  //       console.log("Se unio a la sala" + quickCarDateFilter[i].id);
-  //     }
-  //   }
+      for (let i = 0; i < quickCarDateFilter.length; i++) {
+        roomsJoinedTemporal.push(quickCarDateFilter[i].id);
+        socket.emit("joinDriverRoom", quickCarDateFilter[i].id);
+        console.log("Se unio a la sala" + quickCarDateFilter[i].id);
+      }
+    }
 
-  //   socket.on("reciveDriverLocation", (driverLocation) => {
-  //     console.log("Se reciben datos");
-  //     console.log("yes");
-  //     updateQuickCarData(driverLocation);
-  //   });
+    socket.on("reciveDriverLocation", (driverLocation) => {
+      console.log("Se reciben datos");
+      console.log("yes");
+      updateQuickCarData(driverLocation);
+    });
 
-  //   // Clean up the socket connection on component unmount
-  //   return () => {
-  //     socket.off("reciveDriverLocation");
-  //     socket.disconnect();
-  //   };
-  // }, [quickCarsData, roomsJoined]);
+    // Clean up the socket connection on component unmount
+    return () => {
+      socket.off("reciveDriverLocation");
+      socket.disconnect();
+    };
+  }, [quickCarsData, roomsJoined]);
 
-  // useEffect(() => {
-  //   const intervalId = setInterval(() => {
-  //     console.log("Se pidio la actualizacion");
-  //     dispatch(updateAllQuickCarCurrentLocation());
-  //   }, 10000);
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      console.log("Se pidio la actualizacion");
+      dispatch(updateAllQuickCarCurrentLocation());
+    }, 10000);
 
-  //   // Cleanup function to clear the interval when the component unmounts
-  //   return () => {
-  //     clearInterval(intervalId);
-  //     console.log("Interval cleared update all quickcar locations");
-  //   };
-  // }, []);
+    // Cleanup function to clear the interval when the component unmounts
+    return () => {
+      clearInterval(intervalId);
+      console.log("Interval cleared update all quickcar locations");
+    };
+  }, []);
 
   return (
     <View>

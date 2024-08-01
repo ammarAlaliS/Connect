@@ -28,16 +28,16 @@ const QuickCarDetailsButtom = ({ setShowQuickCarDetails }) => {
     }
   };
 
-  // useEffect(() => {
-  //   const intervalId = setInterval(() => {
-  //     emitToAllQuickCars();
-  //   }, 6000);
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      emitToAllQuickCars();
+    }, 6000);
 
-  //   // Cleanup function to clear the interval when the component unmounts
-  //   return () => {
-  //     clearInterval(intervalId);
-  //   };
-  // }, []);
+    // Cleanup function to clear the interval when the component unmounts
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, []);
 
   return (
     <TouchableOpacity
