@@ -93,9 +93,6 @@ export const travelSlice = createSlice({
       });
     },
     receiveDataFromQuickarSocketLocations: (state, action) => {
-      console.log("SE PIDIO UNA ACTUALIZACION DE LOS DATOS CON LA ACCION");
-      console.log(action);
-
       if (
         state.quickCarDataReceivedForUpdate.filter(
           (el) => el.id == action.payload.id
@@ -129,24 +126,13 @@ export const travelSlice = createSlice({
       }
     },
     updateAllQuickCarCurrentLocation: (state) => {
-      console.log("Se trabaja en la actualizacion");
-      console.log(state.quickCarsData?.length);
-
       state.quickCarsData = state.quickCarsData
         ? state.quickCarsData.map((el, index) => {
             let currentLocation = state.quickCarDataReceivedForUpdate.filter(
               (location) => location.id == el.id
             );
 
-            console.log(
-              "La cantidad de elamentos encontrados fueron: " +
-                currentLocation.length
-            );
-
             if (currentLocation.length > 0) {
-              console.log("Intento actualizarse la MIERDA");
-              console.log(currentLocation[0]);
-              console.log(el.CurrentQuickCarLocation);
               return {
                 ...el,
                 CurrentQuickCarLocation: {

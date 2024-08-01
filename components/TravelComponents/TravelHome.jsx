@@ -27,7 +27,9 @@ const API_BASE_URL = "https://obbaramarket-backend.onrender.com/";
 const TravelHome = () => {
   const mapRef = useRef(null);
 
-  const socket = useRef(null);
+  const socket = io(API_BASE_URL, {
+    transports: ["websocket"],
+  });
 
   const [marker, setMarker] = useState(null);
   const [activeSocket, setActiveSocket] = useState(0);
@@ -103,89 +105,46 @@ const TravelHome = () => {
     );
   };
 
-  const joinToCarRooms = () => {
-    if (quickCarsData && quickCarsData.length > 0 && socket.current) {
-      let roomsJoinedTemporal = [...roomsJoined];
+  // useEffect(() => {
+  //   let roomsJoinedTemporal = [...roomsJoined];
 
-      let quickCarDateFilter = quickCarsData.filter(
-        (el) => roomsJoinedTemporal.filter((ell) => ell == el.id).length == 0
-      );
+  //   if (quickCarsData && quickCarsData.length > 0) {
+  //     let quickCarDateFilter = quickCarsData.filter(
+  //       (el) => roomsJoinedTemporal.filter((ell) => ell == el.id).length == 0
+  //     );
 
-      for (let i = 0; i < quickCarDateFilter.length; i++) {
-        roomsJoinedTemporal.push(quickCarDateFilter[i].id);
-        socket.current.emit("joinDriverRoom", quickCarDateFilter[i].id);
-        console.log("Se unio a la sala" + quickCarDateFilter[i].id);
-      }
-      if (quickCarDateFilter.length > 0) {
-        dispatch(setRoomsJoined(roomsJoinedTemporal));
-      }
-    }
-  };
+  //     for (let i = 0; i < quickCarDateFilter.length; i++) {
+  //       roomsJoinedTemporal.push(quickCarDateFilter[i].id);
+  //       socket.emit("joinDriverRoom", quickCarDateFilter[i].id);
+  //       console.log("Se unio a la sala" + quickCarDateFilter[i].id);
+  //     }
+  //   }
 
-  useEffect(() => {
-    socket.current = io(API_BASE_URL, {
-      transports: ["websocket"],
-    });
+  //   socket.on("reciveDriverLocation", (driverLocation) => {
+  //     console.log("Se reciben datos");
+  //     console.log("yes");
+  //     updateQuickCarData(driverLocation);
+  //   });
 
-    socket.current.on("reciveDriverLocation", (driverLocation) => {
-      console.log("Se reciben datos");
-      console.log("yes");
-      updateQuickCarData(driverLocation);
-    });
-    console.log("Mierdaa");
+  //   // Clean up the socket connection on component unmount
+  //   return () => {
+  //     socket.off("reciveDriverLocation");
+  //     socket.disconnect();
+  //   };
+  // }, [quickCarsData, roomsJoined]);
 
-    // Clean up the socket connection on component unmount
-    return () => {
-      socket.current.off("reciveDriverLocation");
-      socket.current.disconnect();
-    };
-  }, []);
+  // useEffect(() => {
+  //   const intervalId = setInterval(() => {
+  //     console.log("Se pidio la actualizacion");
+  //     dispatch(updateAllQuickCarCurrentLocation());
+  //   }, 10000);
 
-  useEffect(() => {
-    joinToCarRooms();
-  }, [quickCarsData]);
-
-  const emitToAllQuickCars = () => {
-    if (quickCarsData && quickCarsData.length > 0 && socket.current) {
-      setActiveSocket(activeSocket + 1);
-      for (let i = 0; i < quickCarsData.length; i++) {
-        let room = quickCarsData[i].id;
-        let driverLocation = {
-          latitude:
-            quickCarsData[i].CurrentQuickCarLocation.latitude +
-            new Date().getSeconds() * 0.0005,
-          longitude: quickCarsData[i].CurrentQuickCarLocation.longitude,
-        };
-        socket.current.emit("sendDriverLocation", { room, driverLocation });
-      }
-    }
-  };
-
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      console.log(new Date().getSeconds());
-      emitToAllQuickCars();
-    }, 6000);
-
-    // Cleanup function to clear the interval when the component unmounts
-    return () => {
-      clearInterval(intervalId);
-      console.log("Interval cleared");
-    };
-  }, []);
-
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      console.log("Se pidio la actualizacion");
-      dispatch(updateAllQuickCarCurrentLocation());
-    }, 10000);
-
-    // Cleanup function to clear the interval when the component unmounts
-    return () => {
-      clearInterval(intervalId);
-      console.log("Interval cleared update all quickcar locations");
-    };
-  }, []);
+  //   // Cleanup function to clear the interval when the component unmounts
+  //   return () => {
+  //     clearInterval(intervalId);
+  //     console.log("Interval cleared update all quickcar locations");
+  //   };
+  // }, []);
 
   return (
     <View>
@@ -204,8 +163,8 @@ const TravelHome = () => {
       <SearchNearQuickCarButton></SearchNearQuickCarButton>
       <MapView
         customMapStyle={
-          // darkMode.darkMode ? stylesMap.mapStyleLight : stylesMap.mapStyle
-          stylesMap.mapStyleLight
+          darkMode.darkMode ? stylesMap.mapStyleLight : stylesMap.mapStyle
+          // stylesMap.mapStyleLight
         }
         style={{
           width: "100%",

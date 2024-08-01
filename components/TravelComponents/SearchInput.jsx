@@ -82,8 +82,6 @@ const SearchInput = ({ setMarker }) => {
     dispatch(setTripOrigin({ latitude: lat, longitude: lng }));
     dispatch(setTripOriginName(data.description));
 
-    // console.log(data);
-    // console.log(details);
     // setMapRegion({
     //   latitude: lat,
     //   longitude: lng,
@@ -158,7 +156,6 @@ const SearchInput = ({ setMarker }) => {
 
   const onSeatNumbersChanges = (text) => {
     let numericValue = text.replace(/[^0-9]/g, "");
-    console.log(numericValue);
     dispatch(setSeatRequested(numericValue));
   };
 

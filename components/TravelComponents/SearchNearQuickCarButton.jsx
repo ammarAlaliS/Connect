@@ -86,7 +86,6 @@ const SearchNearQuickCarButton = () => {
       ).then((res) => res.json());
 
       if (data && data.conductores && data.conductores[0]) {
-        console.log("Se cambio la region");
         dispatch(setQuickarData(data.conductores));
 
         dispatch(
