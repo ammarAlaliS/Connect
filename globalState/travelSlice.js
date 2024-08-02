@@ -21,6 +21,9 @@ const initialState = {
     latitudeDelta: 0.1522,
     longitudeDelta: 0.221,
   },
+  quickCarDataReceivedForUpdate: [],
+  roomsJoined: [],
+  userType: "user",
 };
 
 export const travelSlice = createSlice({
@@ -72,6 +75,83 @@ export const travelSlice = createSlice({
     setMapRegion: (state, action) => {
       state.region = action.payload;
     },
+    setRoomsJoined: (state, action) => {
+      state.roomsJoined = action.payload;
+    },
+    updateIndividualQuickCarLocations: (state, action) => {
+      state.quickCarsData = state.quickCarsData.map((el, index) => {
+        if (el.id == action.id) {
+          return {
+            ...el,
+            CurrentQuickCarLocation: {
+              latitude: action.latitude,
+              longitude: action.longitude,
+            },
+          };
+        } else {
+          return el;
+        }
+      });
+    },
+    receiveDataFromQuickarSocketLocations: (state, action) => {
+      if (
+        state.quickCarDataReceivedForUpdate.filter(
+          (el) => el.id == action.payload.id
+        ).length > 0
+      ) {
+        state.quickCarDataReceivedForUpdate =
+          state.quickCarDataReceivedForUpdate.map((el, index) => {
+            if (el.id == action.payload.id) {
+              return {
+                ...el,
+                CurrentQuickCarLocation: {
+                  latitude: action.payload.latitude,
+                  longitude: action.payload.longitude,
+                },
+              };
+            } else {
+              return el;
+            }
+          });
+      } else {
+        state.quickCarDataReceivedForUpdate = [
+          ...state.quickCarDataReceivedForUpdate,
+          {
+            id: action.payload.id,
+            CurrentQuickCarLocation: {
+              latitude: action.payload.latitude,
+              longitude: action.payload.longitude,
+            },
+          },
+        ];
+      }
+    },
+    updateAllQuickCarCurrentLocation: (state) => {
+      state.quickCarsData = state.quickCarsData
+        ? state.quickCarsData.map((el, index) => {
+            let currentLocation = state.quickCarDataReceivedForUpdate.filter(
+              (location) => location.id == el.id
+            );
+
+            if (currentLocation.length > 0) {
+              return {
+                ...el,
+                CurrentQuickCarLocation: {
+                  latitude: currentLocation[0].CurrentQuickCarLocation.latitude,
+                  longitude:
+                    currentLocation[0].CurrentQuickCarLocation.longitude,
+                },
+              };
+            } else {
+              return el;
+            }
+          })
+        : [];
+      state.quickCarDataReceivedForUpdate = [];
+    },
+    setUserType: (state, action) => {
+      state.userType = action.payload;
+    },
   },
 });
 
@@ -91,5 +171,10 @@ export const {
   setSeatRequested,
   setIsInputActive,
   setMapRegion,
+  updateIndividualQuickCarLocations,
+  updateAllQuickCarCurrentLocation,
+  receiveDataFromQuickarSocketLocations,
+  setRoomsJoined,
+  setUserType,
 } = travelSlice.actions;
 export default travelSlice.reducer;

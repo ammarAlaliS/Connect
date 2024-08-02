@@ -1,6 +1,6 @@
 import { Path, Svg } from "react-native-svg";
 
-const PlusIcon = ({ width, height, color, strokeWidth }) => (
+const PlusIcon = ({ width, height, color, strokeWidth, onPressOut }) => (
   <Svg
     xmlns="http://www.w3.org/2000/svg"
     fill="none"
@@ -11,6 +11,7 @@ const PlusIcon = ({ width, height, color, strokeWidth }) => (
     color={color}
     width={width}
     height={height}
+    onPressOut={onPressOut}
   >
     <Path
       strokeLinecap="round"
