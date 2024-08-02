@@ -2,11 +2,13 @@ import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import ArrowLeftIcon from "../../icons/ArrowLeftIcon";
 import { FontAwesome } from "@expo/vector-icons";
 import { Image } from "react-native";
+import { useSelector } from "react-redux";
 
 const IndividualQuickCarDetails = ({
   setShowQuickCarProfile,
   quickCarInfo,
 }) => {
+  const seatRequested = useSelector((state) => state.travel.seatRequested);
   return (
     <View
       style={{
@@ -57,7 +59,7 @@ const IndividualQuickCarDetails = ({
         </Text>
       </View>
 
-      <ScrollView>
+      <ScrollView style={{ width: "100%", flex: 1 }}>
         <View
           style={{
             display: "flex",
@@ -430,37 +432,130 @@ const IndividualQuickCarDetails = ({
           }}
         ></View>
 
+        <Text
+          style={{
+            marginTop: 15,
+            color: "#00000090",
+            marginLeft: "8.75%",
+            marginBottom: 10,
+          }}
+        >
+          Dias regulares
+        </Text>
+
         <View
           style={{
             display: "flex",
             flexDirection: "row",
             width: "100%",
             height: 100,
+            flexWrap: "wrap",
           }}
         >
-          <View style={{ width: "33%" }}>
-            <Text>Lunes</Text>
-          </View>
-          <View style={{ width: "33%" }}>
-            <Text>Lunes</Text>
-          </View>
-          <View style={{ width: "33%" }}>
-            <Text>Lunes</Text>
-          </View>
-          <View style={{ width: "33%" }}>
-            <Text>Lunes</Text>
-          </View>
-          <View style={{ width: "33%" }}>
-            <Text>Lunes</Text>
-          </View>
-          <View style={{ width: "33%" }}>
-            <Text>Lunes</Text>
-          </View>
-          <View style={{ width: "33%" }}>
-            <Text>Lunes</Text>
-          </View>
+          {quickCarInfo.regularDays.map((item) => {
+            return (
+              <View
+                style={{ width: "50%", height: 30, alignItems: "flex-start" }}
+              >
+                <Text
+                  style={{
+                    marginLeft: "35%",
+                    textAlign: "left",
+                    fontFamily: "PlusJakartaSans-SemiBold",
+                  }}
+                >
+                  {item}
+                </Text>
+              </View>
+            );
+          })}
         </View>
       </ScrollView>
+
+      {/*Cuarta linea divisoria  */}
+      <View
+        style={{
+          width: "100%",
+          height: 0,
+          borderColor: "#c3c3c3",
+          borderWidth: 1.5,
+          borderStyle: "solid",
+          shadowColor: "#000",
+          shadowOpacity: 0.1,
+          shadowRadius: 4,
+          elevation: 4,
+        }}
+      ></View>
+
+      <View
+        style={{
+          backgroundColor: "#c3c3c380",
+          width: "100%",
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+          paddingHorizontal: 30,
+          paddingVertical: 15,
+          marginBottom: 10,
+        }}
+      >
+        <TouchableOpacity
+          style={{
+            height: 45,
+            justifyContent: "center",
+            backgroundColor: "#f4f5f6",
+            width: "47%",
+            borderRadius: 10,
+            borderColor: "#c3c3c3",
+            borderWidth: 1.5,
+            borderStyle: "solid",
+            shadowColor: "#000",
+            shadowOpacity: 0.1,
+            shadowRadius: 4,
+            elevation: 4,
+          }}
+          onPressOut={() => {
+            setShowQuickCarProfile(false);
+          }}
+        >
+          <Text
+            style={{
+              textAlign: "center",
+              fontFamily: "PlusJakartaSans-Bold",
+              fontSize: 15,
+            }}
+          >
+            Cancelar
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={{
+            height: 45,
+            justifyContent: "center",
+            backgroundColor: "#2b00b6",
+            width: "47%",
+            borderRadius: 10,
+            borderColor: "#c3c3c3",
+            borderWidth: 1.5,
+            borderStyle: "solid",
+            shadowColor: "#000",
+            shadowOpacity: 0.1,
+            shadowRadius: 4,
+            elevation: 4,
+          }}
+        >
+          <Text
+            style={{
+              textAlign: "center",
+              fontFamily: "PlusJakartaSans-Bold",
+              fontSize: 15,
+              color: "white",
+            }}
+          >
+            {seatRequested == 0 ? "Proponer Viaje" : "Suscribirse al viaje"}
+          </Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };

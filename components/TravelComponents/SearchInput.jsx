@@ -28,6 +28,7 @@ import {
   setIsInputActive,
 } from "../../globalState/travelSlice";
 import ClockIcon from "../../icons/ClockIcon";
+import PlusIcon from "../../icons/PlusIcon";
 
 const SearchInput = ({ setMarker }) => {
   const dispatch = useDispatch();
@@ -45,6 +46,8 @@ const SearchInput = ({ setMarker }) => {
   const tripDestinationName = useSelector(
     (state) => state.travel.tripDestinationName
   );
+
+  const userType = useSelector((state) => state.travel.userType);
 
   const refInputAutoComplete = useRef();
   const refInputAutoCompleteDestination = useRef();
@@ -267,7 +270,11 @@ const SearchInput = ({ setMarker }) => {
                 ref={refInputAutoComplete}
                 minLength={3}
                 placeholder={
-                  inputIsActive ? "Origen del viaje" : "A donde quieres ir?"
+                  inputIsActive
+                    ? "Origen del viaje"
+                    : userType == "driver"
+                    ? "Crea un Viaje!!"
+                    : "A donde quieres ir?"
                 }
                 fetchDetails={true}
                 onPress={handleLocationSelect}
@@ -280,6 +287,7 @@ const SearchInput = ({ setMarker }) => {
                   textInput: [
                     {
                       backgroundColor: !inputIsActive ? "white" : "#f4f5f6",
+                      fontFamily: "PlusJakartaSans-Regular",
                     },
                     styles.originAutoCompleteTextInputStyle,
                   ],
@@ -310,17 +318,32 @@ const SearchInput = ({ setMarker }) => {
                     justifyContent: "center",
                   }}
                 >
-                  {!inputIsActive && !placesSelected && (
-                    <Icon
-                      style={{ padding: 0 }}
-                      name="search"
-                      size={21}
-                      color={"#00000050"}
-                      onPress={() => {
-                        dispatch(setIsInputActive(true));
-                      }}
-                    />
-                  )}
+                  {!inputIsActive &&
+                    !placesSelected &&
+                    userType == "passenger" && (
+                      <Icon
+                        style={{ padding: 0 }}
+                        name="search"
+                        size={21}
+                        color={"#00000050"}
+                        onPress={() => {
+                          dispatch(setIsInputActive(true));
+                        }}
+                      />
+                    )}
+                  {!inputIsActive &&
+                    !placesSelected &&
+                    userType == "driver" && (
+                      <PlusIcon
+                        width={22}
+                        height={22}
+                        color={"#00000050"}
+                        strokeWidth={3}
+                        onPressOut={() => {
+                          dispatch(setIsInputActive(true));
+                        }}
+                      ></PlusIcon>
+                    )}
                   {!inputIsActive && placesSelected && (
                     <Entypo
                       name="block"
@@ -360,6 +383,7 @@ const SearchInput = ({ setMarker }) => {
                     textInput: [
                       {
                         backgroundColor: !inputIsActive ? "white" : "#f4f5f6",
+                        fontFamily: "PlusJakartaSans-Regular",
                       },
                       styles.originAutoCompleteTextInputStyle,
                     ],
@@ -409,7 +433,12 @@ const SearchInput = ({ setMarker }) => {
           >
             <ClockIcon height={25} width={25} color={"#0000ff99"}></ClockIcon>
             <TextInput
-              style={{ width: "100%", fontSize: 16, marginLeft: 10 }}
+              style={{
+                width: "100%",
+                fontSize: 16,
+                marginLeft: 10,
+                fontFamily: "PlusJakartaSans-Regular",
+              }}
               onFocus={() => {
                 setShowDatePicker(true);
               }}
@@ -449,8 +478,16 @@ const SearchInput = ({ setMarker }) => {
               width={30}
             ></SquarePlusIcon>
             <TextInput
-              style={{ width: "100%" }}
-              placeholder="Numero de asientos"
+              style={{
+                width: "100%",
+                fontSize: 16,
+                fontFamily: "PlusJakartaSans-Regular",
+              }}
+              placeholder={
+                userType == "driver"
+                  ? "Numero de asientos libres"
+                  : "Numero de asientos"
+              }
               onChangeText={onSeatNumbersChanges}
               inputMode="numeric"
               value={seatRequested == 0 ? "" : seatRequested}
@@ -488,18 +525,28 @@ const SearchInput = ({ setMarker }) => {
             <TouchableOpacity
               style={{
                 height: 46,
-                backgroundColor: "#2b00b6",
+                backgroundColor: userType == "driver" ? "#ffbb1c" : "#2b00b6",
                 justifyContent: "center",
                 alignItems: "center",
                 width: "65%",
                 borderRadius: 10,
               }}
               onPress={() => {
-                searchQuickCars();
+                if (userType == "passenger") {
+                  searchQuickCars();
+                } else {
+                  Alert.alert("Creaste un viaje");
+                }
               }}
             >
-              <Text style={{ fontSize: 16, color: "#f4f5f6" }}>
-                Buscar QuickCars
+              <Text
+                style={{
+                  fontSize: 16,
+                  color: userType == "driver" ? "#000" : "#f4f5f6",
+                  fontFamily: "PlusJakartaSans-Bold",
+                }}
+              >
+                {userType == "driver" ? "Crear viaje" : "Buscar QuickCars"}
               </Text>
             </TouchableOpacity>
           </View>

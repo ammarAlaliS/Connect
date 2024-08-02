@@ -21,6 +21,7 @@ import {
   receiveDataFromQuickarSocketLocations,
   setRoomsJoined,
 } from "../../globalState/travelSlice";
+import PassengersDetailsButtom from "./DriverComponents/PassengersDetailsButtom";
 
 const API_BASE_URL = "https://obbaramarket-backend.onrender.com/";
 
@@ -45,6 +46,8 @@ const TravelHome = () => {
   const inputIsActive = useSelector((state) => state.travel.inputIsActive);
   const roomsJoined = useSelector((state) => state.travel.roomsJoined);
 
+  const [mapStyle, setMapStyle] = useState(null);
+
   // const polylineCoordinates = [
   //   { latitude: 40.479112, longitude: -3.573604 },
   //   { latitude: 40.472, longitude: -3.58 }, // Punto adicional
@@ -53,6 +56,8 @@ const TravelHome = () => {
   // ];
 
   const dispatch = useDispatch();
+
+  const userType = useSelector((state) => state.travel.userType);
 
   const animateToRegion = (region) => {
     if (mapRef.current) {
@@ -105,46 +110,51 @@ const TravelHome = () => {
     );
   };
 
+  // useEffect(() => {
+  //   let roomsJoinedTemporal = [...roomsJoined];
+
+  //   if (quickCarsData && quickCarsData.length > 0) {
+  //     let quickCarDateFilter = quickCarsData.filter(
+  //       (el) => roomsJoinedTemporal.filter((ell) => ell == el.id).length == 0
+  //     );
+
+  //     for (let i = 0; i < quickCarDateFilter.length; i++) {
+  //       roomsJoinedTemporal.push(quickCarDateFilter[i].id);
+  //       socket.emit("joinDriverRoom", quickCarDateFilter[i].id);
+  //       console.log("Se unio a la sala" + quickCarDateFilter[i].id);
+  //     }
+  //   }
+
+  //   socket.on("reciveDriverLocation", (driverLocation) => {
+  //     console.log("Se reciben datos");
+  //     console.log("yes");
+  //     updateQuickCarData(driverLocation);
+  //   });
+
+  //   // Clean up the socket connection on component unmount
+  //   return () => {
+  //     socket.off("reciveDriverLocation");
+  //     socket.disconnect();
+  //   };
+  // }, [quickCarsData, roomsJoined]);
+
+  // useEffect(() => {
+  //   const intervalId = setInterval(() => {
+  //     console.log("Se pidio la actualizacion");
+  //     dispatch(updateAllQuickCarCurrentLocation());
+  //   }, 10000);
+
+  //   // Cleanup function to clear the interval when the component unmounts
+  //   return () => {
+  //     clearInterval(intervalId);
+  //     console.log("Interval cleared update all quickcar locations");
+  //   };
+  // }, []);
+
   useEffect(() => {
-    let roomsJoinedTemporal = [...roomsJoined];
-
-    if (quickCarsData && quickCarsData.length > 0) {
-      let quickCarDateFilter = quickCarsData.filter(
-        (el) => roomsJoinedTemporal.filter((ell) => ell == el.id).length == 0
-      );
-
-      for (let i = 0; i < quickCarDateFilter.length; i++) {
-        roomsJoinedTemporal.push(quickCarDateFilter[i].id);
-        socket.emit("joinDriverRoom", quickCarDateFilter[i].id);
-        console.log("Se unio a la sala" + quickCarDateFilter[i].id);
-      }
-    }
-
-    socket.on("reciveDriverLocation", (driverLocation) => {
-      console.log("Se reciben datos");
-      console.log("yes");
-      updateQuickCarData(driverLocation);
-    });
-
-    // Clean up the socket connection on component unmount
-    return () => {
-      socket.off("reciveDriverLocation");
-      socket.disconnect();
-    };
-  }, [quickCarsData, roomsJoined]);
-
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      console.log("Se pidio la actualizacion");
-      dispatch(updateAllQuickCarCurrentLocation());
-    }, 10000);
-
-    // Cleanup function to clear the interval when the component unmounts
-    return () => {
-      clearInterval(intervalId);
-      console.log("Interval cleared update all quickcar locations");
-    };
-  }, []);
+    console.log("Cambio la puta  mierda del tema");
+    console.log(darkMode.text);
+  }, [darkMode]);
 
   return (
     <View>
@@ -160,10 +170,17 @@ const TravelHome = () => {
           setShowQuickCarDetails={setShowQuickCarDetails}
         ></QuickCarDetailsButtom>
       )}
-      <SearchNearQuickCarButton></SearchNearQuickCarButton>
+      {userType == "passenger" && (
+        <SearchNearQuickCarButton></SearchNearQuickCarButton>
+      )}
+
+      {userType == "driver" && (
+        <PassengersDetailsButtom></PassengersDetailsButtom>
+      )}
+
       <MapView
         customMapStyle={
-          darkMode.darkMode ? stylesMap.mapStyleLight : stylesMap.mapStyle
+          darkMode.text != "#fff" ? stylesMap.mapStyleLight : stylesMap.mapStyle
           // stylesMap.mapStyleLight
         }
         style={{

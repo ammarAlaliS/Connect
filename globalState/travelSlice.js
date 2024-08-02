@@ -23,6 +23,7 @@ const initialState = {
   },
   quickCarDataReceivedForUpdate: [],
   roomsJoined: [],
+  userType: "user",
 };
 
 export const travelSlice = createSlice({
@@ -148,6 +149,9 @@ export const travelSlice = createSlice({
         : [];
       state.quickCarDataReceivedForUpdate = [];
     },
+    setUserType: (state, action) => {
+      state.userType = action.payload;
+    },
   },
 });
 
@@ -171,5 +175,6 @@ export const {
   updateAllQuickCarCurrentLocation,
   receiveDataFromQuickarSocketLocations,
   setRoomsJoined,
+  setUserType,
 } = travelSlice.actions;
 export default travelSlice.reducer;
