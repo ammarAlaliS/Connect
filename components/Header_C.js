@@ -84,7 +84,7 @@ const HeaderC = ({ activeScreen, handlePress }) => {
 
   return (
     <View
-      style={[{ borderBottomWidth: 1, borderBottomColor: darkMode.borderBox }]}
+      style={[{ }]}
     >
       <StatusBar
         backgroundColor={darkMode.background}

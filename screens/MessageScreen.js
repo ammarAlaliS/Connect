@@ -102,7 +102,7 @@ function MessageScreen({ route }) {
             ))}
         </View>
       </ScrollView>
-      <View style={styles.inputContainer}>
+      <View style={[styles.inputContainer, { backgroundColor: darkMode.background, borderColor: darkMode.borderBox}]}>
         <TextInput
           style={[styles.input, { color: darkMode.text }]}
           placeholder="Escribe un mensaje"
@@ -161,7 +161,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 10,
     borderTopWidth: 1,
-    borderTopColor: "#ddd",
   },
   input: {
     flex: 1,

@@ -51,7 +51,7 @@ export const colors = {
     dotActive: "#1E90FF",
     iconNavbar: "#333",
     iconBorderBottomActive: "#1E90FF",
-    borderBox: "rgba(128, 128, 128, 1)",
+    borderBox: "rgba(128, 128, 128, 0.3)",
     borderBoxCardList: "rgba(128, 128, 128, 1)",
     backgroundDark: "#000",
     backgroundList: "#1a5319",
