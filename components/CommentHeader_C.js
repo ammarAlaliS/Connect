@@ -11,7 +11,7 @@ const CommentHeader_C = ({ navigation, darkMode }) => {
             backgroundColor: darkMode.background,
             borderWidth: 1,
             borderColor: darkMode.borderBox
-        }} className="py-6 px-4 mx-2 mt-2 rounded-lg border-b-[1px]">
+        }} className="py-6 px-4 mx-2 mt-2 border-b-[1px]">
             <Text style={{
                 fontSize: 24,
                 fontFamily: 'PlusJakartaSans-Bold',

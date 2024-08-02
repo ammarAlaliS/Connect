@@ -23,7 +23,7 @@ const Comment = ({ data, darkMode }) => {
 
   return (
     <View
-      className="flex-row rounded-lg items-center space-x-2 py-5 px-4"
+      className="flex-row rounded-sm items-center space-x-2 py-5 px-4"
       style={{
         backgroundColor: darkMode.background,
         borderWidth: 1,

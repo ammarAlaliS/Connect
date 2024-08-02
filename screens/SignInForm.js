@@ -158,6 +158,7 @@ const SignInForm = () => {
 
                     if (response.ok) {
                       const data = await response.json();
+                      console.log(data)
                       await AsyncStorage.setItem(
                         "userData",
                         JSON.stringify(data)
@@ -166,7 +167,7 @@ const SignInForm = () => {
                       dispatch(
                         setUser({
                           global_user: {
-                            _id: data._id,
+                            _id: data.id,
                             first_name: data.first_name,
                             last_name: data.last_name,
                             profile_img_url: data.profile_img_url,

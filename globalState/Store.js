@@ -1,5 +1,3 @@
-// store.js
-
 import { configureStore } from "@reduxjs/toolkit";
 import navbarReducer from "./navbarSlice";
 import userReducer from "./userSlice";
@@ -9,7 +7,8 @@ import menuReducer from './menuSlice';
 import headerReducer from './headerSlice';
 import blogsReducer from './blogsSlice'; 
 import themeReducer from "./themeSlice";
-import travelReducer from './travelSlice'
+import travelReducer from './travelSlice';
+import messagesReducer from './MessageSlice'; // Asegúrate de importar como messagesReducer
 
 export const store = configureStore({
   reducer: {
@@ -22,8 +21,8 @@ export const store = configureStore({
     blogs: blogsReducer,
     theme: themeReducer,
     travel: travelReducer,
+    messages: messagesReducer, // Usar messages en lugar de message
   },
 });
 
 export default store;
-

@@ -32,7 +32,6 @@ const HeaderC = ({ activeScreen, handlePress }) => {
     const fetchToken = async () => {
       try {
         const storedToken = await AsyncStorage.getItem("token");
-        console.log("Token recuperado:", storedToken);
 
         if (typeof storedToken === 'string') {
           setToken(storedToken);
@@ -129,10 +128,10 @@ const HeaderC = ({ activeScreen, handlePress }) => {
           />
           <TouchableOpacity onPress={toggleDarkModeHandler}>
             <FontAwesome
-              name={darkMode.darkMode ? "sun-o" : "moon-o"}
+              name={darkModeBoleanState ? "sun-o" : "moon-o"}
               size={32}
               color={
-                darkMode.darkMode ? darkMode.colors.dark.icon : darkMode.icon
+                darkModeBoleanState ? '#FFD900' : '#000'
               }
             />
           </TouchableOpacity>

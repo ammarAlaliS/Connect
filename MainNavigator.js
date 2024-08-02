@@ -61,6 +61,7 @@ export default function MainNavigator() {
       <Stack.Screen name="ArticleScreen" component={ArticleScreen} options={{ headerShown: false }} />
       <Stack.Screen name="Contact" component={ContactScreen} options={{ headerShown: false }} />
       <Stack.Screen name="commentScreen" component={CommentsScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="MessageScreen" component={MessageScreen} options={{ headerShown: false }} />
 
     </Stack.Navigator>
 

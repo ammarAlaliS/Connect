@@ -32,7 +32,7 @@ import ClockIcon from "../../icons/ClockIcon";
 const SearchInput = ({ setMarker }) => {
   const dispatch = useDispatch();
 
-  const GOOGLE_PLACES_API_KEY = "";
+  const GOOGLE_PLACES_API_KEY = "AIzaSyAAwUd5bO7daxQUktwliIcG4YA8M5mWhrY";
 
   const [originCleaning, setOriginCleaning] = useState(false);
   const [destininationCleaning, setDestininationCleaning] = useState(false);
