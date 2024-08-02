@@ -1,26 +1,30 @@
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import useCustomFonts from "../fonts/useCustomFonts";
 import * as Animatable from "react-native-animatable";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import { setUserType } from "../globalState/travelSlice";
 
 const Card = ({ darkMode, handlePress, activeScreen }) => {
   const user = useSelector((state) => state.user);
   const { fontsLoaded, onLayoutRootView } = useCustomFonts();
+  const dispatch = useDispatch();
 
   if (!fontsLoaded) {
     return null;
   }
 
   return (
-    <View className=" px-6 py-2  space-y-1 bg-red-500" style={{
-      width: '100%',
-   
-      backgroundColor: darkMode.background,
-      borderBottomWidth: 1,
-      borderColor: darkMode.borderBox
-    }}>
+    <View
+      className=" px-6 py-2  space-y-1 bg-red-500"
+      style={{
+        width: "100%",
+        backgroundColor: darkMode.background,
+        borderBottomWidth: 1,
+        borderColor: darkMode.borderBox,
+      }}
+    >
       <View className="flex-row space-x-2 items-center">
         <View className="flex items-center">
           {user && user.global_user && user.global_user.profile_img_url ? (
@@ -124,6 +128,7 @@ const Card = ({ darkMode, handlePress, activeScreen }) => {
           <View className=" flex-row items-center space-x-2">
             <TouchableOpacity
               onPress={() => {
+                dispatch(setUserType("passenger"));
                 handlePress("Travel"); // Cambia a "Travel" al hacer clic
               }}
             >
@@ -169,6 +174,10 @@ const Card = ({ darkMode, handlePress, activeScreen }) => {
                   flexDirection: "row",
                   alignItems: "center",
                   gap: 10,
+                }}
+                onTouchEnd={() => {
+                  dispatch(setUserType("driver"));
+                  handlePress("Travel"); // Cambia a "Travel" al hacer clic
                 }}
               >
                 <AntDesign name="pluscircle" size={16} color="white" />

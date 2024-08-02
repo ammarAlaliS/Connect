@@ -14,18 +14,27 @@ import QuickCarDetailsButtom from "./QuickCarDetailsButtom";
 import QuickCarsSearchesDetails from "./QuickCarsSearchesDetails";
 import SearchNearQuickCarButton from "./SearchNearQuickCarButton";
 import { io } from "socket.io-client";
+import {
+  setQuickarData,
+  updateIndividualQuickCarLocations,
+  updateAllQuickCarCurrentLocation,
+  receiveDataFromQuickarSocketLocations,
+  setRoomsJoined,
+} from "../../globalState/travelSlice";
+import PassengersDetailsButtom from "./DriverComponents/PassengersDetailsButtom";
 
-const API_BASE_URL =
-  "https://obbaramarket-backend.onrender.com/api/ObbaraMarket";
-const socket = io(API_BASE_URL, {
-  transports: ["websocket"],
-});
+const API_BASE_URL = "https://obbaramarket-backend.onrender.com/";
 
 const TravelHome = () => {
   const mapRef = useRef(null);
 
+  const socket = io(API_BASE_URL, {
+    transports: ["websocket"],
+  });
+
   const [marker, setMarker] = useState(null);
-  const [isFocused, setIsFocused] = useState(false);
+  const [activeSocket, setActiveSocket] = useState(0);
+  // const [isFocused, setIsFocused] = useState(false);
   const [showQuickCarDetails, setShowQuickCarDetails] = useState(false);
   const darkMode = useSelector(selectTheme);
   const placesSelected = useSelector((state) => state.travel.placesSelected);
@@ -34,6 +43,10 @@ const TravelHome = () => {
   const tripOrigin = useSelector((state) => state.travel.tripOrigin);
   const tripDestination = useSelector((state) => state.travel.tripDestination);
   const userLocation = useSelector((state) => state.travel.userLocation);
+  const inputIsActive = useSelector((state) => state.travel.inputIsActive);
+  const roomsJoined = useSelector((state) => state.travel.roomsJoined);
+
+  const [mapStyle, setMapStyle] = useState(null);
 
   // const polylineCoordinates = [
   //   { latitude: 40.479112, longitude: -3.573604 },
@@ -43,6 +56,8 @@ const TravelHome = () => {
   // ];
 
   const dispatch = useDispatch();
+
+  const userType = useSelector((state) => state.travel.userType);
 
   const animateToRegion = (region) => {
     if (mapRef.current) {
@@ -81,24 +96,65 @@ const TravelHome = () => {
     }
   }, [tripDestination]);
 
+  const updateQuickCarData = (driverLocation) => {
+    console.log("Se manda a llamar a la funcion");
+
+    dispatch(
+      receiveDataFromQuickarSocketLocations({
+        id: quickCarsData.filter(
+          (el) =>
+            el.CurrentQuickCarLocation.longitude == driverLocation.longitude
+        )[0].id,
+        ...driverLocation,
+      })
+    );
+  };
+
+  // useEffect(() => {
+  //   let roomsJoinedTemporal = [...roomsJoined];
+
+  //   if (quickCarsData && quickCarsData.length > 0) {
+  //     let quickCarDateFilter = quickCarsData.filter(
+  //       (el) => roomsJoinedTemporal.filter((ell) => ell == el.id).length == 0
+  //     );
+
+  //     for (let i = 0; i < quickCarDateFilter.length; i++) {
+  //       roomsJoinedTemporal.push(quickCarDateFilter[i].id);
+  //       socket.emit("joinDriverRoom", quickCarDateFilter[i].id);
+  //       console.log("Se unio a la sala" + quickCarDateFilter[i].id);
+  //     }
+  //   }
+
+  //   socket.on("reciveDriverLocation", (driverLocation) => {
+  //     console.log("Se reciben datos");
+  //     console.log("yes");
+  //     updateQuickCarData(driverLocation);
+  //   });
+
+  //   // Clean up the socket connection on component unmount
+  //   return () => {
+  //     socket.off("reciveDriverLocation");
+  //     socket.disconnect();
+  //   };
+  // }, [quickCarsData, roomsJoined]);
+
+  // useEffect(() => {
+  //   const intervalId = setInterval(() => {
+  //     console.log("Se pidio la actualizacion");
+  //     dispatch(updateAllQuickCarCurrentLocation());
+  //   }, 10000);
+
+  //   // Cleanup function to clear the interval when the component unmounts
+  //   return () => {
+  //     clearInterval(intervalId);
+  //     console.log("Interval cleared update all quickcar locations");
+  //   };
+  // }, []);
+
   useEffect(() => {
-    if (quickCarsData && quickCarsData.length > 0) {
-      for (let i = 0; i < quickCarsData.length; i++) {
-        socket.emit("joinDriverRoom", quickCarsData[i].id);
-      }
-
-      socket.on("reciveDriverLocation", (driverLocation) => {
-        console.log("Connected to server");
-        console.log("La ubicacion recibida es: ");
-        console.log(location);
-      });
-    }
-
-    // Clean up the socket connection on component unmount
-    return () => {
-      socket.off("reciveDriverLocation");
-    };
-  }, [quickCarsData]);
+    console.log("Cambio la puta  mierda del tema");
+    console.log(darkMode.text);
+  }, [darkMode]);
 
   return (
     <View>
@@ -114,11 +170,18 @@ const TravelHome = () => {
           setShowQuickCarDetails={setShowQuickCarDetails}
         ></QuickCarDetailsButtom>
       )}
-      <SearchNearQuickCarButton></SearchNearQuickCarButton>
+      {userType == "passenger" && (
+        <SearchNearQuickCarButton></SearchNearQuickCarButton>
+      )}
+
+      {userType == "driver" && (
+        <PassengersDetailsButtom></PassengersDetailsButtom>
+      )}
+
       <MapView
         customMapStyle={
-          // darkMode.darkMode ? stylesMap.mapStyleLight : stylesMap.mapStyle
-          stylesMap.mapStyleLight
+          darkMode.text != "#fff" ? stylesMap.mapStyleLight : stylesMap.mapStyle
+          // stylesMap.mapStyleLight
         }
         style={{
           width: "100%",
@@ -133,7 +196,8 @@ const TravelHome = () => {
         ref={mapRef}
       >
         {marker && <Marker coordinate={marker} />}
-        {quickCarsData &&
+        {!inputIsActive &&
+          quickCarsData &&
           quickCarsData.length > 0 &&
           quickCarsData.map((item, index) => {
             return (

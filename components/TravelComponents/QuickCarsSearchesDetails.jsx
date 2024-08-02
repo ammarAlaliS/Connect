@@ -6,9 +6,10 @@ import { TouchableOpacity } from "react-native";
 import QuickCarHeaderTravelDetails from "./QuickCarHeaderTravelDetails";
 import { ScrollView } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import useLocation from "../../hooks/useLocation";
 import { setQuickCarsDistances } from "../../globalState/travelSlice";
+import IndividualQuickCarDetails from "./IndividualQuickCarDetails";
 
 const QuickCarsSearchesDetails = ({ setShowQuickCarDetails }) => {
   const quickCarsData = useSelector((state) => state.travel.quickCarsData);
@@ -22,6 +23,9 @@ const QuickCarsSearchesDetails = ({ setShowQuickCarDetails }) => {
     (state) => state.travel.quickCarsDistances
   );
   const seatRequested = useSelector((state) => state.travel.seatRequested);
+
+  const [showQuickCarProfile, setShowQuickCarProfile] = useState(false);
+  const [quickCarIndex, setQuickCarIndex] = useState(0);
 
   const dispatch = useDispatch();
 
@@ -91,10 +95,6 @@ const QuickCarsSearchesDetails = ({ setShowQuickCarDetails }) => {
     }
   }, [quickCarsData, tripOriginLocation, userLocation]);
 
-  useEffect(() => {
-    console.log(quickCarsData[0]);
-  }, [quickCarsData]);
-
   return (
     <View
       style={{
@@ -107,6 +107,13 @@ const QuickCarsSearchesDetails = ({ setShowQuickCarDetails }) => {
         zIndex: 102,
       }}
     >
+      {showQuickCarProfile && (
+        <IndividualQuickCarDetails
+          setShowQuickCarProfile={setShowQuickCarProfile}
+          quickCarInfo={quickCarsData[quickCarIndex]}
+        ></IndividualQuickCarDetails>
+      )}
+
       <View
         style={{
           height: 54,
@@ -170,6 +177,10 @@ const QuickCarsSearchesDetails = ({ setShowQuickCarDetails }) => {
                 shadowOpacity: 0.1,
                 shadowRadius: 1,
                 elevation: 1,
+              }}
+              onTouchEnd={() => {
+                setQuickCarIndex(index);
+                setShowQuickCarProfile(true);
               }}
             >
               <View
