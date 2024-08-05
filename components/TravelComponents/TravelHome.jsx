@@ -22,6 +22,8 @@ import {
   setRoomsJoined,
 } from "../../globalState/travelSlice";
 import PassengersDetailsButtom from "./DriverComponents/PassengersDetailsButtom";
+import PassengerSearchesDetails from "./DriverComponents/PassengerSearchesDetails";
+import BtnStartTrip from "./DriverComponents/BtnStartTrip";
 
 const API_BASE_URL = "https://obbaramarket-backend.onrender.com/";
 
@@ -45,6 +47,9 @@ const TravelHome = () => {
   const userLocation = useSelector((state) => state.travel.userLocation);
   const inputIsActive = useSelector((state) => state.travel.inputIsActive);
   const roomsJoined = useSelector((state) => state.travel.roomsJoined);
+
+  const [showPassengerSearchesDetails, setShowPassengerSearchesDetails] =
+    useState(false);
 
   const [mapStyle, setMapStyle] = useState(null);
 
@@ -175,8 +180,18 @@ const TravelHome = () => {
       )}
 
       {userType == "driver" && (
-        <PassengersDetailsButtom></PassengersDetailsButtom>
+        <PassengersDetailsButtom
+          setShowPassengerSearchesDetails={setShowPassengerSearchesDetails}
+        ></PassengersDetailsButtom>
       )}
+
+      {userType == "driver" && showPassengerSearchesDetails && (
+        <PassengerSearchesDetails
+          setShowPassengerSearchesDetails={setShowPassengerSearchesDetails}
+        ></PassengerSearchesDetails>
+      )}
+
+      <BtnStartTrip></BtnStartTrip>
 
       <MapView
         customMapStyle={
@@ -229,34 +244,38 @@ const TravelHome = () => {
               strokeWidth={6} // Ancho de la línea
             />
           )}
-        {!(tripOrigin.latitude == 0 && tripOrigin.longitude == 0) && (
-          <Marker
-            coordinate={{
-              latitude: tripOrigin.latitude,
-              longitude: tripOrigin.longitude,
-            }}
-          >
-            <Image
-              source={originLocationImage}
-              style={{ height: 60, width: 20 }}
-              resizeMode="contain"
-            ></Image>
-          </Marker>
-        )}
-        {!(tripDestination.latitude == 0 && tripDestination.longitude == 0) && (
-          <Marker
-            coordinate={{
-              latitude: tripDestination.latitude,
-              longitude: tripDestination.longitude,
-            }}
-          >
-            <Image
-              source={destinationLocationImage}
-              style={{ height: 60, width: 20 }}
-              resizeMode="contain"
-            ></Image>
-          </Marker>
-        )}
+        {(placesSelected || (!placesSelected && inputIsActive)) &&
+          !(tripOrigin.latitude == 0 && tripOrigin.longitude == 0) && (
+            <Marker
+              coordinate={{
+                latitude: tripOrigin.latitude,
+                longitude: tripOrigin.longitude,
+              }}
+            >
+              <Image
+                source={originLocationImage}
+                style={{ height: 60, width: 20 }}
+                resizeMode="contain"
+              ></Image>
+            </Marker>
+          )}
+        {(placesSelected || (!placesSelected && inputIsActive)) &&
+          !(
+            tripDestination.latitude == 0 && tripDestination.longitude == 0
+          ) && (
+            <Marker
+              coordinate={{
+                latitude: tripDestination.latitude,
+                longitude: tripDestination.longitude,
+              }}
+            >
+              <Image
+                source={destinationLocationImage}
+                style={{ height: 60, width: 20 }}
+                resizeMode="contain"
+              ></Image>
+            </Marker>
+          )}
         {!(userLocation.latitude == 0 && userLocation.longitude == 0) && (
           <Marker
             coordinate={{
