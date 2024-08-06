@@ -9,7 +9,7 @@ const BtnStartTrip = () => {
         position: "absolute",
         bottom: "5%",
         left: "7%",
-        zIndex: 101,
+        zIndex: 50,
         backgroundColor: "#00ff0090",
         borderRadius: 60,
         display: "flex",

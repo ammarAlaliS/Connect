@@ -240,6 +240,14 @@ const SearchInput = ({ setMarker }) => {
             refInputAutoCompleteDestination.current.clear();
             refInputAutoComplete.current.blur();
             refInputAutoCompleteDestination.current.blur();
+            if (!placesSelected) {
+              dispatch(setStartTime({ hour: 0, minutes: 0 }));
+              dispatch(setSeatRequested(0));
+              dispatch(setTripOrigin({ latitude: 0, longitude: 0 }));
+              dispatch(setTripOriginName(""));
+              dispatch(setTripDestination({ latitude: 0, longitude: 0 }));
+              dispatch(setTripDestinationName(""));
+            }
           }}
         ></View>
       )}
@@ -546,7 +554,7 @@ const SearchInput = ({ setMarker }) => {
                   fontFamily: "PlusJakartaSans-Bold",
                 }}
               >
-                {userType == "driver" ? "Crear viaje" : "Buscar QuickCars"}
+                {userType == "driver" ? "Crear viajee" : "Buscar QuickCars"}
               </Text>
             </TouchableOpacity>
           </View>

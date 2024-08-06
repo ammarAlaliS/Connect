@@ -1,19 +1,31 @@
-import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import React, { useState } from "react";
+import { View, Text, TouchableOpacity, Alert, Modal } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import useCustomFonts from "../fonts/useCustomFonts";
 import * as Animatable from "react-native-animatable";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { setUserType } from "../globalState/travelSlice";
+import FormCreateNewQuickCar from "./TravelComponents/DriverComponents/FormCreateNewQuickCar";
 
 const Card = ({ darkMode, handlePress, activeScreen }) => {
   const user = useSelector((state) => state.user);
   const { fontsLoaded, onLayoutRootView } = useCustomFonts();
+  const [showNewQuickCarModal, setShowNewQuickCarModal] = useState(false);
   const dispatch = useDispatch();
 
   if (!fontsLoaded) {
     return null;
   }
+
+  const VerifyQuickCarExists = () => {
+    if (1 == 2) {
+      Alert.alert("No existe un quickcar");
+      setShowNewQuickCarModal(true);
+    } else {
+      dispatch(setUserType("driver"));
+      handlePress("Travel"); // Cambia a "Travel" al hacer clic
+    }
+  };
 
   return (
     <View
@@ -176,8 +188,7 @@ const Card = ({ darkMode, handlePress, activeScreen }) => {
                   gap: 10,
                 }}
                 onTouchEnd={() => {
-                  dispatch(setUserType("driver"));
-                  handlePress("Travel"); // Cambia a "Travel" al hacer clic
+                  VerifyQuickCarExists();
                 }}
               >
                 <AntDesign name="pluscircle" size={16} color="white" />
@@ -196,6 +207,21 @@ const Card = ({ darkMode, handlePress, activeScreen }) => {
           </View>
         </View>
       </View>
+      <Modal
+        visible={showNewQuickCarModal}
+        animationType="slide"
+        style={{
+          width: "100%",
+          marginTop: "25%",
+          backgroundColor: "red",
+          padding: 40,
+        }}
+        transparent={true}
+      >
+        <FormCreateNewQuickCar setShowModal={setShowNewQuickCarModal}>
+          Que pedo guey
+        </FormCreateNewQuickCar>
+      </Modal>
     </View>
   );
 };

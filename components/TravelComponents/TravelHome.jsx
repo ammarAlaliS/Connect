@@ -191,7 +191,7 @@ const TravelHome = () => {
         ></PassengerSearchesDetails>
       )}
 
-      <BtnStartTrip></BtnStartTrip>
+      {placesSelected && <BtnStartTrip></BtnStartTrip>}
 
       <MapView
         customMapStyle={

@@ -9,7 +9,7 @@ const PassengersDetailsButtom = ({ setShowPassengerSearchesDetails }) => {
         position: "absolute",
         bottom: "5%",
         right: "35%",
-        zIndex: 101,
+        zIndex: 50,
         backgroundColor: "#ffbb1c",
         borderRadius: 24,
         display: "flex",
