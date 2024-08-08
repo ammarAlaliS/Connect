@@ -23,7 +23,7 @@ export const colors = {
     showText: '#1E90FF',
     backgroundCommentButton :  '#1E90FF',
     headerIconColor: '#1A5319',
-    headerBorderIcon: '#67ED94 ',
+    headerBorderIcon: '#fff ',
     textColorLikeButton: '#ff226e',
     textCommentButton: '#1E90FF',
     backgroundComment : '#000',
@@ -37,6 +37,14 @@ export const colors = {
     singInForgotPtextColor: '#EB4166',
     singInEmailIconColor : '#008000',
     singInPasswordIconColor : '#EB4166',
+
+      // ContenMesagge 
+
+      contentMessageBg : '#fff',
+      contentMessageBgTwo : '#00221c',
+      contentMessageBorderColor: 'rgba(128, 128, 128, 0.3)',
+      contentReceiverText: '#000',
+      contentSenderText: '#fff',
     
     // Presentation
     PreBgColor: '#fff'
@@ -51,7 +59,7 @@ export const colors = {
     dotActive: "#1E90FF",
     iconNavbar: "#333",
     iconBorderBottomActive: "#1E90FF",
-    borderBox: "rgba(128, 128, 128, 0.3)",
+    borderBox: "rgba(128, 128, 128, 0.9)",
     borderBoxCardList: "rgba(128, 128, 128, 1)",
     backgroundDark: "#000",
     backgroundList: "#1a5319",
@@ -61,7 +69,7 @@ export const colors = {
     backgroundCommentButton :  'rgba(128, 128, 128, 0.4)',
     showText: '#FFCD57',
     headerIconColor: '#06BCEE',
-    headerBorderIcon: '#06BCEE',
+    headerBorderIcon: '#0D1117',
     textColorLikeButton: '#ff226e',
     textCommentButton: '#1E90FF',
     backgroundComment : '#000',
@@ -76,8 +84,17 @@ export const colors = {
     singInEmailIconColor : '#06BCEE',
     singInPasswordIconColor : '#EB4166',
 
+    // ContenMesagge 
+
+    contentMessageBg : "#0D1117",
+    contentMessageBgTwo : '#19191a',
+    contentMessageBorderColor: 'rgba(128, 128, 128, 0.1)',
+    contentReceiverText: '#fff',
+    contentSenderText: '#fff',
+
     // Presentation
-    PreBgColor: '#000'
+    PreBgColor: '#000',
+
   },
 };
 

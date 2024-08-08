@@ -1,37 +1,83 @@
 import { View, Text, Image, TouchableOpacity } from "react-native";
-import { useNavigation, CommonActions } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import React, { useState } from "react";
+import { useDispatch, useSelector } from 'react-redux';
+import { setLoading } from '../../globalState/loadingSlice';
+import { setConversations } from '../../globalState/MessageSlice'
+
+import axios from "axios";
 
 export default function MessagerContainer({
   darkMode,
   userImageUrl,
-  userFirtName,
+  userFirstName,
   userLastName,
   messageContent,
   totalMessage,
   messageState,
+  userId
 }) {
+  const dispatch = useDispatch();
   const [showMore, setShowMore] = useState(false);
+  const [error, setError] = useState(null);
+  const [userMessageInteraction, setUserMessageInteraction ] = useState([]);
   const navigation = useNavigation();
+  const API_BASE_URL = "https://obbaramarket-backend.onrender.com";
+  const token = useSelector((state) => state.user.global_user?.token);
 
   const toggleShowMore = () => {
     setShowMore(!showMore);
   };
 
+  const fetchConversations = async () => {
+    dispatch(setLoading(true));
+    try {
+      if (userId) {
+        const response = await axios.get(
+          `${API_BASE_URL}/api/ObbaraMarket/conversations/${userId}?page=1&limit=10`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        let result = response.data;
+        if (result && result.messages) {
+          dispatch(
+            setConversations({
+              totalMessages: result.totalMessages, 
+              totalPages: result.totalPages, 
+              currentPage: result.currentPage, 
+              conversations: result.messages
+            })
+          );
+        } else {
+          setUserMessageInteraction({ messages: [] });
+        }
+      }
+    } catch (error) {
+      setError(error.response || { message: "Error al realizar la solicitud" });
+    } finally {
+      dispatch(setLoading(false));
+    
+    }
+  };
+
+
   return (
     <TouchableOpacity
-      onPress={() =>
+      onPress={() => {
+        fetchConversations();
         navigation.navigate("MessageScreen", {
           darkMode,
           userImageUrl,
-          userFirtName,
+          userFirstName,
           userLastName,
           messageContent,
           totalMessage,
           messageState,
-        })
-      }
+          userMessageInteraction,
+        });
+      }}
     >
       <View
         className="flex-row items-center px-2 py-[10px] pt-[20px] space-x-2"
@@ -42,7 +88,7 @@ export default function MessagerContainer({
           borderColor: darkMode.borderBox,
         }}
       >
-        <View className="  h-full">
+        <View className="h-full">
           <Image
             source={{
               uri: userImageUrl,
@@ -52,18 +98,18 @@ export default function MessagerContainer({
               height: 50,
               borderRadius: 9999,
               backgroundColor: darkMode.backgroundDark,
-              borderWidth: 1, 
+              borderWidth: 1,
               borderColor: darkMode.borderBox
             }}
             resizeMode="cover"
           />
-          <View className=" w-full flex-1 items-end">
+          <View className="w-full flex-1 items-end">
             <View
               style={{
                 borderColor: darkMode.borderBox,
                 borderBottomLeftRadius: 10,
               }}
-              className=" w-[50%] flex-1 mb-[12px] border-l-[1px] border-b-[1px] "
+              className="w-[50%] flex-1 mb-[12px] border-l-[1px] border-b-[1px]"
             ></View>
           </View>
         </View>
@@ -77,12 +123,12 @@ export default function MessagerContainer({
               lineHeight: 20,
             }}
           >
-            {userFirtName} {userLastName}
+            {userFirstName} {userLastName}
           </Text>
           <Text
             className=""
             style={{
-              fontFamily: "PlusJakartaSans-SemiBold",
+              fontFamily: "PlusJakartaSans-Regular",
               fontSize: 14,
               color: darkMode.text,
               lineHeight: 20,
@@ -91,8 +137,8 @@ export default function MessagerContainer({
           >
             {showMore ? messageContent : `${messageContent.slice(0, 45)}...`}
           </Text>
-          <TouchableOpacity onPress={toggleShowMore}>
-            <View className=" flex-row items-center justify-start">
+          <TouchableOpacity onPress={toggleShowMore} className="">
+            <View className="flex-row items-center justify-start">
               <Text
                 style={{
                   color: darkMode.showText,
@@ -106,20 +152,19 @@ export default function MessagerContainer({
                   color: darkMode.showText,
                   fontSize: 12,
                 }}
-                className=" mt-[3px]"
+                className="mt-[3px]"
               >
-
-              {showMore 
-                ?<MaterialIcons name="keyboard-arrow-down" size={24} color={darkMode.showText} /> 
-                :<MaterialIcons name="keyboard-arrow-right" size={24} color={darkMode.showText} />
-            }
+                {showMore 
+                  ? <MaterialIcons name="keyboard-arrow-down" size={24} color={darkMode.showText} /> 
+                  : <MaterialIcons name="keyboard-arrow-right" size={24} color={darkMode.showText} />
+                }
               </Text>
             </View>
           </TouchableOpacity>
         </View>
 
         {!showMore && (
-          <View className=" flex-col items-center ">
+          <View className="flex-col items-center">
             <View
               className="w-7 h-7 rounded-full flex items-center justify-center"
               style={{
@@ -127,7 +172,7 @@ export default function MessagerContainer({
               }}
             >
               <Text
-                className=" text-sm "
+                className="text-sm"
                 style={{
                   color: darkMode.text,
                   fontFamily: "PlusJakartaSans-Bold",
@@ -137,7 +182,7 @@ export default function MessagerContainer({
               </Text>
             </View>
             <Text
-              className=" text-sm font-semibold"
+              className="text-sm font-semibold"
               style={{
                 color: darkMode.text,
               }}

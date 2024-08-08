@@ -30,7 +30,7 @@ const ContactScreen = ({ darkMode }) => {
         if (globalUserId) {
           setLoading(true);
           const response = await axios.get(
-            `${API_BASE_URL}/api/ObbaraMarket/user/information/conversations/${globalUserId}?page=1&limit=10`,
+            `${API_BASE_URL}/api/ObbaraMarket/user/information/conversations/${globalUserId}?page=1&limit=20`,
             {
               headers: { Authorization: `Bearer ${token}` },
             }
@@ -40,9 +40,10 @@ const ContactScreen = ({ darkMode }) => {
         }
       } catch (error) {
         setLoading(false);
-        setError(error.response?.data || { message: "Error desconocido" });
+        setError(error.response?.data || { message: "Error al realizar la solicitud" });
       }
     };
+
 
     fetchConversations();
   }, [globalUserId, token]);
@@ -56,8 +57,6 @@ const ContactScreen = ({ darkMode }) => {
 
         setMessageUserData((prevState) => {
           let updatedConversations = [...prevState.conversations];
-
-          // Buscar conversación existente o crear nueva
           const existingConversationIndex = updatedConversations.findIndex(
             (conv) =>
               (conv.sender._id === message.sender && conv.receiver._id === message.receiver) ||
@@ -67,7 +66,6 @@ const ContactScreen = ({ darkMode }) => {
           const newMessage = { ...message };
 
           if (existingConversationIndex !== -1) {
-            // Actualizar conversación existente
             const updatedConversation = updatedConversations[existingConversationIndex];
 
             if (!updatedConversation.messages) {
@@ -113,32 +111,40 @@ const ContactScreen = ({ darkMode }) => {
 
   const getUniqueConversations = (conversations) => {
     const uniqueConversations = {};
-
+  
     conversations.forEach((conversation) => {
       const isSender = globalUserId === conversation.sender._id;
       const otherUser = isSender ? conversation.receiver : conversation.sender;
-
-      if (otherUser) {
-        if (!uniqueConversations[otherUser._id]) {
-          uniqueConversations[otherUser._id] = {
-            user: otherUser.global_user,
-            messages: [conversation.lastMessage],
-          };
-        } else {
-          uniqueConversations[otherUser._id].messages.push(
-            conversation.lastMessage
-          );
-        }
+  
+      if (!uniqueConversations[otherUser._id]) {
+        uniqueConversations[otherUser._id] = {
+          user: otherUser.global_user,
+          userId: otherUser._id, // ID del usuario
+          messages: [{
+            ...conversation.lastMessage,
+            senderId: conversation.sender._id,
+            receiverId: conversation.receiver._id // ID del receptor
+          }]
+        };
+      } else {
+        uniqueConversations[otherUser._id].messages.push({
+          ...conversation.lastMessage,
+          senderId: conversation.sender._id,
+          receiverId: conversation.receiver._id // ID del receptor
+        });
       }
     });
-
-    return Object.values(uniqueConversations).map((conversation) => ({
+  
+    const sortedConversations = Object.values(uniqueConversations).map((conversation) => ({
       ...conversation,
       messages: conversation.messages.sort(
         (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
       ),
     }));
+  
+    return sortedConversations;
   };
+  
 
   const uniqueConversations = getUniqueConversations(
     messageUserDataResult.conversations || []
@@ -199,7 +205,7 @@ const ContactScreen = ({ darkMode }) => {
                     },
                   ]}
                   onPress={() => {
-                    // Lógica adicional si es necesario
+
                   }}
                 >
                   <Icon name="search" size={20} color={darkMode.text} />
@@ -215,16 +221,21 @@ const ContactScreen = ({ darkMode }) => {
             ) : (
               <View>
                 {uniqueConversations.map((conversation, index) => {
-                  const { user, messages } = conversation;
+                
+  
+                  const { user, messages, userId } = conversation;
                   const lastMessage = messages[0];
+
+         
 
                   if (!lastMessage || !user) {
                     return null;
                   }
-
+   
                   return (
                     <MessagerContainer
                       key={index}
+                      userId={userId}
                       userImageUrl={user.profile_img_url}
                       userFirstName={user.first_name}
                       userLastName={user.last_name}
@@ -278,3 +289,4 @@ const styles = StyleSheet.create({
 });
 
 export default ContactScreen;
+ 

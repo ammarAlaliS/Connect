@@ -59,7 +59,6 @@ const MarketScreen = ({ darkMode }) => {
   const global_user = useSelector((state) => state.user.global_user);
   const token = global_user?.token;
 
-  console.log(token);
 
   const listClasifications = [
     { id: 1, name: "Todos" },
@@ -179,7 +178,7 @@ const MarketScreen = ({ darkMode }) => {
           <ScrollView
             horizontal={true}
             showsHorizontalScrollIndicator={false}
-            className="flex-row"
+            className="flex-row "
             style={{
               width: "100%",
             }}

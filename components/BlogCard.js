@@ -336,18 +336,24 @@ const BlogCard = ({
           className="border-t-[1px] py-4  space-y-2  "
           style={{ borderColor: darkMode.borderBox }}
         >
-          <View className="flex-row space-x-[6px] justify-between">
-            <TouchableOpacity onPress={handleLikePost}>
+          <View className="flex-row space-x-[6px] justify-between ">
+            <TouchableOpacity
+              onPress={handleLikePost}
+              className="  rounded-full overflow-hidden"
+              style={{
+                borderWidth:1,
+                borderColor: darkMode.borderBox
+              }}
+            >
               <View
-                className=" flex-row space-x-[2px] items-center justify-center border-[1px]  py-2 px-4 rounded-full"
+                className=" flex-row space-x-[2px] items-center justify-center py-2 px-4 "
                 style={[
                   likeSubcribe
                     ? {
-                        borderColor: darkMode.borderBox,
+                        backgroundColor: darkMode.backgroundDark,
                       }
                     : {
                         backgroundColor: darkMode.backgroundDark,
-                        borderColor: darkMode.borderBox,
                       },
                 ]}
               >
@@ -385,13 +391,14 @@ const BlogCard = ({
               </View>
             </TouchableOpacity>
             <TouchableOpacity
-              className=" py-2 px-2  rounded-full border-[1px]  flex-1"
+              className=" py-2 px-2 rounded-full overflow-hidden  flex-1"
               style={{
+                borderWidth:1,
                 borderColor: darkMode.borderBox,
                 backgroundColor: darkMode.backgroundDark,
               }}
               onPress={() =>
-                navigation.navigate('commentScreen', {
+                navigation.navigate("commentScreen", {
                   blogId,
                   token,
                   darkMode,
@@ -412,8 +419,9 @@ const BlogCard = ({
               </View>
             </TouchableOpacity>
             <TouchableOpacity
-              className=" py-2 px-4 rounded-full border-[1px] "
+              className=" py-2 px-4 rounded-full overflow-hidden "
               style={{
+                borderWidth:1,
                 borderColor: darkMode.borderBox,
                 backgroundColor: darkMode.backgroundDark,
               }}
@@ -451,7 +459,7 @@ const BlogCard = ({
                   time,
                   blogId,
                   sections,
-                  darkMode
+                  darkMode,
                 })
               }
             >

@@ -8,7 +8,8 @@ import headerReducer from './headerSlice';
 import blogsReducer from './blogsSlice'; 
 import themeReducer from "./themeSlice";
 import travelReducer from './travelSlice';
-import messagesReducer from './MessageSlice'; // Asegúrate de importar como messagesReducer
+import messagesReducer from './MessageSlice';
+import loadingReducer from './loadingSlice'; 
 
 export const store = configureStore({
   reducer: {
@@ -21,7 +22,8 @@ export const store = configureStore({
     blogs: blogsReducer,
     theme: themeReducer,
     travel: travelReducer,
-    messages: messagesReducer, // Usar messages en lugar de message
+    messages: messagesReducer, 
+    loading: loadingReducer,
   },
 });
 

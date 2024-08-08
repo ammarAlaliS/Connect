@@ -10,21 +10,22 @@ import {
 } from "react-native";
 import Back from "../../icons/Back";
 import MenuPoints from "../../icons/MenuPoints";
-export default function MessageHeader({ 
-    darkMode,
-    userImageUrl,
-    userFirtName,
-    userLastName,
-    messageContent,
-    totalMessage,
-    messageState,
+import AntDesign from "@expo/vector-icons/AntDesign";
+export default function MessageHeader({
+  darkMode,
+  userImageUrl,
+  userFirstName,
+  userLastName,
+  messageContent,
+  totalMessage,
+  messageState,
 }) {
   return (
     <View
       style={{
         backgroundColor: darkMode.background,
         borderBottomWidth: 1,
-        borderColor: darkMode.borderBox,
+        borderColor: darkMode.contentMessageBorderColor,
         padding: 10,
       }}
       className=" flex-row space-x-2 items-center"
@@ -34,17 +35,35 @@ export default function MessageHeader({
       </View>
       <View className=" flex-1 flex-row items-center space-x-2">
         <View>
-          <Image
-            source={{
-              uri: userImageUrl,
-            }}
-            style={{
-              width: 50,
-              height: 50,
-              borderRadius: 9999,
-            }}
-            resizeMode="cover"
-          />
+          {userImageUrl ? (
+            <Image
+              source={{
+                uri: userImageUrl,
+              }}
+              style={{
+                width: 50,
+                height: 50,
+                borderRadius: 9999,
+                backgroundColor: darkMode.backgroundDark,
+                borderWidth: 1,
+                borderColor: darkMode.borderBox,
+              }}
+              resizeMode="cover"
+            />
+          ) : (
+            <View
+              style={{
+                width: 50,
+                height: 50,
+                borderRadius: 9999,
+                backgroundColor: darkMode.backgroundDark,
+                borderWidth: 1,
+                borderColor: darkMode.borderBox,
+              }}
+            >
+              <AntDesign name="question" size={50} color={darkMode.text} />
+            </View>
+          )}
         </View>
         <View>
           <Text
@@ -56,7 +75,7 @@ export default function MessageHeader({
               lineHeight: 20,
             }}
           >
-            {userFirtName} {userLastName}
+            {userFirstName} {userLastName}
           </Text>
         </View>
       </View>
