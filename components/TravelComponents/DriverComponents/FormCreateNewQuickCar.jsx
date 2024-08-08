@@ -15,7 +15,7 @@ import { Text } from "react-native";
 import { Image } from "react-native";
 import AddFileIcon from "../../../icons/AddFileIcon";
 
-const FormCreateNewQuickCar = ({ setShowModal, isNewProduct }) => {
+const FormCreateNewQuickCar = ({ setShowModal, isNewProduct = true }) => {
   const dispatch = useDispatch();
   const global_user = useSelector((state) => state.user.global_user);
   const token = global_user?.token;
@@ -26,12 +26,8 @@ const FormCreateNewQuickCar = ({ setShowModal, isNewProduct }) => {
 
   const listCategories = ["Coche", "Moto", "Motocarro", "Articulos"];
   const listState = ["Madrid", "Barselona", "Andalucía", "Castilla", "León"];
-  const articleState = [
-    "Nuevo",
-    "Usado-Como nuevo",
-    "Usado-Buen estado",
-    "Usado-Aceptable",
-  ];
+  const vehiculeType = ["Coche", "Moto"];
+  const articleState = ["Activo", "Inactivo"];
 
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
@@ -108,7 +104,7 @@ const FormCreateNewQuickCar = ({ setShowModal, isNewProduct }) => {
           </View>
 
           <View style={styles.principalDetailContainer} className="d-flex">
-            <Text style={styles.detailsTitle}>Crear QuickCar</Text>
+            <Text style={styles.detailsTitle}>Actualizar QuickCar</Text>
             <View style={styles.dividingLine}></View>
           </View>
 
@@ -134,10 +130,25 @@ const FormCreateNewQuickCar = ({ setShowModal, isNewProduct }) => {
                     <Text style={styles.sellerName}>{completeName}</Text>
                   </View>
                 </View>
-                {/* <Text style={styles.sellerContactInfo}>
-                  Publicacion publica en ObbaraMarket
-                </Text> */}
+                <Text style={styles.sellerContactInfo}>
+                  Verifica tu cuenta con una foto de tu identificacion
+                </Text>
               </View>
+
+              <Text style={styles.titleText}>Tipo de Vehiculo</Text>
+
+              <InputSelectBox
+                listItems={vehiculeType}
+                placeHolder={"Selecciona el tipo de vehiculo"}
+                setSelectedItemIdex={setStatusSelectedIndex}
+                selectedItemIdex={
+                  isNewProduct
+                    ? -1
+                    : vehiculeType.findIndex(
+                        (el) => el == selectedProduct?.productStatus
+                      )
+                }
+              ></InputSelectBox>
 
               <Text style={styles.titleText}>Modelo</Text>
 
@@ -148,7 +159,7 @@ const FormCreateNewQuickCar = ({ setShowModal, isNewProduct }) => {
                   onChangeText={(text) => {
                     //   onTextInputChange(setTitle, text);
                   }}
-                  placeholder="Ingresa el titulo"
+                  placeholder="Ingresa el modelo del vehiculo"
                 ></TextInput>
               </View>
 
@@ -167,7 +178,20 @@ const FormCreateNewQuickCar = ({ setShowModal, isNewProduct }) => {
               </View>
 
               <Text style={styles.categoryLabel}>Asientos disponibles</Text>
-              <InputSelectBox
+
+              <View style={styles.priceInputContainer}>
+                <TextInput
+                  style={styles.priceInput}
+                  placeholder="Ingresa el # de asientos disponibles"
+                  keyboardType="numeric"
+                  onChangeText={(text) => {
+                    //   onPriceChange(setPrice, text);
+                  }}
+                  value={price <= 0 ? "" : "€ " + price}
+                ></TextInput>
+              </View>
+
+              {/* <InputSelectBox
                 listItems={listCategories}
                 placeHolder={"Selecciona una categoria"}
                 setSelectedItemIdex={setCategorySelectedIndex}
@@ -178,7 +202,7 @@ const FormCreateNewQuickCar = ({ setShowModal, isNewProduct }) => {
                         (el) => el == selectedProduct?.productCategory
                       )
                 }
-              ></InputSelectBox>
+              ></InputSelectBox> */}
 
               <Text style={styles.stateLabel}>Estado</Text>
               <InputSelectBox
@@ -194,8 +218,24 @@ const FormCreateNewQuickCar = ({ setShowModal, isNewProduct }) => {
                 }
               ></InputSelectBox>
 
+              <Text style={styles.priceLabel}>Numero de Licencia</Text>
+
+              <View style={styles.priceInputContainer}>
+                <TextInput
+                  style={styles.priceInput}
+                  placeholder="Ingresa el numero de licencia"
+                  keyboardType="default"
+                  onChangeText={(text) => {
+                    //   onPriceChange(setPrice, text);
+                  }}
+                  value={price <= 0 ? "" : "€ " + price}
+                ></TextInput>
+              </View>
+
               <View style={styles.principalFotoContainer}>
-                <Text style={styles.addFotoLabel}>Agrega una foto</Text>
+                <Text style={styles.addFotoLabel}>
+                  Agrega una foto de tu dentificacion
+                </Text>
                 <Text style={styles.addFotoSubLable}>Puedes subir 5 fotos</Text>
                 {imageList.length == 0 &&
                   imageListSelectedProduct.length == 0 && (
@@ -295,57 +335,9 @@ const FormCreateNewQuickCar = ({ setShowModal, isNewProduct }) => {
                     </View>
                   </ScrollView>
                 )}
-                <Text style={styles.articleLabel}>
-                  Informacion del Articulo
-                </Text>
-                <Text style={styles.locationLabel}>Ubicacion</Text>
-                <InputSelectBox
-                  listItems={listState}
-                  placeHolder={"Seleccione la ubicacion"}
-                  setSelectedItemIdex={setLocationSelectedIndex}
-                  selectedItemIdex={
-                    isNewProduct
-                      ? -1
-                      : listState.findIndex(
-                          (el) => el == selectedProduct?.productLocation.state
-                        )
-                  }
-                ></InputSelectBox>
-                <Text style={styles.stockLabel}>Stock / Disponible</Text>
-                <TextInput
-                  style={styles.stockInput}
-                  placeholder="Ingresa cuantos hay disponibles"
-                  onChangeText={(text) => {
-                    //   onStockChange(setStock, text);
-                  }}
-                  value={stock <= 0 ? "" : stock}
-                  keyboardType="numeric"
-                ></TextInput>
-                <Text style={styles.descriptionLabel}>Descripcion</Text>
-                <TextInput
-                  style={styles.descriptionContainer}
-                  placeholder="Ingresa una descripcion"
-                  multiline={true}
-                  value={description}
-                  onChangeText={(text) => {
-                    //   onTextInputChange(setDescription, text);
-                  }}
-                ></TextInput>
               </View>
             </ScrollView>
 
-            {!isNewProduct && (
-              <View style={styles.sellerBottomContainer}>
-                <TouchableOpacity
-                  style={styles.sellerBottom}
-                  onPress={() => {
-                    //   setConfirmAlertMessage(true);
-                  }}
-                >
-                  <Text style={styles.sellerBottomText}>Regresar</Text>
-                </TouchableOpacity>
-              </View>
-            )}
             <View style={styles.bottonsContainer} className="d-flex flex-row">
               <TouchableOpacity
                 style={styles.cancelBotton}
@@ -366,7 +358,7 @@ const FormCreateNewQuickCar = ({ setShowModal, isNewProduct }) => {
                 }}
               >
                 <Text style={styles.publicLabel}>
-                  {isNewProduct ? "Publicar" : "Actualizar"}
+                  {isNewProduct ? "Actualizar" : "Crear QuickCar"}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -571,6 +563,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 2,
     elevation: 2,
+    marginBottom: 10,
   },
   fotoLabel: { fontSize: 16, fontFamily: "PlusJakartaSans-Bold" },
   articleLabel: {
@@ -647,7 +640,7 @@ const styles = StyleSheet.create({
   cancelBotton: {
     height: 43,
     backgroundColor: "#c3c3c3",
-    width: 100,
+    width: 150,
     borderRadius: 8,
   },
   cancelLabel: {
@@ -662,7 +655,7 @@ const styles = StyleSheet.create({
   publicBotton: {
     height: 43,
     backgroundColor: "#2b00b6",
-    width: 100,
+    width: 150,
     borderRadius: 8,
   },
   publicLabel: {

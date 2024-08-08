@@ -18,8 +18,8 @@ const Card = ({ darkMode, handlePress, activeScreen }) => {
   }
 
   const VerifyQuickCarExists = () => {
-    if (1 == 2) {
-      Alert.alert("No existe un quickcar");
+    if (1 == 1) {
+      // Alert.alert("No existe un quickcar");
       setShowNewQuickCarModal(true);
     } else {
       dispatch(setUserType("driver"));

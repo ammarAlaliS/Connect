@@ -544,6 +544,8 @@ const SearchInput = ({ setMarker }) => {
                   searchQuickCars();
                 } else {
                   Alert.alert("Creaste un viaje");
+                  dispatch(setIsInputActive(false));
+                  dispatch(setPlacesSelected(true));
                 }
               }}
             >
@@ -554,7 +556,7 @@ const SearchInput = ({ setMarker }) => {
                   fontFamily: "PlusJakartaSans-Bold",
                 }}
               >
-                {userType == "driver" ? "Crear viajee" : "Buscar QuickCars"}
+                {userType == "driver" ? "Crear viaje" : "Buscar QuickCars"}
               </Text>
             </TouchableOpacity>
           </View>
