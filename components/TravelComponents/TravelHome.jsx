@@ -156,11 +156,6 @@ const TravelHome = () => {
   //   };
   // }, []);
 
-  useEffect(() => {
-    console.log("Cambio la puta  mierda del tema");
-    console.log(darkMode.text);
-  }, [darkMode]);
-
   return (
     <View>
       <SearchInput setMarker={setMarker}></SearchInput>

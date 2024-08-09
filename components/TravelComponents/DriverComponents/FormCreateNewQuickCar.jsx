@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
+  Alert,
   Animated,
   ScrollView,
   StyleSheet,
@@ -14,36 +15,28 @@ import XMarkIcon from "../../../icons/XMarkIcon";
 import { Text } from "react-native";
 import { Image } from "react-native";
 import AddFileIcon from "../../../icons/AddFileIcon";
+import AlertMessage from "../../MarketComponents/AlertMessage";
 
-const FormCreateNewQuickCar = ({ setShowModal, isNewProduct = true }) => {
+const FormCreateNewQuickCar = ({ setShowModal, isNewProduct }) => {
   const dispatch = useDispatch();
   const global_user = useSelector((state) => state.user.global_user);
   const token = global_user?.token;
   const completeName = global_user?.first_name + " " + global_user?.last_name;
   const profileImageUrl = global_user?.profile_img_url;
-  const selectedProduct = useSelector((state) => state.market.selectedProduct);
-  const [productStatus, setproductStatus] = useState(false);
 
-  const listCategories = ["Coche", "Moto", "Motocarro", "Articulos"];
-  const listState = ["Madrid", "Barselona", "Andalucía", "Castilla", "León"];
   const vehiculeType = ["Coche", "Moto"];
-  const articleState = ["Activo", "Inactivo"];
 
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [imageList, setImageList] = useState([]);
-  const [imageListSelectedProduct, setImageListSelectedProduct] = useState([]);
+  const [vehiculeImageList, setVehiculeImageList] = useState([]);
 
-  const [title, setTitle] = useState("");
   const [price, setPrice] = useState(0);
-  const [stock, setStock] = useState(0);
-  const [categorySelectedIndex, setCategorySelectedIndex] = useState(-1);
-  const [statusSelectedIndex, setStatusSelectedIndex] = useState(-1);
-  const [locationSelectedIndex, setLocationSelectedIndex] = useState(-1);
-  const [description, setDescription] = useState("");
-  const [confirmAlertMessage, setConfirmAlertMessage] = useState(false);
-  const [markingAsSold, setMarkingAsSold] = useState(false);
-  const products = useSelector((state) => state.market.products);
+  const [seatsAvailables, setSeatsAvailables] = useState(0);
+  const [licenseNumber, setLicenseNumber] = useState("");
+
+  const [modelo, setModelo] = useState("");
+  const [vehiculeSelectedIndex, setVehiculeSelectedIndex] = useState(-1);
 
   const pickImage = async () => {
     // Solicitar permisos para acceder a la galería
@@ -70,18 +63,187 @@ const FormCreateNewQuickCar = ({ setShowModal, isNewProduct = true }) => {
       setImageList([...imageList, result.assets[0]]);
     }
   };
+  const pickVehiculeImage = async () => {
+    // Solicitar permisos para acceder a la galería
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== "granted") {
+      alert("Lo sentimos, necesitamos permisos para acceder a tu galería.");
+      return;
+    }
 
-  const crearProducto = async () => {};
+    // Seleccionar una imagen
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      quality: 1,
+    });
 
-  const updateProducto = async (IsASoldProduct) => {};
+    if (imageList.length == 5) {
+      setAlertMessage("Solo puedes enviar 5 imagenes como maximo");
+      setShowAlert(true);
+      return;
+    }
+
+    if (!result.canceled) {
+      setImageList([...imageList, result.assets[0]]);
+    }
+  };
 
   const onTextInputChange = (setValue, text) => {
     setValue(text);
   };
 
-  const onPriceChange = (setValue, text) => {};
+  const onPriceChange = (setValue, text) => {
+    let numericValue = text.replace(/[^0-9.]/g, "");
+    if (text.indexOf(".") >= 0) {
+      let index = text.indexOf(".");
+      let secondIndex = text.indexOf(".", index + 1);
+      if (secondIndex >= 0) {
+        numericValue = numericValue.substring(0, numericValue.length - 1);
+      }
+    }
+    setValue(numericValue);
+  };
 
-  const onStockChange = (setValue, text) => {};
+  const onSeatsChange = (setValue, text) => {
+    let numericValue = text.replace(/[^0-9]/g, "");
+    setValue(numericValue);
+  };
+
+  const onLicenseChange = (setValue, text) => {
+    setValue(text);
+  };
+
+  const CrearQuickCar = async () => {
+    console.log("Creando quickCar");
+    if (vehiculeSelectedIndex < 0) {
+      setAlertMessage("Seleccione un tipo de vehiculo");
+      setShowAlert(true);
+      return;
+    }
+    if (modelo.length <= 3) {
+      setAlertMessage("Ingrese un modelo valido");
+      setShowAlert(true);
+      return;
+    }
+    if (price <= 0) {
+      setAlertMessage("Ingrese un precio valido");
+      setShowAlert(true);
+      return;
+    }
+    if (seatsAvailables <= 0) {
+      setAlertMessage(
+        "El numero de asientos disponibles debe ser mayor que cero"
+      );
+      setShowAlert(true);
+      return;
+    }
+    if (seatsAvailables > 5) {
+      setAlertMessage("El numero de asientos disponibles debe ser menor que 6");
+      setShowAlert(true);
+      return;
+    }
+    if (licenseNumber.length < 5) {
+      setAlertMessage("Ingrese un numero de licencia valido");
+      setShowAlert(true);
+      return;
+    }
+
+    const formData = new FormData();
+
+    for (let i = 0; i < vehiculeImageList.length; i++) {
+      let localUri = vehiculeImageList[i].uri;
+      let filename = localUri.split("/").pop();
+
+      // Infer the type of the image
+      let match = /\.(\w+)$/.exec(filename);
+      let type = match ? `image/${match[1]}` : `image`;
+
+      formData.append("vehicleModelImage", {
+        uri: localUri,
+        name: filename,
+        type,
+      });
+    }
+
+    for (let i = 0; i < imageList.length; i++) {
+      let localUri = imageList[i].uri;
+      let filename = localUri.split("/").pop();
+
+      // Infer the type of the image
+      let match = /\.(\w+)$/.exec(filename);
+      let type = match ? `image/${match[1]}` : `image`;
+
+      formData.append("drivingLicenseImage", {
+        uri: localUri,
+        name: filename,
+        type,
+      });
+    }
+
+    formData.append("vehicleType", vehiculeType[vehiculeSelectedIndex]);
+    formData.append("vehicleModel", modelo);
+    formData.append("drivingLicense", licenseNumber);
+    formData.append(
+      "startTime",
+      JSON.stringify({
+        hour: 0,
+        minute: 0,
+      })
+    );
+    formData.append(
+      "endTime",
+      JSON.stringify({
+        hour: 0,
+        minute: 0,
+      })
+    );
+    formData.append("regularDays", "Lunes,Martes,Miércoles,Jueves,Viernes");
+    formData.append("availableSeats", seatsAvailables);
+    formData.append("pricePerSeat", price);
+    formData.append("TripFare", price);
+    formData.append("PricePerKilometer", price);
+    formData.append("vehicleModelImageAlt", modelo);
+    formData.append("drivingLicenseImageAlt", licenseNumber);
+    formData.append("starLocation", {
+      startLocationName: "Casa",
+      latitude: 40.473687,
+      longitude: -3.709342,
+    });
+    formData.append("endLocation", {
+      endLocationName: "Trabajo",
+      latitude: 40.45142,
+      longitude: -3.715488,
+    });
+    formData.append("currentQuickCarLocation", {
+      latitude: 40.473687,
+      longitude: -3.709342,
+    });
+
+    try {
+      const response = await fetch(
+        "https://obbaramarket-backend.onrender.com/api/obbaramarket/driver/register",
+        {
+          method: "post",
+          body: formData,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.status === 201) {
+        const data = await response.json();
+        console.log("La creacion fue exitosa");
+        //AQUI SE DEBE DE GUARDAS LA INFO EN EL REDUCER
+      } else {
+        console.error(`Error en la solicitud: ${response.status}`);
+        Alert.alert("Ya existe un quickcar");
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -104,9 +266,15 @@ const FormCreateNewQuickCar = ({ setShowModal, isNewProduct = true }) => {
           </View>
 
           <View style={styles.principalDetailContainer} className="d-flex">
-            <Text style={styles.detailsTitle}>Actualizar QuickCar</Text>
+            <Text style={styles.detailsTitle}>Crear QuickCar</Text>
             <View style={styles.dividingLine}></View>
           </View>
+
+          <AlertMessage
+            seeModal={showAlert}
+            message={alertMessage}
+            setShowAlert={setShowAlert}
+          ></AlertMessage>
 
           <View style={styles.principalScrollContainer}>
             <ScrollView
@@ -140,14 +308,8 @@ const FormCreateNewQuickCar = ({ setShowModal, isNewProduct = true }) => {
               <InputSelectBox
                 listItems={vehiculeType}
                 placeHolder={"Selecciona el tipo de vehiculo"}
-                setSelectedItemIdex={setStatusSelectedIndex}
-                selectedItemIdex={
-                  isNewProduct
-                    ? -1
-                    : vehiculeType.findIndex(
-                        (el) => el == selectedProduct?.productStatus
-                      )
-                }
+                setSelectedItemIdex={setVehiculeSelectedIndex}
+                selectedItemIdex={-1}
               ></InputSelectBox>
 
               <Text style={styles.titleText}>Modelo</Text>
@@ -155,12 +317,85 @@ const FormCreateNewQuickCar = ({ setShowModal, isNewProduct = true }) => {
               <View style={styles.titleInputContainer}>
                 <TextInput
                   style={styles.titleInput}
-                  value={title}
+                  value={modelo}
                   onChangeText={(text) => {
-                    //   onTextInputChange(setTitle, text);
+                    onTextInputChange(setModelo, text);
                   }}
                   placeholder="Ingresa el modelo del vehiculo"
                 ></TextInput>
+              </View>
+
+              <View style={styles.principalFotoContainer}>
+                <Text style={styles.addFotoLabel}>
+                  Agrega una foto de tu vehiculo
+                </Text>
+                <Text style={styles.addFotoSubLable}>Puedes subir 5 fotos</Text>
+                {vehiculeImageList.length == 0 && (
+                  <View style={styles.fotoContainer}>
+                    <View style={styles.addImageBottomContainer}>
+                      <TouchableOpacity
+                        style={styles.addImageBottom}
+                        onPress={pickVehiculeImage}
+                      >
+                        <AddFileIcon
+                          color={"#2b00b6"}
+                          width={40}
+                          height={40}
+                        ></AddFileIcon>
+                        <Text style={styles.plusText}>+</Text>
+                      </TouchableOpacity>
+                      <Text style={styles.fotoLabel}>Sube una foto</Text>
+                    </View>
+                  </View>
+                )}
+                {vehiculeImageList.length > 0 && (
+                  <ScrollView style={styles.fotoContainer} horizontal={true}>
+                    {vehiculeImageList.length > 0 &&
+                      vehiculeImageList.map((item, index) => {
+                        return (
+                          <View key={index}>
+                            <View>
+                              <TouchableOpacity
+                                style={styles.deleteImageBottomContainer}
+                                onPress={() => {
+                                  setVehiculeImageList(
+                                    vehiculeImageList.filter(
+                                      (el, subindex) => subindex != index
+                                    )
+                                  );
+                                }}
+                              >
+                                <XMarkIcon
+                                  width={30}
+                                  height={30}
+                                  color={"#000"}
+                                ></XMarkIcon>
+                              </TouchableOpacity>
+                              <Image
+                                source={{ uri: item.uri }}
+                                style={styles.fistImageStyle}
+                              ></Image>
+                            </View>
+                          </View>
+                        );
+                      })}
+
+                    <View style={styles.secondImageContainer}>
+                      <TouchableOpacity
+                        style={styles.secondAddImageBottom}
+                        onPress={pickVehiculeImage}
+                      >
+                        <AddFileIcon
+                          color={"#2b00b6"}
+                          width={40}
+                          height={40}
+                        ></AddFileIcon>
+                        <Text style={styles.plusText}>+</Text>
+                      </TouchableOpacity>
+                      <Text style={styles.fotoLabel}>Sube una foto</Text>
+                    </View>
+                  </ScrollView>
+                )}
               </View>
 
               <Text style={styles.priceLabel}>Precio por asiento</Text>
@@ -171,7 +406,7 @@ const FormCreateNewQuickCar = ({ setShowModal, isNewProduct = true }) => {
                   placeholder="Ingresa el Precio"
                   keyboardType="numeric"
                   onChangeText={(text) => {
-                    //   onPriceChange(setPrice, text);
+                    onPriceChange(setPrice, text);
                   }}
                   value={price <= 0 ? "" : "€ " + price}
                 ></TextInput>
@@ -185,38 +420,11 @@ const FormCreateNewQuickCar = ({ setShowModal, isNewProduct = true }) => {
                   placeholder="Ingresa el # de asientos disponibles"
                   keyboardType="numeric"
                   onChangeText={(text) => {
-                    //   onPriceChange(setPrice, text);
+                    onSeatsChange(setSeatsAvailables, text);
                   }}
-                  value={price <= 0 ? "" : "€ " + price}
+                  value={seatsAvailables <= 0 ? "" : seatsAvailables}
                 ></TextInput>
               </View>
-
-              {/* <InputSelectBox
-                listItems={listCategories}
-                placeHolder={"Selecciona una categoria"}
-                setSelectedItemIdex={setCategorySelectedIndex}
-                selectedItemIdex={
-                  isNewProduct
-                    ? -1
-                    : listCategories.findIndex(
-                        (el) => el == selectedProduct?.productCategory
-                      )
-                }
-              ></InputSelectBox> */}
-
-              <Text style={styles.stateLabel}>Estado</Text>
-              <InputSelectBox
-                listItems={articleState}
-                placeHolder={"Selecciona un estado"}
-                setSelectedItemIdex={setStatusSelectedIndex}
-                selectedItemIdex={
-                  isNewProduct
-                    ? -1
-                    : articleState.findIndex(
-                        (el) => el == selectedProduct?.productStatus
-                      )
-                }
-              ></InputSelectBox>
 
               <Text style={styles.priceLabel}>Numero de Licencia</Text>
 
@@ -226,9 +434,9 @@ const FormCreateNewQuickCar = ({ setShowModal, isNewProduct = true }) => {
                   placeholder="Ingresa el numero de licencia"
                   keyboardType="default"
                   onChangeText={(text) => {
-                    //   onPriceChange(setPrice, text);
+                    onLicenseChange(setLicenseNumber, text);
                   }}
-                  value={price <= 0 ? "" : "€ " + price}
+                  value={licenseNumber <= 0 ? "" : licenseNumber}
                 ></TextInput>
               </View>
 
@@ -237,58 +445,26 @@ const FormCreateNewQuickCar = ({ setShowModal, isNewProduct = true }) => {
                   Agrega una foto de tu dentificacion
                 </Text>
                 <Text style={styles.addFotoSubLable}>Puedes subir 5 fotos</Text>
-                {imageList.length == 0 &&
-                  imageListSelectedProduct.length == 0 && (
-                    <View style={styles.fotoContainer}>
-                      <View style={styles.addImageBottomContainer}>
-                        <TouchableOpacity
-                          style={styles.addImageBottom}
-                          onPress={pickImage}
-                        >
-                          <AddFileIcon
-                            color={"#2b00b6"}
-                            width={40}
-                            height={40}
-                          ></AddFileIcon>
-                          <Text style={styles.plusText}>+</Text>
-                        </TouchableOpacity>
-                        <Text style={styles.fotoLabel}>Sube una foto</Text>
-                      </View>
+                {imageList.length == 0 && (
+                  <View style={styles.fotoContainer}>
+                    <View style={styles.addImageBottomContainer}>
+                      <TouchableOpacity
+                        style={styles.addImageBottom}
+                        onPress={pickImage}
+                      >
+                        <AddFileIcon
+                          color={"#2b00b6"}
+                          width={40}
+                          height={40}
+                        ></AddFileIcon>
+                        <Text style={styles.plusText}>+</Text>
+                      </TouchableOpacity>
+                      <Text style={styles.fotoLabel}>Sube una foto</Text>
                     </View>
-                  )}
-                {(imageList.length > 0 ||
-                  imageListSelectedProduct.length > 0) && (
+                  </View>
+                )}
+                {imageList.length > 0 && (
                   <ScrollView style={styles.fotoContainer} horizontal={true}>
-                    {imageListSelectedProduct.length > 0 &&
-                      imageListSelectedProduct.map((item, index) => {
-                        return (
-                          <View key={index}>
-                            <View>
-                              <TouchableOpacity
-                                style={styles.deleteImageBottomContainer}
-                                onPress={() => {
-                                  // setImageListSelectedProduct(
-                                  //   imageListSelectedProduct.filter(
-                                  //     (item, subIndex) => subIndex != index
-                                  //   )
-                                  // );
-                                }}
-                              >
-                                <XMarkIcon
-                                  width={30}
-                                  height={30}
-                                  color={"#000"}
-                                ></XMarkIcon>
-                              </TouchableOpacity>
-                              <Image
-                                source={{ uri: item }}
-                                style={styles.fistImageStyle}
-                              ></Image>
-                            </View>
-                          </View>
-                        );
-                      })}
-
                     {imageList.length > 0 &&
                       imageList.map((item, index) => {
                         return (
@@ -297,11 +473,11 @@ const FormCreateNewQuickCar = ({ setShowModal, isNewProduct = true }) => {
                               <TouchableOpacity
                                 style={styles.deleteImageBottomContainer}
                                 onPress={() => {
-                                  // setImageList(
-                                  //   imageList.filter(
-                                  //     (el, subindex) => subindex != index
-                                  //   )
-                                  // );
+                                  setImageList(
+                                    imageList.filter(
+                                      (el, subindex) => subindex != index
+                                    )
+                                  );
                                 }}
                               >
                                 <XMarkIcon
@@ -342,7 +518,7 @@ const FormCreateNewQuickCar = ({ setShowModal, isNewProduct = true }) => {
               <TouchableOpacity
                 style={styles.cancelBotton}
                 onPress={() => {
-                  // setShowModal(false);
+                  setShowModal(false);
                 }}
               >
                 <Text style={styles.cancelLabel}>Cancelar</Text>
@@ -350,11 +526,11 @@ const FormCreateNewQuickCar = ({ setShowModal, isNewProduct = true }) => {
               <TouchableOpacity
                 style={styles.publicBotton}
                 onPress={() => {
-                  // if (isNewProduct) {
-                  //   crearProducto();
-                  // } else {
-                  //   updateProducto(false);
-                  // }
+                  if (isNewProduct) {
+                    // updateProducto(false);
+                  } else {
+                    CrearQuickCar();
+                  }
                 }}
               >
                 <Text style={styles.publicLabel}>

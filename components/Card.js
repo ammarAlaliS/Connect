@@ -17,7 +17,24 @@ const Card = ({ darkMode, handlePress, activeScreen }) => {
     return null;
   }
 
-  const VerifyQuickCarExists = () => {
+  const VerifyQuickCarExists = async () => {
+    // try {
+    //   console.log("ENTRANDO");
+
+    //   let data = await fetch(
+    //     "https://obbaramarket-backend.onrender.com/api/ObbaraMarket/driver/6696af34a97fbe4ebe74e350"
+    //   ).then((res) => {
+    //     if (res.ok) {
+
+    //       return res.json();
+    //     } else {
+    //       console.log("Ocurrio un error");
+    //     }
+    //   });
+    // } catch (error) {
+    //   console.log("Ocurrio un error: " + error.message);
+    // }
+
     if (1 == 1) {
       // Alert.alert("No existe un quickcar");
       setShowNewQuickCarModal(true);
