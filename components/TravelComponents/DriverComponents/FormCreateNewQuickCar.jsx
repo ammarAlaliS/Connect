@@ -16,8 +16,10 @@ import { Text } from "react-native";
 import { Image } from "react-native";
 import AddFileIcon from "../../../icons/AddFileIcon";
 import AlertMessage from "../../MarketComponents/AlertMessage";
+import { setQuickCarInfo } from "../../../globalState/userSlice";
+import { setUserType } from "../../../globalState/travelSlice";
 
-const FormCreateNewQuickCar = ({ setShowModal, isNewProduct }) => {
+const FormCreateNewQuickCar = ({ setShowModal, isNewProduct, handlePress }) => {
   const dispatch = useDispatch();
   const global_user = useSelector((state) => state.user.global_user);
   const token = global_user?.token;
@@ -78,14 +80,14 @@ const FormCreateNewQuickCar = ({ setShowModal, isNewProduct }) => {
       quality: 1,
     });
 
-    if (imageList.length == 5) {
+    if (vehiculeImageList.length == 5) {
       setAlertMessage("Solo puedes enviar 5 imagenes como maximo");
       setShowAlert(true);
       return;
     }
 
     if (!result.canceled) {
-      setImageList([...imageList, result.assets[0]]);
+      setVehiculeImageList([...vehiculeImageList, result.assets[0]]);
     }
   };
 
@@ -126,6 +128,13 @@ const FormCreateNewQuickCar = ({ setShowModal, isNewProduct }) => {
       setShowAlert(true);
       return;
     }
+
+    if (vehiculeImageList.length == 0) {
+      setAlertMessage("Ingrese por lo menos una imagen");
+      setShowAlert(true);
+      return;
+    }
+
     if (price <= 0) {
       setAlertMessage("Ingrese un precio valido");
       setShowAlert(true);
@@ -158,6 +167,10 @@ const FormCreateNewQuickCar = ({ setShowModal, isNewProduct }) => {
       // Infer the type of the image
       let match = /\.(\w+)$/.exec(filename);
       let type = match ? `image/${match[1]}` : `image`;
+
+      console.log("El tipo de la imagen es: ");
+      console.log(type);
+      console.log(token);
 
       formData.append("vehicleModelImage", {
         uri: localUri,
@@ -205,22 +218,34 @@ const FormCreateNewQuickCar = ({ setShowModal, isNewProduct }) => {
     formData.append("PricePerKilometer", price);
     formData.append("vehicleModelImageAlt", modelo);
     formData.append("drivingLicenseImageAlt", licenseNumber);
-    formData.append("starLocation", {
-      startLocationName: "Casa",
-      latitude: 40.473687,
-      longitude: -3.709342,
-    });
-    formData.append("endLocation", {
-      endLocationName: "Trabajo",
-      latitude: 40.45142,
-      longitude: -3.715488,
-    });
-    formData.append("currentQuickCarLocation", {
-      latitude: 40.473687,
-      longitude: -3.709342,
-    });
+    formData.append(
+      "starLocation",
+      JSON.stringify({
+        startLocationName: "Casa",
+        latitude: 40.473687,
+        longitude: -3.709342,
+      })
+    );
+    formData.append(
+      "endLocation",
+      JSON.stringify({
+        endLocationName: "Trabajo",
+        latitude: 40.45142,
+        longitude: -3.715488,
+      })
+    );
+    formData.append(
+      "currentQuickCarLocation",
+      JSON.stringify({
+        latitude: 40.473687,
+        longitude: -3.709342,
+      })
+    );
 
     try {
+      console.log("Entrando al try");
+      console.log(formData);
+
       const response = await fetch(
         "https://obbaramarket-backend.onrender.com/api/obbaramarket/driver/register",
         {
@@ -232,12 +257,17 @@ const FormCreateNewQuickCar = ({ setShowModal, isNewProduct }) => {
         }
       );
 
+      console.log("TODO BIEN HASTA AQUI");
+
       if (response.status === 201) {
         const data = await response.json();
         console.log("La creacion fue exitosa");
+        console.log(data);
+        dispatch(setQuickCarInfo(data.quickCar));
+        dispatch(setUserType("driver"));
+        handlePress("Travel"); // Cambia a "Travel" al hacer clic
         //AQUI SE DEBE DE GUARDAS LA INFO EN EL REDUCER
       } else {
-        console.error(`Error en la solicitud: ${response.status}`);
         Alert.alert("Ya existe un quickcar");
       }
     } catch (error) {

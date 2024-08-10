@@ -20,11 +20,11 @@ export const userSlice = createSlice({
       state.global_user = null;
       state.driver_information = null;
     },
-    setQuickCarUser: (state, action) => {
+    setQuickCarInfo: (state, action) => {
       state.quickcar_info = action.payload;
     },
   },
 });
 
-export const { setUser, clearUser } = userSlice.actions;
+export const { setUser, clearUser, setQuickCarInfo } = userSlice.actions;
 export default userSlice.reducer;

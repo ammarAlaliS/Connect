@@ -235,7 +235,10 @@ const Card = ({ darkMode, handlePress, activeScreen }) => {
         }}
         transparent={true}
       >
-        <FormCreateNewQuickCar setShowModal={setShowNewQuickCarModal}>
+        <FormCreateNewQuickCar
+          setShowModal={setShowNewQuickCarModal}
+          handlePress={handlePress}
+        >
           Que pedo guey
         </FormCreateNewQuickCar>
       </Modal>
