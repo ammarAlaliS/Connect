@@ -9,14 +9,52 @@ import {
   FlatList,
   StatusBar,
   ActivityIndicator,
-  Image
+  Image,
 } from "react-native";
 import MessageHeader from "../components/MessageComponets/MessageHeader";
 import axios from "axios";
-import { useSelector } from "react-redux";
-import socket from "../socket"; // Asegúrate de que la configuración del socket esté correcta
+import { useSelector, useDispatch } from "react-redux";
+import socket from "../socket";
+// import { loadSounds, playMessageSentSound, playMessageReceivedSound, unloadSounds } from "../utils/SoundManager";
+import { setConversations, setCurrentPage, clearMessages  } from '../globalState/MessageSlice';
+import { setLoading } from '../globalState/loadingSlice';
+import { useFocusEffect } from "@react-navigation/native";
+
 
 const statusBarHeight = StatusBar.currentHeight || 0;
+
+export const fetchConversations = async (userId, dispatch, token, page, limit) => {
+  const API_BASE_URL = "https://obbaramarket-backend.onrender.com";
+  dispatch(setLoading(true));
+
+  try {
+    if (userId) {
+      const response = await axios.get(
+        `${API_BASE_URL}/api/ObbaraMarket/conversations/${userId}?page=${page}&limit=${limit}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      const result = response.data;
+
+      if (result && result.messages) {
+        dispatch(setConversations({
+          conversations: result.messages,
+          totalMessages: result.totalMessages,
+          totalPages: result.totalPages,
+          currentPage: result.currentPage
+        }));
+        dispatch(setCurrentPage(result.currentPage));
+      } else {
+        console.log('No se encontraron mensajes');
+      }
+    }
+  } catch (error) {
+    console.error("Error al realizar la solicitud", error);
+  } finally {
+    dispatch(setLoading(false));
+  }
+};
 
 const MessageScreen = ({ route }) => {
   const params = route.params || {};
@@ -28,33 +66,32 @@ const MessageScreen = ({ route }) => {
     messageContent,
     totalMessage,
     messageState,
+    userId
   } = params;
 
   const API_BASE_URL = "https://obbaramarket-backend.onrender.com";
 
+  const dispatch = useDispatch()
   const [messages, setMessages] = useState([]);
-  const [newMessage, setNewMessage] = useState("");
+  const [isAtBottom, setIsAtBottom] = useState(true);
+  const [IsAtTop, setIsAtTop] = useState(false);
+  const [content, setContent] = useState("");
   const [loadingMessage, setLoadingMessage] = useState(false);
+
+
   const global_user_id = useSelector((state) => state.user.global_user?._id);
   const conversations = useSelector((state) => state.messages.conversations);
   const token = useSelector((state) => state.user.global_user?.token);
-  const profile_img_url = useSelector((state) => state.user.global_user?.profile_img_url);
+  const profile_img_url = useSelector(
+    (state) => state.user.global_user?.profile_img_url
+  );
   const loading = useSelector((state) => state.loading);
 
   const scrollViewRef = useRef(null);
 
   useEffect(() => {
-    socket.on("connect", () => {
-      console.log("Connected to socket");
-    });
-
-    socket.on("disconnect", () => {
-      console.log("Disconnected from socket");
-    });
-
     socket.on("newMessage", (data) => {
       const { message, receiver, sender } = data;
-
       const tempMessage = {
         content: message.content,
         isSender: data.message.sender === global_user_id,
@@ -67,10 +104,6 @@ const MessageScreen = ({ route }) => {
       };
       setMessages((prevMessages) => [...prevMessages, tempMessage]);
     });
-
-    return () => {
-      socket.off("newMessage");
-    };
   }, [global_user_id]);
 
   useEffect(() => {
@@ -88,21 +121,45 @@ const MessageScreen = ({ route }) => {
           senderId: msg.sender._id,
         };
       });
-
-      formattedMessages.sort(
-        (a, b) => new Date(a.timestamp) - new Date(b.timestamp)
-      );
-      setMessages(formattedMessages);
+      setMessages((prevMessages) => {
+        const newMessages = formattedMessages.filter(
+          (msg) =>
+            !prevMessages.some(
+              (existingMsg) =>
+                existingMsg.timestamp === msg.timestamp &&
+                existingMsg.content === msg.content
+            )
+        );
+        return [...prevMessages, ...newMessages];
+      });
     } else {
       setMessages([]);
     }
   }, [conversations, global_user_id]);
 
-  useEffect(() => {
-    if (scrollViewRef.current) {
-      scrollViewRef.current.scrollToEnd({ animated: true });
-    }
-  }, [messages]);
+  useFocusEffect(
+    React.useCallback(() => {
+      dispatch(clearMessages());
+      setMessages([])
+      return () => {
+      };
+    }, [dispatch])
+  );
+
+
+//   const handleScrollPosition = (event) => {
+//     if (event && event.nativeEvent) {
+//         const offsetY = event.nativeEvent.contentOffset.y;
+//         const contentHeight = event.nativeEvent.contentSize.height;
+//         const scrollViewHeight = event.nativeEvent.layoutMeasurement.height;
+//         setIsAtTop(offsetY <= 0);
+//         setIsAtBottom(offsetY + scrollViewHeight >= contentHeight - 1);
+//     } else {
+//         console.error("Evento no contiene nativeEvent");
+//     }
+    
+// };
+
 
   const formatTime = (timestamp) => {
     const date = new Date(timestamp);
@@ -162,36 +219,42 @@ const MessageScreen = ({ route }) => {
   const senderIdArray = Array.from(uniqueSenderIds);
 
   const handleSendMessage = async () => {
+    if (!content.trim()) {
+      console.warn("Message content cannot be empty.");
+      return;
+    }
+
+    setLoadingMessage(true);
+    setContent("");
+
     try {
       const userReceiverId = receiverIdsArray[0] || senderIdArray[0];
-
-      if (!newMessage.trim()) {
-        console.log("Message content cannot be empty.");
-        return;
-      }
-
-      setLoadingMessage(true);
 
       const response = await axios.post(
         `${API_BASE_URL}/api/ObbaraMarket/send/${userReceiverId}`,
         {
-          content: newMessage,
+          content: content.trim(),
           timestamp: new Date().toISOString(),
         },
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-
-      if (response.status === 200) {
-        setNewMessage("");
-        setLoadingMessage(false);
+      if (response.status >= 200 && response.status < 300) {
+        console.log("Message sent successfully");
       } else {
-        console.log("Error sending message:", response.data.error);
-        setLoadingMessage(false);
+        console.error(
+          "Error sending message: Failed to send message with status:",
+          response.status
+        );
       }
     } catch (error) {
-      console.error("Error sending message:", error);
+      const errorMsg =
+        error.response?.data?.error ||
+        error.message ||
+        "An unexpected error occurred";
+      console.error("Error sending message:", errorMsg);
+    } finally {
       setLoadingMessage(false);
     }
   };
@@ -223,7 +286,7 @@ const MessageScreen = ({ route }) => {
       ]}
     >
       {loading ? (
-        <ActivityIndicator size="small" color={darkMode.text} />
+        <ActivityIndicator size="small" color="#fff" />
       ) : (
         <View>
           <Text
@@ -272,11 +335,11 @@ const MessageScreen = ({ route }) => {
   const data = Object.keys(groupedMessages).flatMap((dateKey) => [
     dateKey,
     ...groupedMessages[dateKey],
-  ]);
+  ]).reverse();
 
   return (
     <SafeAreaView
-      style={[styles.container, { backgroundColor: darkMode.backgroundDark }]}
+      style={[styles.container, { backgroundColor: darkMode.screenBg }]}
     >
       <MessageHeader
         darkMode={darkMode}
@@ -287,24 +350,34 @@ const MessageScreen = ({ route }) => {
         totalMessage={totalMessage}
         messageState={messageState}
       />
-      <View style={styles.messageListContainer}>
+      <View style={{
+        flex:1,
+        justifyContent:'flex-start'
+      }}>
         <FlatList
+        inverted
+          ListHeaderComponent={
+            loadingMessage ? (
+              <View className=" items-end justify-end py-2">
+                <ActivityIndicator size="small" color={darkMode.text} />
+              </View>
+            ) : null
+          }
           data={data}
           keyExtractor={(item, index) => index.toString()}
           contentContainerStyle={{
             paddingHorizontal: 8,
+            flexGrow:1,
+            justifyContent:'flex-end'
+        
           }}
-          renderItem={({ item }) => {
-            if (typeof item === "string") {
-              return renderDateHeader({ item });
-            } else {
-              return renderMessage({ item });
-            }
-          }}
-          ref={scrollViewRef}
-          onContentSizeChange={() =>
-            scrollViewRef.current.scrollToEnd({ animated: true })
+          renderItem={({ item }) =>
+            typeof item === "string"
+              ? renderDateHeader({ item })
+              : renderMessage({ item })
           }
+          ref={scrollViewRef}
+ 
         />
       </View>
       <View style={[styles.inputContainer]}>
@@ -319,7 +392,7 @@ const MessageScreen = ({ route }) => {
             backgroundColor: darkMode.backgroundDark,
             borderWidth: 1,
             borderColor: darkMode.borderBox,
-            marginRight:10
+            marginRight: 10,
           }}
           resizeMode="cover"
         />
@@ -332,26 +405,23 @@ const MessageScreen = ({ route }) => {
               borderColor: darkMode.borderBox,
             },
           ]}
-          value={newMessage}
+          value={content}
           placeholder="Escribe un mensaje..."
           placeholderTextColor={darkMode.text}
-          onChangeText={setNewMessage}
+          onChangeText={setContent}
           onSubmitEditing={handleSendMessage}
           multiline
         />
         <TouchableOpacity
           style={styles.sendButton}
-          onPress={handleSendMessage}
           disabled={loadingMessage}
+          onPress={() => {
+            handleSendMessage();
+          }}
         >
           <Text style={styles.sendButtonText}>Enviar</Text>
         </TouchableOpacity>
       </View>
-      {loadingMessage && (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={darkMode.text} />
-        </View>
-      )}
     </SafeAreaView>
   );
 };
@@ -377,7 +447,7 @@ const styles = StyleSheet.create({
   },
   sendButton: {
     backgroundColor: "#007bff",
-    paddingVertical: 6,
+    paddingVertical: 8,
     paddingHorizontal: 8,
     borderRadius: 9999,
   },
@@ -385,9 +455,7 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
   },
-  messageListContainer: {
-    flex: 1,
-  },
+
   myMessageWrapper: {
     alignSelf: "flex-end",
     marginVertical: 2,
@@ -409,11 +477,6 @@ const styles = StyleSheet.create({
     color: "#aaa",
     marginVertical: 5,
     fontSize: 12,
-  },
-  loadingContainer: {
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
 });
 

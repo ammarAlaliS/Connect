@@ -10,13 +10,22 @@ const messageSlice = createSlice({
   },
   reducers: {
     setConversations(state, action) {
-      state.conversations = action.payload.conversations;
+      state.conversations = [...state.conversations, ...action.payload.conversations];
       state.totalMessages = action.payload.totalMessages;
       state.totalPages = action.payload.totalPages;
       state.currentPage = action.payload.currentPage;
     },
+    setCurrentPage(state, action) {
+      state.currentPage = action.payload;
+    },
+    clearMessages(state) {
+      state.totalMessages = 0;
+      state.totalPages = 0;
+      state.currentPage = 1;
+      state.conversations = [];
+    },
   },
 });
 
-export const { setConversations } = messageSlice.actions;
+export const { setConversations, setCurrentPage, clearMessages } = messageSlice.actions;
 export default messageSlice.reducer;

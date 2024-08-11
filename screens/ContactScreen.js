@@ -51,7 +51,7 @@ const ContactScreen = ({ darkMode }) => {
   useEffect(() => {
     if (globalUserId) {
       const handleNewMessage = (data) => {
-        console.log('Evento "newMessage" recibido:', data);
+        console.log('Evento "para actualizar messager container" recibido:', data);
 
         const { message, sender, receiver } = data;
 
@@ -79,13 +79,11 @@ const ContactScreen = ({ darkMode }) => {
               updatedConversation.lastMessage = newMessage;
             }
 
-            // Mover la conversación actualizada al principio de la lista
             updatedConversations = [
               updatedConversation,
               ...updatedConversations.filter((_, index) => index !== existingConversationIndex),
             ];
           } else {
-            // Crear nueva conversación y agregarla al principio de la lista
             updatedConversations = [
               {
                 sender: { _id: message.sender, global_user: sender },

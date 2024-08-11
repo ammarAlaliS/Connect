@@ -21,10 +21,9 @@ const HomeAppScreen = () => {
 
   const handlePress = (screen) => {
     setAnimation("fadeOut");
-    setTimeout(() => {
       setActiveScreen(screen);
       setAnimation("fadeIn");
-    }, 100);
+  
   };
 
   const { RequestLocationPermissions } = useLocation();

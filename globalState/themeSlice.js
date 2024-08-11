@@ -28,6 +28,7 @@ export const colors = {
     textCommentButton: '#1E90FF',
     backgroundComment : '#000',
     // SingIn
+
     signInTextColor: '#06BCEE',
     singInBgColor: '#fff',
     singInInputBgColor: "rgba(173, 216, 230, 0.09)",
@@ -40,11 +41,12 @@ export const colors = {
 
       // ContenMesagge 
 
-      contentMessageBg : '#fff',
-      contentMessageBgTwo : '#00221c',
+      contentMessageBg : '#19191a',
+      contentMessageBgTwo : '#8d9f58',
       contentMessageBorderColor: 'rgba(128, 128, 128, 0.3)',
-      contentReceiverText: '#000',
+      contentReceiverText: '#fff',
       contentSenderText: '#fff',
+      screenBg: '#F0F2F4',
     
     // Presentation
     PreBgColor: '#fff'
@@ -91,6 +93,7 @@ export const colors = {
     contentMessageBorderColor: 'rgba(128, 128, 128, 0.1)',
     contentReceiverText: '#fff',
     contentSenderText: '#fff',
+    screenBg: '#000',
 
     // Presentation
     PreBgColor: '#000',

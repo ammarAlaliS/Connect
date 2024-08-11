@@ -1,12 +1,9 @@
-import { View, Text, Image, TouchableOpacity } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import React, { useState } from "react";
+import React, { useState } from 'react';
+import { View, Text, Image, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useDispatch, useSelector } from 'react-redux';
-import { setLoading } from '../../globalState/loadingSlice';
-import { setConversations } from '../../globalState/MessageSlice'
-
-import axios from "axios";
+import { fetchConversations } from '../../screens/MessageScreen';
 
 export default function MessagerContainer({
   darkMode,
@@ -18,67 +15,31 @@ export default function MessagerContainer({
   messageState,
   userId
 }) {
-  const dispatch = useDispatch();
   const [showMore, setShowMore] = useState(false);
-  const [error, setError] = useState(null);
-  const [userMessageInteraction, setUserMessageInteraction ] = useState([]);
   const navigation = useNavigation();
-  const API_BASE_URL = "https://obbaramarket-backend.onrender.com";
+  const dispatch = useDispatch();
   const token = useSelector((state) => state.user.global_user?.token);
 
   const toggleShowMore = () => {
     setShowMore(!showMore);
   };
 
-  const fetchConversations = async () => {
-    dispatch(setLoading(true));
-    try {
-      if (userId) {
-        const response = await axios.get(
-          `${API_BASE_URL}/api/ObbaraMarket/conversations/${userId}?page=1&limit=10`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        let result = response.data;
-        if (result && result.messages) {
-          dispatch(
-            setConversations({
-              totalMessages: result.totalMessages, 
-              totalPages: result.totalPages, 
-              currentPage: result.currentPage, 
-              conversations: result.messages
-            })
-          );
-        } else {
-          setUserMessageInteraction({ messages: [] });
-        }
-      }
-    } catch (error) {
-      setError(error.response || { message: "Error al realizar la solicitud" });
-    } finally {
-      dispatch(setLoading(false));
-    
-    }
+  const handlePress = () => {
+    fetchConversations(userId, dispatch, token, page = 1, limit = 20);
+    navigation.navigate("MessageScreen", {
+      darkMode,
+      userImageUrl,
+      userFirstName,
+      userLastName,
+      messageContent,
+      totalMessage,
+      messageState,
+      userId
+    });
   };
 
-
   return (
-    <TouchableOpacity
-      onPress={() => {
-        fetchConversations();
-        navigation.navigate("MessageScreen", {
-          darkMode,
-          userImageUrl,
-          userFirstName,
-          userLastName,
-          messageContent,
-          totalMessage,
-          messageState,
-          userMessageInteraction,
-        });
-      }}
-    >
+    <TouchableOpacity onPress={handlePress}>
       <View
         className="flex-row items-center px-2 py-[10px] pt-[20px] space-x-2"
         style={{
