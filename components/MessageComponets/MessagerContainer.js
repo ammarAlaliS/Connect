@@ -3,7 +3,7 @@ import { View, Text, Image, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchConversations } from '../../screens/MessageScreen';
+import { fetchConversations } from '../MessageComponets/api/backendRequest';
 
 export default function MessagerContainer({
   darkMode,
@@ -25,7 +25,7 @@ export default function MessagerContainer({
   };
 
   const handlePress = () => {
-    fetchConversations(userId, dispatch, token, page = 1, limit = 20);
+    fetchConversations(dispatch, userId, token, 1, 93);
     navigation.navigate("MessageScreen", {
       darkMode,
       userImageUrl,

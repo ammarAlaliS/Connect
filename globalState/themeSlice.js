@@ -15,7 +15,7 @@ export const colors = {
     iconBorderBottomActive: "#333",
     borderBox: "rgba(128, 128, 128, 0.4)",
     borderBoxCardList: "1E90FF",
-    backgroundDark: "#e4e4e6",
+    backgroundDark: "#F0F2F4",
     backgroundList: "#4ade80",
     backgroundCardList: '#000',
     colorTextCardList: '#67ED94',

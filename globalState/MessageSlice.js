@@ -6,26 +6,49 @@ const messageSlice = createSlice({
     totalMessages: 0,
     totalPages: 0,
     currentPage: 1,
-    conversations: [],
+    firstFetch: false,
+    currentDate: 'Quickcar',
+    groupedMessages: [], 
   },
   reducers: {
-    setConversations(state, action) {
-      state.conversations = [...state.conversations, ...action.payload.conversations];
-      state.totalMessages = action.payload.totalMessages;
-      state.totalPages = action.payload.totalPages;
-      state.currentPage = action.payload.currentPage;
+    setTotalMessages(state, action) {
+      state.totalMessages = action.payload;
+    },
+    setGroupedMessages(state, action) {
+      const newGroupedMessages = action.payload; 
+      state.groupedMessages = [...state.groupedMessages, ...newGroupedMessages];
     },
     setCurrentPage(state, action) {
       state.currentPage = action.payload;
+    },
+    setTotalPages(state, action) {
+      state.totalPages = action.payload;
+    },
+    setCurrentDate(state, action) {
+      state.currentDate = action.payload;
     },
     clearMessages(state) {
       state.totalMessages = 0;
       state.totalPages = 0;
       state.currentPage = 1;
-      state.conversations = [];
+      state.groupedMessages = [];
+      state.firstFetch = false;
+      state.currentDate= 'Quickcar';
+    },
+    setFirstFetch(state, action) {
+      state.firstFetch = action.payload;
     },
   },
 });
 
-export const { setConversations, setCurrentPage, clearMessages } = messageSlice.actions;
+export const {
+  setGroupedMessages,
+  setCurrentPage,
+  clearMessages,
+  setTotalPages,
+  setFirstFetch,
+  setTotalMessages,
+  setCurrentDate,
+} = messageSlice.actions;
+
 export default messageSlice.reducer;

@@ -11,76 +11,82 @@ import {
 import Back from "../../icons/Back";
 import MenuPoints from "../../icons/MenuPoints";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import RenderDateHeader from "../../components/MessageComponets/RenderDateHeader"; 
 export default function MessageHeader({
   darkMode,
   userImageUrl,
   userFirstName,
   userLastName,
-  messageContent,
-  totalMessage,
-  messageState,
+  IsAtTop,
 }) {
   return (
     <View
       style={{
         backgroundColor: darkMode.background,
-        borderBottomWidth: 1,
-        borderColor: darkMode.contentMessageBorderColor,
-        padding: 10,
+        // borderBottomWidth: 1,
+        // borderColor: !IsAtTop ? 'transparent' : darkMode.borderBox,
+       paddingBottom:0,
+       paddingHorizontal:10,
+       paddingTop:10
       }}
-      className=" flex-row space-x-2 items-center"
+      
     >
-      <View>
-        <Back size={30} color={darkMode.text} />
-      </View>
-      <View className=" flex-1 flex-row items-center space-x-2">
+      <View className=" flex-row space-x-2 items-center">
         <View>
-          {userImageUrl ? (
-            <Image
-              source={{
-                uri: userImageUrl,
-              }}
+          <Back size={30} color={darkMode.text} />
+        </View>
+        <View className=" flex-1 flex-row items-center space-x-2">
+          <View>
+            {userImageUrl ? (
+              <Image
+                source={{
+                  uri: userImageUrl,
+                }}
+                style={{
+                  width: 50,
+                  height: 50,
+                  borderRadius: 9999,
+                  backgroundColor: darkMode.backgroundDark,
+                  borderWidth: 1,
+                  borderColor: darkMode.contentMessageBorderColor,
+                }}
+                resizeMode="cover"
+              />
+            ) : (
+              <View
+                style={{
+                  width: 50,
+                  height: 50,
+                  borderRadius: 9999,
+                  backgroundColor: darkMode.backgroundDark,
+                  borderWidth: 1,
+                  borderColor: darkMode.borderBox,
+                }}
+              >
+                <AntDesign name="question" size={50} color={darkMode.text} />
+              </View>
+            )}
+          </View>
+          <View>
+            <Text
+              className=""
               style={{
-                width: 50,
-                height: 50,
-                borderRadius: 9999,
-                backgroundColor: darkMode.backgroundDark,
-                borderWidth: 1,
-                borderColor: darkMode.borderBox,
-              }}
-              resizeMode="cover"
-            />
-          ) : (
-            <View
-              style={{
-                width: 50,
-                height: 50,
-                borderRadius: 9999,
-                backgroundColor: darkMode.backgroundDark,
-                borderWidth: 1,
-                borderColor: darkMode.borderBox,
+                fontSize: 18,
+                fontFamily: "PlusJakartaSans-SemiBold",
+                color: darkMode.text,
+                lineHeight: 20,
               }}
             >
-              <AntDesign name="question" size={50} color={darkMode.text} />
-            </View>
-          )}
+              {userFirstName} {userLastName}
+            </Text>
+          </View>
         </View>
         <View>
-          <Text
-            className=""
-            style={{
-              fontSize: 18,
-              fontFamily: "PlusJakartaSans-SemiBold",
-              color: darkMode.text,
-              lineHeight: 20,
-            }}
-          >
-            {userFirstName} {userLastName}
-          </Text>
+          <MenuPoints size={30} color={darkMode.text} />
         </View>
       </View>
       <View>
-        <MenuPoints size={30} color={darkMode.text} />
+      {RenderDateHeader({ darkMode })}
       </View>
     </View>
   );

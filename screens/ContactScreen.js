@@ -7,17 +7,22 @@ import {
   ScrollView,
   TextInput,
   ActivityIndicator,
+  Image,
+  StatusBar,
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import axios from "axios";
 import MessagerContainer from "../components/MessageComponets/MessagerContainer";
 import { useSelector } from "react-redux";
-import socket from '../socket'; // Asegúrate de importar tu configuración de socket
+import socket from "../socket"; 
 
+const statusBarHeight = StatusBar.currentHeight || 0;
 const ContactScreen = ({ darkMode }) => {
   const API_BASE_URL = "https://obbaramarket-backend.onrender.com";
   const [searchTerm, setSearchTerm] = useState("");
-  const [messageUserDataResult, setMessageUserData] = useState({ conversations: [] });
+  const [messageUserDataResult, setMessageUserData] = useState({
+    conversations: [],
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -40,10 +45,11 @@ const ContactScreen = ({ darkMode }) => {
         }
       } catch (error) {
         setLoading(false);
-        setError(error.response?.data || { message: "Error al realizar la solicitud" });
+        setError(
+          error.response?.data || { message: "Error al realizar la solicitud" }
+        );
       }
     };
-
 
     fetchConversations();
   }, [globalUserId, token]);
@@ -51,7 +57,10 @@ const ContactScreen = ({ darkMode }) => {
   useEffect(() => {
     if (globalUserId) {
       const handleNewMessage = (data) => {
-        console.log('Evento "para actualizar messager container" recibido:', data);
+        console.log(
+          'Evento "para actualizar messager container" recibido:',
+          data
+        );
 
         const { message, sender, receiver } = data;
 
@@ -59,19 +68,26 @@ const ContactScreen = ({ darkMode }) => {
           let updatedConversations = [...prevState.conversations];
           const existingConversationIndex = updatedConversations.findIndex(
             (conv) =>
-              (conv.sender._id === message.sender && conv.receiver._id === message.receiver) ||
-              (conv.sender._id === message.receiver && conv.receiver._id === message.sender)
+              (conv.sender._id === message.sender &&
+                conv.receiver._id === message.receiver) ||
+              (conv.sender._id === message.receiver &&
+                conv.receiver._id === message.sender)
           );
 
           const newMessage = { ...message };
 
           if (existingConversationIndex !== -1) {
-            const updatedConversation = updatedConversations[existingConversationIndex];
+            const updatedConversation =
+              updatedConversations[existingConversationIndex];
 
             if (!updatedConversation.messages) {
               updatedConversation.messages = [];
             }
-            if (!updatedConversation.messages.find(m => m._id === newMessage._id)) {
+            if (
+              !updatedConversation.messages.find(
+                (m) => m._id === newMessage._id
+              )
+            ) {
               updatedConversation.messages.push(newMessage);
               updatedConversation.messages.sort(
                 (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
@@ -81,7 +97,9 @@ const ContactScreen = ({ darkMode }) => {
 
             updatedConversations = [
               updatedConversation,
-              ...updatedConversations.filter((_, index) => index !== existingConversationIndex),
+              ...updatedConversations.filter(
+                (_, index) => index !== existingConversationIndex
+              ),
             ];
           } else {
             updatedConversations = [
@@ -89,7 +107,7 @@ const ContactScreen = ({ darkMode }) => {
                 sender: { _id: message.sender, global_user: sender },
                 receiver: { _id: message.receiver, global_user: receiver },
                 messages: [newMessage],
-                lastMessage: newMessage
+                lastMessage: newMessage,
               },
               ...updatedConversations,
             ];
@@ -99,50 +117,53 @@ const ContactScreen = ({ darkMode }) => {
         });
       };
 
-      socket.on('newMessage', handleNewMessage);
+      socket.on("newMessage", handleNewMessage);
 
       return () => {
-        socket.off('newMessage', handleNewMessage);
+        socket.off("newMessage", handleNewMessage);
       };
     }
   }, [globalUserId]);
 
   const getUniqueConversations = (conversations) => {
     const uniqueConversations = {};
-  
+
     conversations.forEach((conversation) => {
       const isSender = globalUserId === conversation.sender._id;
       const otherUser = isSender ? conversation.receiver : conversation.sender;
-  
+
       if (!uniqueConversations[otherUser._id]) {
         uniqueConversations[otherUser._id] = {
           user: otherUser.global_user,
           userId: otherUser._id, // ID del usuario
-          messages: [{
-            ...conversation.lastMessage,
-            senderId: conversation.sender._id,
-            receiverId: conversation.receiver._id // ID del receptor
-          }]
+          messages: [
+            {
+              ...conversation.lastMessage,
+              senderId: conversation.sender._id,
+              receiverId: conversation.receiver._id, // ID del receptor
+            },
+          ],
         };
       } else {
         uniqueConversations[otherUser._id].messages.push({
           ...conversation.lastMessage,
           senderId: conversation.sender._id,
-          receiverId: conversation.receiver._id // ID del receptor
+          receiverId: conversation.receiver._id, // ID del receptor
         });
       }
     });
-  
-    const sortedConversations = Object.values(uniqueConversations).map((conversation) => ({
-      ...conversation,
-      messages: conversation.messages.sort(
-        (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
-      ),
-    }));
-  
+
+    const sortedConversations = Object.values(uniqueConversations).map(
+      (conversation) => ({
+        ...conversation,
+        messages: conversation.messages.sort(
+          (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
+        ),
+      })
+    );
+
     return sortedConversations;
   };
-  
 
   const uniqueConversations = getUniqueConversations(
     messageUserDataResult.conversations || []
@@ -155,11 +176,24 @@ const ContactScreen = ({ darkMode }) => {
   return (
     <View style={{ flex: 1 }}>
       {loading ? (
-        <ActivityIndicator
-          style={{ flex: 1 }}
-          size="large"
-          color={darkMode.text}
-        />
+        <View
+          className=" items-center justify-center flex-1"
+          style={{ backgroundColor: darkMode.background }}
+        >
+          <View  style={{ marginBottom: 120 + statusBarHeight}}>
+            <Image
+              source={{
+                uri: "https://storage.googleapis.com/quickcar-storage/quickcar-removebg-preview%20(1).png",
+              }}
+              style={{
+                width: 100,
+                height: 100,
+              }}
+              resizeMode="contain"
+            />
+            <ActivityIndicator size="large" color={darkMode.text} />
+          </View>
+        </View>
       ) : (
         <ScrollView
           style={{ flex: 1 }}
@@ -202,9 +236,7 @@ const ContactScreen = ({ darkMode }) => {
                       backgroundColor: darkMode.backgroundDark,
                     },
                   ]}
-                  onPress={() => {
-
-                  }}
+                  onPress={() => {}}
                 >
                   <Icon name="search" size={20} color={darkMode.text} />
                 </TouchableOpacity>
@@ -219,17 +251,13 @@ const ContactScreen = ({ darkMode }) => {
             ) : (
               <View>
                 {uniqueConversations.map((conversation, index) => {
-                
-  
                   const { user, messages, userId } = conversation;
                   const lastMessage = messages[0];
-
-         
 
                   if (!lastMessage || !user) {
                     return null;
                   }
-   
+
                   return (
                     <MessagerContainer
                       key={index}
@@ -287,4 +315,3 @@ const styles = StyleSheet.create({
 });
 
 export default ContactScreen;
- 
