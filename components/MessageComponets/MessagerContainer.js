@@ -25,7 +25,7 @@ export default function MessagerContainer({
   };
 
   const handlePress = () => {
-    fetchConversations(dispatch, userId, token, 1, 93);
+    fetchConversations(dispatch, userId, token, 1, 15);
     navigation.navigate("MessageScreen", {
       darkMode,
       userImageUrl,

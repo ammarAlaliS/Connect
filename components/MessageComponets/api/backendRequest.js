@@ -1,16 +1,18 @@
 import axios from "axios";
-import { setGroupedMessages, setCurrentPage, setCurrentDate, clearMessages, setTotalPages, setFirstFetch, setTotalMessages } from "../../../globalState/MessageSlice";
+import { setGroupedMessages, setCurrentPage, setCurrentDate, addMessages, setTotalPages, setFirstFetch, setTotalMessages } from "../../../globalState/MessageSlice";
 import { setLoading } from "../../../globalState/loadingSlice";
 import { useDispatch, useSelector } from 'react-redux';
+import { incrementRequestCount } from "../../../utils/ApiCounter";
+
 
 const API_BASE_URL = "https://obbaramarket-backend.onrender.com";
+
 
 export const handleSendMessage = async (content, receiverIdsArray, senderIdArray, token, setLoadingMessage, setContent) => {
     if (!content.trim()) {
         console.warn("Message content cannot be empty.");
         return;
     }
-
     setLoadingMessage(true);
     setContent("");
 
@@ -35,18 +37,17 @@ export const handleSendMessage = async (content, receiverIdsArray, senderIdArray
     } catch (error) {
         const errorMsg = error.response?.data?.error || error.message || "An unexpected error occurred";
         console.error("Error sending message:", errorMsg);
-        // Optionally, set an error message in state or show a notification
     } finally {
         setLoadingMessage(false);
     }
 };
-
-
 export const fetchConversations = async (dispatch, userId, token, page, limit) => {
     dispatch(setLoading(true));
     const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     try {
         if (userId) {
+            incrementRequestCount(); 
+
             const response = await axios.get(
                 `${API_BASE_URL}/api/ObbaraMarket/conversations/${userId}?page=${page}&limit=${limit}&timeZone=${timeZone}`,
                 {
@@ -55,15 +56,16 @@ export const fetchConversations = async (dispatch, userId, token, page, limit) =
             );
             const result = response.data;
 
-            console.log(result.groupedMessages[0].date);
-
-            if (result && Array.isArray(result.groupedMessages)) {
-                dispatch(setGroupedMessages(result.groupedMessages));
+            if (result && Array.isArray(result.messages)) {
+                dispatch(addMessages(result.messages));
                 dispatch(setCurrentPage(result.currentPage || 1));
                 dispatch(setTotalMessages(result.totalMessages || 0));
                 dispatch(setTotalPages(result.totalPages || 0));
                 if (page === 1) {
-                    dispatch(setFirstFetch(true));
+                    dispatch(setFirstFetch(1));
+                }
+                if (page >= 2) {
+                    dispatch(setFirstFetch(0));
                 }
             } else {
                 console.log("No se encontraron mensajes o formato incorrecto");

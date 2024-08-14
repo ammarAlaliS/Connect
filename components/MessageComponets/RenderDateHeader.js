@@ -33,14 +33,14 @@ const RenderDateHeader = ({ darkMode }) => {
         style={[
           styles.dateWrapper,
           {
-            backgroundColor: loading ? darkMode.background : '#fff',
+            backgroundColor:  '#fff',
             paddingHorizontal: 4,
             borderTopWidth: 1,
             borderColor: darkMode.contentMessageBorderColor,
           },
         ]}
       >
-        { !loading ? (
+       
           <Text
           style={[
             styles.date,
@@ -54,10 +54,6 @@ const RenderDateHeader = ({ darkMode }) => {
         >
           QuickCar
         </Text>
-        ) :(
-          <ActivityIndicator size="small" color={darkMode.text} />
-
-        )}
       </View>
       <View
         style={[
@@ -72,7 +68,7 @@ const RenderDateHeader = ({ darkMode }) => {
         ]}
       >
         <Text style={[styles.text, { color: darkMode.text }]}>
-          Total de mensajes {totalMessages}
+          Total de mensajes <Text>{totalMessages}</Text>
         </Text>
       </View>
     </View>
