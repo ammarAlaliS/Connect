@@ -1,3 +1,4 @@
+// src/socket.js
 import io from "socket.io-client";
 
 const socket = io("https://obbaramarket-backend.onrender.com", {

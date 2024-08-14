@@ -6,7 +6,8 @@ const messageSlice = createSlice({
     totalMessages: 0,
     totalPages: 0,
     currentPage: 1,
-    firstFetch: 0,
+    firstFetch: false,
+    timeZone: '',
     messages: [],
   },
   reducers: {
@@ -15,21 +16,13 @@ const messageSlice = createSlice({
     },
     addMessages(state, action) {
       const newMessages = action.payload;
-      state.messages = [...state.messages, ...newMessages];
-    },
-    
-    addMessages(state, action) {
-      const newMessages = action.payload;
-      const existingMessages = state.messages.reduce((acc, msg) => {
-        acc[msg._id] = msg;
-        return acc;
-      }, {});
+      const messageMap = new Map(state.messages.map((msg) => [msg._id, msg]));
     
       newMessages.forEach(msg => {
-        existingMessages[msg._id] = msg;
+        messageMap.set(msg._id, msg);
       });
     
-      state.messages = Object.values(existingMessages);
+      state.messages = Array.from(messageMap.values());
     },
     
     setCurrentPage(state, action) {
@@ -38,12 +31,16 @@ const messageSlice = createSlice({
     setTotalPages(state, action) {
       state.totalPages = action.payload;
     },
+    setTimeZone(state, action) {
+      state.timeZone = action.payload;
+    },
     clearMessages(state) {
       state.totalMessages = 0;
       state.totalPages = 0;
       state.currentPage = 1;
-      state.messages = []; 
+      state.messages = [];
       state.firstFetch = false;
+      state.timeZone = '';
     },
     setFirstFetch(state, action) {
       state.firstFetch = action.payload;
@@ -53,12 +50,12 @@ const messageSlice = createSlice({
 
 export const {
   addMessages,
-  addMessage,  // Exporta la nueva acción
   setCurrentPage,
   clearMessages,
   setTotalPages,
   setFirstFetch,
   setTotalMessages,
+  setTimeZone,
 } = messageSlice.actions;
 
 export default messageSlice.reducer;

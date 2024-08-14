@@ -19,6 +19,9 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import { fetchConversations } from "../components/MessageComponets/api/backendRequest";
 import { useNavigation } from "@react-navigation/native";
 
+import { formatDate, formatTime } from "../utils/formatTime";
+import socket from "../socket";
+
 const statusBarHeight = StatusBar.currentHeight || 0;
 
 const MessageScreen = ({ route }) => {
@@ -36,9 +39,9 @@ const MessageScreen = ({ route }) => {
   const dispatch = useDispatch();
 
   const [messages, setMessages] = useState([]);
-  const navegation = useNavigation()
+  const navegation = useNavigation();
 
-  const allMessages = useSelector((state) => state.messages.messages);
+  const allMessages = useSelector((state) => state.messages.messages || []);
   const global_user_id = useSelector((state) => state.user.global_user?._id);
   const token = useSelector((state) => state.user.global_user?.token);
   const profile_img_url = useSelector(
@@ -47,7 +50,7 @@ const MessageScreen = ({ route }) => {
   const loading = useSelector((state) => state.loading);
   const firstFetch = useSelector((state) => state.messages.firstFetch);
   const currentPage = useSelector((state) => state.messages.currentPage);
-  const totalMessages = useSelector((state) => state.messages.totalMessages);
+  const setTimeZone = useSelector((state) => state.messages.setTimeZone);
   const totalPages = useSelector((state) => state.messages.totalPages);
 
   useFocusEffect(
@@ -61,12 +64,43 @@ const MessageScreen = ({ route }) => {
     setMessages(allMessages);
   }, [allMessages]);
 
-  const formatTime = (timestamp) => {
-    const date = new Date(timestamp);
-    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-  };
+  console.log(`console de message para ver la estructura` + JSON.stringify(messages))
 
-  const renderMessage = ({ item }) => {
+  useEffect(() => {
+    if (socket) {
+      socket.on("newMessage", (data) => {
+        const tempMessage = {
+          _id: data.message._id,
+          content: data.message.content,
+          timestamp: data.message.timestamp,
+          read: data.message.read,
+          sender: {
+            _id: data.message.sender,
+            global_user: {
+              first_name: data.sender.first_name,
+              last_name: data.sender.last_name,
+              profile_img_url: data.sender.profile_img_url
+            }
+          },
+          receiver: {
+            _id: data.message.receiver,
+            global_user: {
+              first_name: data.receiver.first_name,
+              last_name: data.receiver.last_name,
+              profile_img_url: data.receiver.profile_img_url
+            }
+          }
+        };
+        setMessages(prevMessages => [tempMessage, ...prevMessages]);
+      });
+    } else {
+      console.log("No hay socket conectado");
+    }
+  }, [socket, global_user_id, dispatch]);
+  
+
+
+  const renderMessage = ({ item, index }) => {
     const senderId = item.sender?._id;
     const receiverId = item.receiver?._id;
 
@@ -75,55 +109,74 @@ const MessageScreen = ({ route }) => {
       return null;
     }
 
+    const isLastMessageOfDay =
+      index === messages.length - 1 ||
+      formatDate(item.timestamp) !== formatDate(messages[index + 1].timestamp);
+
     return (
-      <View
-        key={item._id}
-        style={[
-          senderId === userId
-            ? styles.userMessageWrapper
-            : styles.myMessageWrapper,
-          {
-            backgroundColor:
-              senderId === userId
-                ? darkMode.contentMessageBg
-                : darkMode.contentMessageBgTwo,
-            borderColor: darkMode.contentMessageBorderColor,
-            marginHorizontal:8
-          },
-        ]}
-      >
-        <Text
-          style={{
-            fontFamily: "PlusJakartaSans-Regular",
-            fontSize: 14,
-            lineHeight: 18,
-            color:
-              senderId === userId
-                ? darkMode.contentSenderText
-                : darkMode.contentReceiverText,
-          }}
+      <View key={item._id}>
+        {isLastMessageOfDay && (
+          <Text
+            style={{
+              fontFamily: "PlusJakartaSans-Bold",
+              fontSize: 12,
+              lineHeight: 18,
+              color: darkMode.text,
+              textAlign: "center",
+              marginVertical: 10,
+            }}
+          >
+            {formatDate(item.timestamp)}
+          </Text>
+        )}
+        <View
+          style={[
+            senderId === userId
+              ? styles.userMessageWrapper
+              : styles.myMessageWrapper,
+            {
+              backgroundColor:
+                senderId === userId
+                  ? darkMode.contentMessageBg
+                  : darkMode.contentMessageBgTwo,
+              borderColor: darkMode.contentMessageBorderColor,
+              marginHorizontal: 8,
+            },
+          ]}
         >
-          {item.content}
-        </Text>
-        <Text
-          style={{
-            color:
-              senderId === userId
-                ? darkMode.contentSenderText
-                : darkMode.contentReceiverText,
-            fontSize: 12,
-            marginTop: 4,
-          }}
-        >
-          {formatTime(item.timestamp)}
-        </Text>
+          <Text
+            style={{
+              fontFamily: "PlusJakartaSans-Regular",
+              fontSize: 14,
+              lineHeight: 18,
+              color:
+                senderId === userId
+                  ? darkMode.contentSenderText
+                  : darkMode.contentReceiverText,
+            }}
+          >
+            {item.content}
+          </Text>
+          <Text
+            style={{
+              color:
+                senderId === userId
+                  ? darkMode.contentSenderText
+                  : darkMode.contentReceiverText,
+              fontSize: 12,
+              marginTop: 4,
+            }}
+          >
+            {formatTime(item.timestamp)}
+          </Text>
+        </View>
       </View>
     );
   };
 
   const handleEndReached = () => {
     if (currentPage < totalPages) {
-      fetchConversations(dispatch, userId, token, currentPage + 1, 10);
+      fetchConversations(dispatch, userId, token, currentPage + 1, 15, loading);
     }
   };
 
@@ -151,9 +204,9 @@ const MessageScreen = ({ route }) => {
           keyExtractor={(item) => item._id}
           contentContainerStyle={{ flexGrow: 1, borderWidth: 0 }}
           onEndReached={handleEndReached}
-          onEndReachedThreshold={0.9}
+          onEndReachedThreshold={0.2}
           refreshing={loading}
-          onRefresh={() => navegation.goBack() }
+          onRefresh={() => navegation.goBack()}
           // ListFooterComponent={
           //   loading && (
           //     <View>
@@ -226,7 +279,9 @@ const styles = StyleSheet.create({
     maxWidth: "80%",
   },
   inputContainer: (darkMode, loading) => ({
-    backgroundColor: loading ? darkMode.backgroundDark : darkMode.backgroundDark,
+    backgroundColor: loading
+      ? darkMode.backgroundDark
+      : darkMode.backgroundDark,
     borderWidth: 0,
     flexDirection: "row",
     alignItems: "center",

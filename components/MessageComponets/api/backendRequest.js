@@ -1,5 +1,5 @@
 import axios from "axios";
-import { setGroupedMessages, setCurrentPage, setCurrentDate, addMessages, setTotalPages, setFirstFetch, setTotalMessages } from "../../../globalState/MessageSlice";
+import { setGroupedMessages, setCurrentPage, setCurrentDate, addMessages, setTotalPages, setFirstFetch, setTotalMessages, setTimeZone } from "../../../globalState/MessageSlice";
 import { setLoading } from "../../../globalState/loadingSlice";
 import { useDispatch, useSelector } from 'react-redux';
 import { incrementRequestCount } from "../../../utils/ApiCounter";
@@ -41,7 +41,10 @@ export const handleSendMessage = async (content, receiverIdsArray, senderIdArray
         setLoadingMessage(false);
     }
 };
-export const fetchConversations = async (dispatch, userId, token, page, limit) => {
+export const fetchConversations = async (dispatch, userId, token, page, limit, loading) => {
+    if(loading){
+        return
+    }
     dispatch(setLoading(true));
     const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     try {
@@ -59,6 +62,7 @@ export const fetchConversations = async (dispatch, userId, token, page, limit) =
             if (result && Array.isArray(result.messages)) {
                 dispatch(addMessages(result.messages));
                 dispatch(setCurrentPage(result.currentPage || 1));
+                dispatch(setTimeZone(result.timeZone));
                 dispatch(setTotalMessages(result.totalMessages || 0));
                 dispatch(setTotalPages(result.totalPages || 0));
                 if (page === 1) {
