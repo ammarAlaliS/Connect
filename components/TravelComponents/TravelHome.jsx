@@ -158,12 +158,12 @@ const TravelHome = () => {
 
   return (
     <View>
-      <SearchInput setMarker={setMarker}></SearchInput>
-      {showQuickCarDetails && (
+      {/* <SearchInput></SearchInput> */}
+      {/* {showQuickCarDetails && (
         <QuickCarsSearchesDetails
           setShowQuickCarDetails={setShowQuickCarDetails}
         ></QuickCarsSearchesDetails>
-      )}
+      )} */}
 
       {quickCarsData && quickCarsData.length > 0 && (
         <QuickCarDetailsButtom
@@ -188,7 +188,11 @@ const TravelHome = () => {
 
       {placesSelected && <BtnStartTrip></BtnStartTrip>}
 
-      <MapView
+      <View
+        style={{ height: "100%", width: "100%", backgroundColor: "#c3c3c3" }}
+      ></View>
+
+      {/* <MapView
         customMapStyle={
           darkMode.text != "#fff" ? stylesMap.mapStyleLight : stylesMap.mapStyle
           // stylesMap.mapStyleLight
@@ -285,7 +289,7 @@ const TravelHome = () => {
             ></Image>
           </Marker>
         )}
-      </MapView>
+      </MapView> */}
     </View>
   );
 };

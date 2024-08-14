@@ -68,12 +68,8 @@ const SignInForm = () => {
       style={{ flex: 1 }}
     >
       <StatusBar
-        backgroundColor={
-          Platform.OS === "android" ? '#000' : "#000000"
-        }
-        barStyle={
-          Platform.OS === "android" ? 'light-content' : "light-content"
-        }
+        backgroundColor={Platform.OS === "android" ? "#000" : "#000000"}
+        barStyle={Platform.OS === "android" ? "light-content" : "light-content"}
         translucent={false}
       />
       <LinearGradient
@@ -166,7 +162,7 @@ const SignInForm = () => {
                       dispatch(
                         setUser({
                           global_user: {
-                            _id: data._id,
+                            _id: data.id,
                             first_name: data.first_name,
                             last_name: data.last_name,
                             profile_img_url: data.profile_img_url,
@@ -240,7 +236,11 @@ const SignInForm = () => {
                         },
                       ]}
                     >
-                      <Fontisto name="email" size={24} color={darkMode.singInEmailIconColor} />
+                      <Fontisto
+                        name="email"
+                        size={24}
+                        color={darkMode.singInEmailIconColor}
+                      />
                       <TextInput
                         placeholder="Email"
                         onChangeText={handleChange("email")}
@@ -323,19 +323,25 @@ const SignInForm = () => {
                       <TouchableOpacity
                         onPress={() => navigation.navigate("Register")}
                       >
-                        <Text style={[
-                          styles.text,
-                          {
-                            color: darkMode.singInRegisterTextColor
-                          }
-                        ]}>Regístrate</Text>
+                        <Text
+                          style={[
+                            styles.text,
+                            {
+                              color: darkMode.singInRegisterTextColor,
+                            },
+                          ]}
+                        >
+                          Regístrate
+                        </Text>
                       </TouchableOpacity>
-                      <Text style={[
-                        styles.text_password,
-                        {
-                          color: darkMode.singInForgotPtextColor
-                        }
-                      ]}>
+                      <Text
+                        style={[
+                          styles.text_password,
+                          {
+                            color: darkMode.singInForgotPtextColor,
+                          },
+                        ]}
+                      >
                         ¿Olvidaste la Contraseña?
                       </Text>
                     </View>
@@ -364,20 +370,28 @@ const SignInForm = () => {
                       >
                         <View>
                           {!buttonText ? (
-                            <Text style={[
-                              styles.buttom,
-                              {
-                                color: darkMode.singInButtonTextColor
-                              }
-                            ]}>INICIAR SESION</Text>
-                          ) : (
-                            <View className="flex-row items-center space-x-4">
-                              <Text style={[
+                            <Text
+                              style={[
                                 styles.buttom,
                                 {
-                                  color: darkMode.singInButtonTextColor
-                                }
-                              ]}>INICIANDO ...</Text>
+                                  color: darkMode.singInButtonTextColor,
+                                },
+                              ]}
+                            >
+                              INICIAR SESION
+                            </Text>
+                          ) : (
+                            <View className="flex-row items-center space-x-4">
+                              <Text
+                                style={[
+                                  styles.buttom,
+                                  {
+                                    color: darkMode.singInButtonTextColor,
+                                  },
+                                ]}
+                              >
+                                INICIANDO ...
+                              </Text>
                               <ActivityIndicator size="small" color="#FFF" />
                             </View>
                           )}

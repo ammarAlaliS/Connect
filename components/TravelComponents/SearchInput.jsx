@@ -30,7 +30,7 @@ import {
 import ClockIcon from "../../icons/ClockIcon";
 import PlusIcon from "../../icons/PlusIcon";
 
-const SearchInput = ({ setMarker }) => {
+const SearchInput = ({ setShowQuickCarDetails }) => {
   const dispatch = useDispatch();
 
   const GOOGLE_PLACES_API_KEY = "";
@@ -48,6 +48,7 @@ const SearchInput = ({ setMarker }) => {
   );
 
   const userType = useSelector((state) => state.travel.userType);
+  const quickcar_info = useSelector((state) => state.user.quickcar_info);
 
   const refInputAutoComplete = useRef();
   const refInputAutoCompleteDestination = useRef();
@@ -190,6 +191,23 @@ const SearchInput = ({ setMarker }) => {
     dispatch(setPlacesSelected(true));
 
     try {
+      console.log(
+        "https://obbaramarket-backend.onrender.com/api/ObbaraMarket/drivers-nearby-trip-filters?starLocationLatitude=" +
+          tripOriginLocation.latitude +
+          "&starLocationLongitude=" +
+          tripOriginLocation.longitude +
+          "&endLocationLatitude=" +
+          tripDestinationLocation.latitude +
+          "&endLocationLongitude=" +
+          tripDestinationLocation.longitude +
+          "&starTimeHour=" +
+          startTime.hour +
+          "&starTimeMinutes=" +
+          startTime.minutes +
+          "&numberOfSeatRequested=" +
+          seatRequested
+      );
+
       const data = await fetch(
         "https://obbaramarket-backend.onrender.com/api/ObbaraMarket/drivers-nearby-trip-filters?starLocationLatitude=" +
           tripOriginLocation.latitude +
@@ -207,8 +225,11 @@ const SearchInput = ({ setMarker }) => {
           seatRequested
       ).then((res) => res.json());
 
+      console.log(data);
+
       if (data && data.conductores && data.conductores[0]) {
         dispatch(setQuickarData(data.conductores));
+        setShowQuickCarDetails(true);
       }
     } catch (error) {
       console.log("Ocurrio un error");
@@ -229,11 +250,67 @@ const SearchInput = ({ setMarker }) => {
     }
   }, [inputIsActive, placesSelected]);
 
+  //Seleccionar los lugares si es que estos ya existen
+  useEffect(() => {
+    if (userType == "driver") {
+      console.log("ERES UN PUTO DRIVER");
+      dispatch(setIsInputActive(true));
+      if (
+        refInputAutoComplete.current &&
+        refInputAutoCompleteDestination.current &&
+        inputIsActive
+      ) {
+        if (
+          quickcar_info &&
+          quickcar_info.starLocation.startLocationName.length > 0
+        ) {
+          console.log("Que pedo guey");
+          refInputAutoComplete.current.setAddressText(
+            quickcar_info.starLocation.startLocationName
+          );
+          refInputAutoCompleteDestination.current.setAddressText(
+            quickcar_info.endLocation.endLocationName
+          );
+          dispatch(
+            setTripOrigin({
+              latitude: quickcar_info.starLocation.latitude,
+              longitude: quickcar_info.starLocation.longitude,
+            })
+          );
+          dispatch(
+            setTripOriginName(quickcar_info.starLocation.startLocationName)
+          );
+          dispatch(
+            setTripDestination({
+              latitude: quickcar_info.starLocation.latitude,
+              longitude: quickcar_info.starLocation.longitude,
+            })
+          );
+          dispatch(
+            setTripDestinationName(quickcar_info.endLocation.endLocationName)
+          );
+          dispatch(setStartTime(quickcar_info.startTime));
+          dispatch(setSeatRequested(quickcar_info.availableSeats));
+          dispatch(setPlacesSelected(true));
+        }
+      }
+    }
+  }, [
+    userType,
+    quickcar_info,
+    refInputAutoComplete,
+    refInputAutoCompleteDestination,
+    inputIsActive,
+  ]);
+
   return (
     <>
-      {inputIsActive && (
+      {/* {inputIsActive && (
         <View
-          style={styles.backgroundContainer}
+          style={[
+            styles.backgroundContainer,
+            { height: userType != "driver" ? "100%" : "auto" },
+          ]}
           onTouchEnd={() => {
             dispatch(setIsInputActive(false));
             refInputAutoComplete.current.clear();
@@ -250,7 +327,7 @@ const SearchInput = ({ setMarker }) => {
             }
           }}
         ></View>
-      )}
+      )} */}
 
       <View style={styles.principalContainer}>
         <View
@@ -425,7 +502,7 @@ const SearchInput = ({ setMarker }) => {
           </View>
         </View>
 
-        {inputIsActive && (
+        {inputIsActive && userType != "driver" && (
           <View
             style={{
               backgroundColor: "#f4f5f6",
@@ -466,7 +543,7 @@ const SearchInput = ({ setMarker }) => {
           </View>
         )}
 
-        {inputIsActive && (
+        {inputIsActive && userType != "driver" && (
           <View
             style={{
               backgroundColor: "#f4f5f6",
@@ -503,7 +580,7 @@ const SearchInput = ({ setMarker }) => {
           </View>
         )}
 
-        {inputIsActive && (
+        {inputIsActive && userType != "driver" && (
           <View
             style={{
               display: "flex",
@@ -583,20 +660,19 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   backgroundContainer: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    zIndex: 99,
-    height: "100%",
+    // position: "absolute",
+    // top: 0,
+    // left: 0,
+    // zIndex: 99,
     width: "100%",
     backgroundColor: "#00000050",
   },
   principalContainer: {
     width: "85%",
-    position: "absolute",
-    top: "5%",
-    left: 0,
-    zIndex: 100,
+    // position: "absolute",
+    // top: "5%",
+    // left: 0,
+    // zIndex: 100,
     marginHorizontal: "7.5%",
     display: "flex",
     flexDirection: "column",
