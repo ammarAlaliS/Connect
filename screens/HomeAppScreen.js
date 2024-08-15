@@ -21,10 +21,9 @@ const HomeAppScreen = () => {
 
   const handlePress = (screen) => {
     setAnimation("fadeOut");
-    setTimeout(() => {
       setActiveScreen(screen);
       setAnimation("fadeIn");
-    }, 100);
+  
   };
 
   const { RequestLocationPermissions } = useLocation();
@@ -60,7 +59,7 @@ const HomeAppScreen = () => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={{ flex: 1 }}>
-        <HeaderC activeScreen={activeScreen} handlePress={handlePress} />
+        <HeaderC activeScreen={activeScreen} handlePress={handlePress}  darkMode={darkMode} />
         <View
           style={{
             backgroundColor: darkMode.backgroundDark || "#000",

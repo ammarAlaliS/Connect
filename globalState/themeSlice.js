@@ -15,7 +15,7 @@ export const colors = {
     iconBorderBottomActive: "#333",
     borderBox: "rgba(128, 128, 128, 0.4)",
     borderBoxCardList: "1E90FF",
-    backgroundDark: "#fff",
+    backgroundDark: "#F0F2F4",
     backgroundList: "#4ade80",
     backgroundCardList: '#000',
     colorTextCardList: '#67ED94',
@@ -23,11 +23,12 @@ export const colors = {
     showText: '#1E90FF',
     backgroundCommentButton :  '#1E90FF',
     headerIconColor: '#1A5319',
-    headerBorderIcon: '#67ED94 ',
+    headerBorderIcon: '#fff ',
     textColorLikeButton: '#ff226e',
     textCommentButton: '#1E90FF',
     backgroundComment : '#000',
     // SingIn
+
     signInTextColor: '#06BCEE',
     singInBgColor: '#fff',
     singInInputBgColor: "rgba(173, 216, 230, 0.09)",
@@ -37,9 +38,22 @@ export const colors = {
     singInForgotPtextColor: '#EB4166',
     singInEmailIconColor : '#008000',
     singInPasswordIconColor : '#EB4166',
+
+      // ContenMesagge 
+
+      contentMessageBg : '#19191a',
+      contentMessageBgTwo : '#8d9f58',
+      contentMessageBorderColor: 'rgba(128, 128, 128, 0.3)',
+      contentReceiverText: '#fff',
+      contentSenderText: '#fff',
+      screenBg: '#F0F2F4',
     
     // Presentation
-    PreBgColor: '#fff'
+    PreBgColor: '#fff',
+
+    // buttonScrollToBottom 
+    buttonScrollToBottomColor: '#fff',
+    
   },
   dark: {
     background: "#0D1117",
@@ -51,7 +65,7 @@ export const colors = {
     dotActive: "#1E90FF",
     iconNavbar: "#333",
     iconBorderBottomActive: "#1E90FF",
-    borderBox: "rgba(128, 128, 128, 1)",
+    borderBox: "rgba(128, 128, 128, 0.9)",
     borderBoxCardList: "rgba(128, 128, 128, 1)",
     backgroundDark: "#000",
     backgroundList: "#1a5319",
@@ -61,7 +75,7 @@ export const colors = {
     backgroundCommentButton :  'rgba(128, 128, 128, 0.4)',
     showText: '#FFCD57',
     headerIconColor: '#06BCEE',
-    headerBorderIcon: '#06BCEE',
+    headerBorderIcon: '#0D1117',
     textColorLikeButton: '#ff226e',
     textCommentButton: '#1E90FF',
     backgroundComment : '#000',
@@ -76,8 +90,22 @@ export const colors = {
     singInEmailIconColor : '#06BCEE',
     singInPasswordIconColor : '#EB4166',
 
+    // ContenMesagge 
+
+    contentMessageBg : "#0D1117",
+    contentMessageBgTwo : '#19191a',
+    contentMessageBorderColor: 'rgba(128, 128, 128, 0.1)',
+    contentReceiverText: '#fff',
+    contentSenderText: '#fff',
+    screenBg: '#000',
+
     // Presentation
-    PreBgColor: '#000'
+    PreBgColor: '#000',
+    
+    
+    // buttonScrollToBottom 
+    buttonScrollToBottomColor: '#000',
+
   },
 };
 

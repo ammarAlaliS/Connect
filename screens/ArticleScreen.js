@@ -25,81 +25,124 @@ const ArticleScreen = ({ route }) => {
     time,
     blogId,
     sections,
+    darkMode,
   } = route.params;
+
+  const detectHash = (tag) => {
+    const hashIndex = tag.indexOf("#");
+    if (hashIndex !== -1) {
+      const spaceIndex = tag.indexOf(" ", hashIndex);
+      const endIndex = spaceIndex === -1 ? tag.length : spaceIndex;
+      const beforeHash = tag.slice(0, hashIndex);
+      const hashAndWord = tag.slice(hashIndex, endIndex);
+      const remainingText = tag.slice(endIndex);
+      const hashSymbol = hashAndWord.charAt(0);
+      const wordAfterHash = hashAndWord.slice(1);
+
+      return (
+        <Text>
+          {beforeHash}
+          <Text style={{ color: darkMode.signInTextColor }}>{hashSymbol} </Text>
+          <Text
+            style={{
+              color: darkMode.text,
+              fontFamily: "PlusJakartaSans-SemiBold",
+              fontSize: 14,
+              opacity: 0.5,
+            }}
+          >
+            {wordAfterHash}
+          </Text>
+          {remainingText}
+        </Text>
+      );
+    } else {
+      return <Text>{tag}</Text>;
+    }
+  };
 
   return (
     <SafeAreaView
-      style={{ flex: 1, marginTop: statusBarHeight, backgroundColor: "#fff" }}
+      style={{
+        flex: 1,
+        marginTop: statusBarHeight,
+        backgroundColor: darkMode.background,
+      }}
     >
       <ScrollView>
-        <StatusBar barStyle="dark-content" backgroundColor="#fff" />
         <View style={styles.headerContainer}>
           <View style={styles.headerContent}>
             <View style={styles.headerTitle}>
-              <Text style={styles.blogTitle}>Blog</Text>
+              <Text
+                style={[
+                  styles.blogTitle,
+                  {
+                    color: darkMode.text,
+                  },
+                ]}
+              >
+                Blog
+              </Text>
               <View style={styles.iconContainer}>
-                <BlogIcon width={36} height={36} />
+                <BlogIcon width={36} height={36} color={darkMode.text} />
               </View>
             </View>
           </View>
         </View>
-        <View className=" px-4 bg-white h-full ">
+        <View className=" px-3 h-full space-y-2 ">
           {image_url.map((image, index) => (
             <Image
               source={{ uri: image.url }}
               alt={image.alt}
               style={{
                 width: "100%",
-                height: 200,
+                height: 250,
                 borderRadius: 2,
-                marginBottom: 10,
               }}
               resizeMode="cover"
               key={index}
             />
           ))}
-          <View className="space-y-4">
+          <View>
+            <Text
+              style={{
+                fontSize: 24,
+                fontFamily: "PlusJakartaSans-Bold",
+                color: darkMode.text,
+              }}
+            >
+              {blog_title}
+            </Text>
+          </View>
+          <View className="">
             <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
               {blog_tag.map((tag, index) => (
-                <Text
+                <View
                   key={index}
                   style={{
-                    backgroundColor: "#8504FF",
-                    color: "#fff",
-                    fontFamily: "PlusJakartaSans-SemiBold",
-                    fontSize: 13,
-                    paddingHorizontal: 8,
-                    paddingVertical: 5,
-                    marginRight: 5,
-                    borderRadius: 5,
+                    marginRight: 4,
+                    height: 24,
                   }}
                 >
-                  {tag}
-                </Text>
+                  {detectHash(tag)}
+                </View>
               ))}
-            </View>
-            <View>
-              <Text
-                style={{ fontSize: 20, fontFamily: "PlusJakartaSans-Bold" }}
-              >
-                {blog_title}
-              </Text>
             </View>
 
             <View>
-              <Text style={{ fontSize: 16, color: "#666" }}>
+              <Text style={{ fontSize: 16, color: darkMode.signInTextColor ,marginTop:10}}>
                 {blog_description}
               </Text>
             </View>
-            <View>
+            <View className="space-y-2" style={{marginTop:5}}>
               {sections.map((section, index) => (
-                <View key={index} className="space-y-4">
+                <View key={index} >
                   <Text
-                    style={{ fontSize: 20, fontFamily: "PlusJakartaSans-Bold" }}
+                    style={{ fontSize: 20, color: darkMode.text, fontFamily: "PlusJakartaSans-Bold", marginBottom:10 }}
                   >
                     {section.title}
                   </Text>
-                  <Text style={{ fontSize: 16, color: "#666" }}>
+                  <Text style={{ fontSize: 16,  color: darkMode.text}}>
                     {section.content}
                   </Text>
                 </View>
@@ -111,15 +154,16 @@ const ArticleScreen = ({ route }) => {
                 justifyContent: "space-between",
                 alignItems: "center",
                 marginBottom: 20,
+                marginTop:10
               }}
             >
               <Text
-                style={{ fontFamily: "PlusJakartaSans-Bold", fontSize: 14 }}
+                style={{ fontFamily: "PlusJakartaSans-Bold", fontSize: 14, color:darkMode.text }}
               >
                 {author_name} {author_last_name}
               </Text>
               <Text
-                style={{ fontFamily: "PlusJakartaSans-Bold", fontSize: 12 }}
+                style={{ fontFamily: "PlusJakartaSans-Bold", fontSize: 12,  color:darkMode.text }}
               >
                 {time}
               </Text>
@@ -132,8 +176,7 @@ const ArticleScreen = ({ route }) => {
 };
 const styles = StyleSheet.create({
   headerContainer: {
-    backgroundColor: "white",
-    paddingHorizontal: 16,
+    paddingHorizontal: 8,
     paddingVertical: 12,
   },
   headerContent: {

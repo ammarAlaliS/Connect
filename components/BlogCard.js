@@ -15,7 +15,6 @@ import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import EvilIcons from "@expo/vector-icons/EvilIcons";
 import { AntDesign } from "@expo/vector-icons";
-import CommentsModal_C from "./CommentsModal _C";
 
 const API_BASE_URL =
   "https://obbaramarket-backend.onrender.com/api/ObbaraMarket";
@@ -40,7 +39,6 @@ const BlogCard = ({
   const [likes, setLikes] = useState();
   const [totalComment, setTotalComment] = useState();
   const [showMore, setShowMore] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
   const [likeSubcribe, setLikeSubcribe] = useState();
   const global_user = useSelector((state) => state.user.global_user);
   const token = global_user?.token;
@@ -90,6 +88,39 @@ const BlogCard = ({
       socket.off("likePost");
     };
   }, [blogId]);
+
+  const detectHash = (tag) => {
+    const hashIndex = tag.indexOf("#");
+    if (hashIndex !== -1) {
+      const spaceIndex = tag.indexOf(" ", hashIndex);
+      const endIndex = spaceIndex === -1 ? tag.length : spaceIndex;
+      const beforeHash = tag.slice(0, hashIndex);
+      const hashAndWord = tag.slice(hashIndex, endIndex);
+      const remainingText = tag.slice(endIndex);
+      const hashSymbol = hashAndWord.charAt(0);
+      const wordAfterHash = hashAndWord.slice(1);
+
+      return (
+        <Text>
+          {beforeHash}
+          <Text style={{ color: darkMode.signInTextColor }}>{hashSymbol} </Text>
+          <Text
+            style={{
+              color: darkMode.text,
+              fontFamily: "PlusJakartaSans-SemiBold",
+              fontSize: 14,
+              opacity: 0.5,
+            }}
+          >
+            {wordAfterHash}
+          </Text>
+          {remainingText}
+        </Text>
+      );
+    } else {
+      return <Text>{tag}</Text>;
+    }
+  };
 
   const handleLikePost = async () => {
     const originalLikes = likes;
@@ -156,32 +187,30 @@ const BlogCard = ({
       <View className="space-y-2">
         <Text
           style={{
-            fontSize: 20,
+            fontSize: 24,
             fontFamily: "PlusJakartaSans-Bold",
             color: darkMode.text,
+            marginTop: 2,
           }}
         >
           {blog_title}
         </Text>
-        <View className="flex-row flex-wrap items-center justify-start space-y-[4px] ">
+        <View className="flex-row flex-wrap items-center justify-start space-y-[0px] ">
           {blog_tag.map((tag, index) => (
-            <Text
+            <View
               key={index}
               style={{
-                backgroundColor: darkMode.backgroundCardList,
-                borderColor: darkMode.borderBoxCardList,
-                color: darkMode.colorTextCardList,
-                fontFamily: "PlusJakartaSans-SemiBold",
-                fontSize: 13,
-                paddingHorizontal: 8,
-                paddingVertical: 5,
+                // paddingHorizontal: 8,
+                // paddingBottom: 5,
+                // paddingTop:3,
                 marginRight: 4,
-                borderRadius: 2,
-                borderWidth: 1,
+                // borderRadius: 9999,
+
+                height: 24,
               }}
             >
-              {tag}
-            </Text>
+              {detectHash(tag)}
+            </View>
           ))}
         </View>
         <Text
@@ -307,23 +336,27 @@ const BlogCard = ({
           className="border-t-[1px] py-4  space-y-2  "
           style={{ borderColor: darkMode.borderBox }}
         >
-          <View className="flex-row space-x-[6px] justify-between">
+          <View className="flex-row space-x-[6px] justify-between ">
             <TouchableOpacity
-              className="  py-2 px-4 rounded-[2px] border-[1px]"
               onPress={handleLikePost}
-              style={[
-                likeSubcribe
-                  ? {
-                      backgroundColor: darkMode.backgroundCardList,
-                      borderColor: darkMode.textColorLikeButton,
-                    }
-                  : {
-                      backgroundColor: darkMode.backgroundDark,
-                      borderColor: darkMode.borderBox,
-                    },
-              ]}
+              className="  rounded-full overflow-hidden"
+              style={{
+                borderWidth:1,
+                borderColor: darkMode.borderBox
+              }}
             >
-              <View className=" flex-row space-x-[2px] items-center justify-center">
+              <View
+                className=" flex-row space-x-[2px] items-center justify-center py-2 px-4 "
+                style={[
+                  likeSubcribe
+                    ? {
+                        backgroundColor: darkMode.backgroundDark,
+                      }
+                    : {
+                        backgroundColor: darkMode.backgroundDark,
+                      },
+                ]}
+              >
                 <EvilIcons
                   name="like"
                   size={24}
@@ -342,7 +375,7 @@ const BlogCard = ({
                     likeSubcribe
                       ? {
                           marginBottom: 3,
-                          fontFamily: "PlusJakartaSans-Bold",
+                          fontFamily: "PlusJakartaSans-SemiBold",
                           color: darkMode.textColorLikeButton,
                         }
                       : {
@@ -358,23 +391,26 @@ const BlogCard = ({
               </View>
             </TouchableOpacity>
             <TouchableOpacity
-              className=" py-2 px-2 rounded-[2px] border-[1px]  flex-1"
+              className=" py-2 px-2 rounded-full overflow-hidden  flex-1"
               style={{
-                borderColor: darkMode.textCommentButton,
-                backgroundColor: darkMode.backgroundComment,
+                borderWidth:1,
+                borderColor: darkMode.borderBox,
+                backgroundColor: darkMode.backgroundDark,
               }}
-              onPress={() => setModalVisible(true)}
+              onPress={() =>
+                navigation.navigate("commentScreen", {
+                  blogId,
+                  token,
+                  darkMode,
+                })
+              }
             >
               <View className=" flex-row space-x-[2px] items-center justify-center">
-                <EvilIcons
-                  name="comment"
-                  size={24}
-                  color={darkMode.textCommentButton}
-                />
+                <EvilIcons name="comment" size={24} color={darkMode.text} />
                 <Text
                   style={{
-                    fontFamily: "PlusJakartaSans-Bold",
-                    color: darkMode.textCommentButton,
+                    fontFamily: "PlusJakartaSans-SemiBold",
+                    color: darkMode.text,
                   }}
                   className=" text-[14px]"
                 >
@@ -383,17 +419,23 @@ const BlogCard = ({
               </View>
             </TouchableOpacity>
             <TouchableOpacity
-              className=" py-2 px-2 rounded-[2px] border-[1px] "
+              className=" py-2 px-4 rounded-full overflow-hidden "
               style={{
+                borderWidth:1,
                 borderColor: darkMode.borderBox,
-                backgroundColor: darkMode.backgroundCardList,
+                backgroundColor: darkMode.backgroundDark,
               }}
             >
               <View className=" flex-row space-x-[2px] items-center justify-center">
-                <AntDesign name="save" size={20} color={darkMode.text} />
+                <AntDesign
+                  name="save"
+                  size={18}
+                  style={{ marginTop: 3 }}
+                  color={darkMode.text}
+                />
                 <Text
                   style={{
-                    fontFamily: "PlusJakartaSans-Bold",
+                    fontFamily: "PlusJakartaSans-SemiBold",
                     color: darkMode.text,
                   }}
                   className=" text-[14px]"
@@ -417,22 +459,22 @@ const BlogCard = ({
                   time,
                   blogId,
                   sections,
+                  darkMode,
                 })
               }
             >
               <View
-                className=" items-center py-2 rounded-[2px] "
+                className=" items-center py-2 rounded-full "
                 style={{
-                  borderWidth:1,
-                  borderColor: darkMode.colorTextCardList,
-                  backgroundColor: darkMode.backgroundCardList,
+                  borderWidth: 1,
+                  borderColor: darkMode.borderBox,
+                  backgroundColor: darkMode.backgroundDark,
                 }}
               >
                 <Text
                   style={{
-                     fontFamily: "PlusJakartaSans-SemiBold",
-                     color: darkMode.colorTextCardList
-
+                    fontFamily: "PlusJakartaSans-Bold",
+                    color: darkMode.colorTextCardList,
                   }}
                   className="text-white text-base mb-[3px]"
                 >
@@ -443,12 +485,6 @@ const BlogCard = ({
           </View>
         </View>
       </View>
-      <CommentsModal_C
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
-        blogId={blogId}
-        token={token}
-      />
     </View>
   );
 };
@@ -464,7 +500,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: "100%",
-    height: 200,
+    height: 250,
     borderRadius: 2,
   },
   iconMessageContent: {

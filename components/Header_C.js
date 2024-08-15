@@ -13,7 +13,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSelector, useDispatch } from "react-redux";
-import { toggleDarkMode, selectTheme } from "../globalState/themeSlice";
+import { toggleDarkMode, selectTheme, selectDarkMode } from "../globalState/themeSlice";
 import { CommonActions } from "@react-navigation/native";
 import { clearUser } from "../globalState/userSlice";
 import { clearBlogs } from "../globalState/blogsSlice";
@@ -24,6 +24,7 @@ const HeaderC = ({ activeScreen, handlePress }) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const darkMode = useSelector(selectTheme);
+  const darkModeBoleanState = useSelector(selectDarkMode);
   const headerVisible = useSelector((state) => state.header.headerVisible);
   const [tokenAsyc, setToken] = useState(null);
 
@@ -31,7 +32,6 @@ const HeaderC = ({ activeScreen, handlePress }) => {
     const fetchToken = async () => {
       try {
         const storedToken = await AsyncStorage.getItem("token");
-        console.log("Token recuperado:", storedToken);
 
         if (typeof storedToken === 'string') {
           setToken(storedToken);
@@ -84,11 +84,11 @@ const HeaderC = ({ activeScreen, handlePress }) => {
 
   return (
     <View
-      style={[{ borderBottomWidth: 1, borderBottomColor: darkMode.borderBox }]}
+      style={[{ borderBottomWidth:1, borderColor: darkMode.borderBox }]}
     >
       <StatusBar
         backgroundColor={darkMode.background}
-        barStyle="light-content"
+        barStyle={darkModeBoleanState ? 'light-content': 'dark-content'}
         translucent
       />
       <View
@@ -128,10 +128,10 @@ const HeaderC = ({ activeScreen, handlePress }) => {
           />
           <TouchableOpacity onPress={toggleDarkModeHandler}>
             <FontAwesome
-              name={darkMode.darkMode ? "sun-o" : "moon-o"}
+              name={darkModeBoleanState ? "sun-o" : "moon-o"}
               size={32}
               color={
-                darkMode.darkMode ? darkMode.colors.dark.icon : darkMode.icon
+                darkModeBoleanState ? '#FFD900' : '#000'
               }
             />
           </TouchableOpacity>

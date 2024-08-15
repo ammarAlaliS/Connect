@@ -154,6 +154,7 @@ const SignInForm = () => {
 
                     if (response.ok) {
                       const data = await response.json();
+                      console.log(data)
                       await AsyncStorage.setItem(
                         "userData",
                         JSON.stringify(data)

@@ -9,7 +9,7 @@ const socket = io("https://obbaramarket-backend.onrender.com", {
   transports: ["websocket"],
 });
 
-const Comment = ({ data }) => {
+const Comment = ({ data, darkMode }) => {
   const [showMore, setShowMore] = useState(false);
 
   const toggleShowMore = () => {
@@ -22,17 +22,28 @@ const Comment = ({ data }) => {
   };
 
   return (
-    <View className="flex-row bg-[#f9f9f9] rounded-lg items-center space-x-2 py-5 px-4 border-[1px] border-gray-200/10 shadow-sm shadow-black">
+    <View
+      className="flex-row rounded-sm items-center space-x-2 py-5 px-4"
+      style={{
+        backgroundColor: darkMode.background,
+        borderWidth: 1,
+        borderColor: darkMode.borderBox,
+      }}
+    >
       <View className="h-full">
         <Image
           source={{ uri: data.author.global_user.profile_img_url }}
           className="w-16 h-16 rounded-full"
+          style={{
+            borderWidth: 1,
+            borderColor: darkMode.borderBox,
+          }}
         />
       </View>
       <View className="flex-1 space-y-4">
         <View className="flex-row justify-between">
           <Text
-            style={{ fontFamily: "PlusJakartaSans-Bold" }}
+            style={{ fontFamily: "PlusJakartaSans-Bold", color: darkMode.text }}
             className="text-sm"
           >
             {data.author.global_user.first_name}{" "}
@@ -40,15 +51,25 @@ const Comment = ({ data }) => {
           </Text>
           <View className="items-end">
             <Text
-              style={{ fontFamily: "PlusJakartaSans-Bold" }}
+              style={{
+                fontFamily: "PlusJakartaSans-Bold",
+                color: darkMode.text,
+              }}
               className="text-[12px]"
             >
               {`${new Date(data.createdAt).toLocaleDateString()}`}
             </Text>
           </View>
         </View>
-        <View className="bg-gray-200 p-2 rounded-xl">
-          <Text className="text-[15px]">
+        <View
+          className=" p-2 rounded-xl"
+          style={{
+            backgroundColor: darkMode.backgroundDark,
+            borderWidth: 1,
+            borderColor: darkMode.borderBox,
+          }}
+        >
+          <Text className="text-[15px]" style={{ color: darkMode.text}}>
             {showMore ? data.content : `${data.content.slice(0, 120)}`}
           </Text>
 
@@ -62,7 +83,7 @@ const Comment = ({ data }) => {
             )}
             <View className="  flex-1 justify-end items-end">
               <Text
-                style={{ fontFamily: "PlusJakartaSans-Bold" }}
+                style={{ fontFamily: "PlusJakartaSans-Bold", color: darkMode.text }}
                 className="text-[10px] w-[30px]  "
               >
                 {formatTime(data.createdAt)}
@@ -75,7 +96,7 @@ const Comment = ({ data }) => {
   );
 };
 
-const Commet_C = ({ blogId }) => {
+const Commet_C = ({ blogId, darkMode }) => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
@@ -105,11 +126,14 @@ const Commet_C = ({ blogId }) => {
   };
 
   return (
-    <View className="flex-1 px-4 bg-gray-200 py-2">
+    <View
+      className="flex-1 px-4 py-2"
+      style={{ backgroundColor: darkMode.backgroundDark }}
+    >
       <ScrollView className="space-y-2">
         {data.map((data, index) => (
           <View key={index}>
-            <Comment data={data} />
+            <Comment data={data} darkMode={darkMode} />
           </View>
         ))}
       </ScrollView>
