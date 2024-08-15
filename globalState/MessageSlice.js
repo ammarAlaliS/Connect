@@ -45,6 +45,9 @@ const messageSlice = createSlice({
     setFirstFetch(state, action) {
       state.firstFetch = action.payload;
     },
+    incrementTotalMessages: (state) => {
+      state.totalMessages += 1;
+    },
   },
 });
 
@@ -56,6 +59,7 @@ export const {
   setFirstFetch,
   setTotalMessages,
   setTimeZone,
+  incrementTotalMessages
 } = messageSlice.actions;
 
 export default messageSlice.reducer;

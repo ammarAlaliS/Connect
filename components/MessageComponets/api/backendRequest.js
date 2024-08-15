@@ -1,5 +1,5 @@
 import axios from "axios";
-import { setGroupedMessages, setCurrentPage, setCurrentDate, addMessages, setTotalPages, setFirstFetch, setTotalMessages, setTimeZone } from "../../../globalState/MessageSlice";
+import { setGroupedMessages, setCurrentPage, setCurrentDate, addMessages, setTotalPages, setFirstFetch, setTotalMessages, setTimeZone, incrementTotalMessages } from "../../../globalState/MessageSlice";
 import { setLoading } from "../../../globalState/loadingSlice";
 import { useDispatch, useSelector } from 'react-redux';
 import { incrementRequestCount } from "../../../utils/ApiCounter";
@@ -8,20 +8,20 @@ import { incrementRequestCount } from "../../../utils/ApiCounter";
 const API_BASE_URL = "https://obbaramarket-backend.onrender.com";
 
 
-export const handleSendMessage = async (content, receiverIdsArray, senderIdArray, token, setLoadingMessage, setContent) => {
-    if (!content.trim()) {
-        console.warn("Message content cannot be empty.");
+export const handleSendMessage = async (dispatch, textInputContent, receiverId, token, setLoadingMessage, setContent) => {
+    if (!textInputContent.trim()) {
+        console.warn("El contenido del mensaje no puede estar vacío.");
         return;
     }
+
     setLoadingMessage(true);
     setContent("");
 
     try {
-        const userReceiverId = receiverIdsArray[0] || senderIdArray[0];
         const response = await axios.post(
-            `${API_BASE_URL}/api/ObbaraMarket/send/${userReceiverId}`,
+            `${API_BASE_URL}/api/ObbaraMarket/send/${receiverId}`,
             {
-                content: content.trim(),
+                content: textInputContent.trim(),
                 timestamp: new Date().toISOString(),
             },
             {
@@ -30,17 +30,19 @@ export const handleSendMessage = async (content, receiverIdsArray, senderIdArray
         );
 
         if (response.status >= 200 && response.status < 300) {
-            console.log("Message sent successfully");
+            console.log("Mensaje enviado con éxito.");
         } else {
-            console.error("Error sending message: Failed to send message with status:", response.status);
+            console.error(`Error al enviar el mensaje: Falló con el estado ${response.status}.`);
         }
     } catch (error) {
-        const errorMsg = error.response?.data?.error || error.message || "An unexpected error occurred";
-        console.error("Error sending message:", errorMsg);
+        const errorMsg = error.response?.data?.error || error.message || "Ocurrió un error inesperado.";
+        console.error("Error al enviar el mensaje:", errorMsg);
     } finally {
         setLoadingMessage(false);
     }
 };
+
+
 export const fetchConversations = async (dispatch, userId, token, page, limit, loading) => {
     if(loading){
         return

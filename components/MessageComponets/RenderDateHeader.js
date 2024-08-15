@@ -1,12 +1,11 @@
 // src/components/MessageComponents/renderDateHeader.js
-import React from "react";
+import React, { useEffect } from "react";
 import { View, Text, StyleSheet,  ActivityIndicator, } from "react-native";
 import { useSelector } from "react-redux";
 
 
-const RenderDateHeader = ({ darkMode }) => {
+const RenderDateHeader = ({ darkMode, totalMessage }) => {
   const currentPage = useSelector((state) => state.messages.currentPage);
-  const totalMessages = useSelector((state) => state.messages.totalMessages);
   const currentDate = useSelector((state) => state.messages.currentDate);
   const totalPages = useSelector((state) => state.messages.totalPages);
   const loading = useSelector((state) => state.loading);
@@ -68,7 +67,7 @@ const RenderDateHeader = ({ darkMode }) => {
         ]}
       >
         <Text style={[styles.text, { color: darkMode.text }]}>
-          Total de mensajes <Text>{totalMessages}</Text>
+          Total de mensajes <Text>{totalMessage}</Text>
         </Text>
       </View>
     </View>

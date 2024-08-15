@@ -1,4 +1,4 @@
-import React, { useState, useEffect, memo, useCallback } from "react";
+import React, { useState, useEffect, memo, useCallback, useRef } from "react";
 import {
   View,
   Text,
@@ -17,10 +17,19 @@ import { useFocusEffect } from "@react-navigation/native";
 import MessageHeader from "../components/MessageComponets/MessageHeader";
 import { clearMessages } from "../globalState/MessageSlice";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import { fetchConversations } from "../components/MessageComponets/api/backendRequest";
+import {
+  fetchConversations,
+  handleSendMessage,
+} from "../components/MessageComponets/api/backendRequest";
 import { useNavigation } from "@react-navigation/native";
 import { formatDate, formatTime } from "../utils/formatTime";
 import socket from "../socket";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+
+import {
+  useIsScrollingDown,
+  useScrollToBottom,
+} from "../utils/handleScrollFaltList";
 
 const statusBarHeight = StatusBar.currentHeight || 0;
 
@@ -32,28 +41,54 @@ const MessageScreen = ({ route }) => {
     userFirstName,
     userLastName,
     messageContent,
-    totalMessage,
     messageState,
     userId,
   } = params;
   const dispatch = useDispatch();
   const [messages, setMessages] = useState([]);
   const navigation = useNavigation();
-  const [textInputContent, setTextInputContent] = useState('');
+  const [textInputContent, setTextInputContent] = useState("");
   const [textInputChange, setTextInputChange] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState(false);
+  const [showNotificacion, setShowNotificacion] = useState(false);
+  const [messageCounter, setMessageCounter] = useState(0);
 
-  const [animatedBorderColor] = useState(new Animated.Value(textInputChange ? 1 : 0));
-  const [animatedBackgroundColor] = useState(new Animated.Value(textInputChange ? 1 : 0));
+  const flatListRef = React.useRef(null);
+  const scrollOffset = useRef(0);
+
+  const scrollToBottom = useScrollToBottom(flatListRef);
+  const { isScrollingDown, handleScroll, setIsScrollingDown } =
+    useIsScrollingDown();
+  const opacity = useRef(new Animated.Value(0)).current;
+  const [showButton, setShowButton] = useState(false);
+
+  const [animatedBorderColor] = useState(
+    new Animated.Value(textInputChange ? 1 : 0)
+  );
+  const [animatedBackgroundColor] = useState(
+    new Animated.Value(textInputChange ? 1 : 0)
+  );
+  const [messageAnimations, setMessageAnimations] = useState({});
+
+  const translateY = useRef(new Animated.Value(-30)).current;
 
   const allMessages = useSelector((state) => state.messages.messages || []);
   const global_user_id = useSelector((state) => state.user.global_user?._id);
   const token = useSelector((state) => state.user.global_user?.token);
-  const profile_img_url = useSelector((state) => state.user.global_user?.profile_img_url);
+  const profile_img_url = useSelector(
+    (state) => state.user.global_user?.profile_img_url
+  );
+
   const loading = useSelector((state) => state.loading);
   const firstFetch = useSelector((state) => state.messages.firstFetch);
   const currentPage = useSelector((state) => state.messages.currentPage);
-  const setTimeZone = useSelector((state) => state.messages.setTimeZone);
+  const totalMessages = useSelector((state) => state.messages.totalMessages);
+  const [totalMessage, setTotalMessage] = useState(totalMessages);
+
   const totalPages = useSelector((state) => state.messages.totalPages);
+
+  const [prevMessagesLength, setPrevMessagesLength] = useState(messages.length);
+  const isFirstRender = useRef(true);
 
   useFocusEffect(
     useCallback(() => {
@@ -61,6 +96,9 @@ const MessageScreen = ({ route }) => {
       return () => {};
     }, [dispatch])
   );
+  useEffect(() => {
+    setTotalMessage(totalMessages);
+  }, [totalMessages]);
 
   useEffect(() => {
     setMessages(allMessages);
@@ -79,19 +117,29 @@ const MessageScreen = ({ route }) => {
             global_user: {
               first_name: data.sender.first_name,
               last_name: data.sender.last_name,
-              profile_img_url: data.sender.profile_img_url
-            }
+              profile_img_url: data.sender.profile_img_url,
+            },
           },
           receiver: {
             _id: data.message.receiver,
             global_user: {
               first_name: data.receiver.first_name,
               last_name: data.receiver.last_name,
-              profile_img_url: data.receiver.profile_img_url
-            }
-          }
+              profile_img_url: data.receiver.profile_img_url,
+            },
+          },
         };
-        setMessages(prevMessages => [tempMessage, ...prevMessages]);
+
+        setMessages((prevMessages) => [tempMessage, ...prevMessages]);
+        setTotalMessage((prevTotal) => prevTotal + 1);
+        setMessageCounter((prevCounter) => prevCounter + 1);
+        if (data.message.sender === global_user_id) {
+          if (flatListRef.current) {
+            flatListRef.current.scrollToOffset({
+              offset: scrollOffset.current,
+            });
+          }
+        }
       });
     } else {
       console.log("No hay socket conectado");
@@ -112,6 +160,48 @@ const MessageScreen = ({ route }) => {
     }).start();
   }, [textInputChange]);
 
+  useEffect(() => {
+    Animated.timing(opacity, {
+      toValue: showButton ? 1 : 0,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+  }, [showButton]);
+
+  useEffect(() => {
+    setShowButton(currentPage > 2 && isScrollingDown);
+  }, [currentPage, isScrollingDown]);
+
+  useEffect(() => {
+    Animated.timing(translateY, {
+      toValue: 30,
+      duration: 200,
+      useNativeDriver: false,
+    }).start();
+  }, [translateY]);
+
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    if (totalMessage) {
+      handleShowNotificacion();
+    }
+    setPrevMessagesLength(messages.length);
+  }, [totalMessage]);
+
+  const handleShowNotificacion = () => {
+    if (messages.length > 0) {
+      const lastMensaje = messages[0];
+      const lastSenderId = lastMensaje.sender._id;
+
+      if (lastSenderId === userId && lastSenderId !== global_user_id) {
+        setShowNotificacion(true);
+        setTimeout(() => setShowNotificacion(false), 2000);
+      }
+    }
+  };
   const renderMessage = ({ item, index }) => {
     const senderId = item.sender?._id;
     const receiverId = item.receiver?._id;
@@ -192,6 +282,44 @@ const MessageScreen = ({ route }) => {
     }
   };
 
+  const handleSendMessageResquest = async () => {
+    if (messages.length > 0) {
+      const lastMensaje = messages[0];
+      const lastSenderId = lastMensaje.sender._id;
+      const lastReceiverId = lastMensaje.receiver._id;
+
+      if (lastSenderId === global_user_id) {
+        handleSendMessage(
+          dispatch,
+          textInputContent,
+          lastReceiverId,
+          token,
+          setLoadingMessage,
+          setTextInputContent
+        );
+      } else {
+        handleSendMessage(
+          dispatch,
+          textInputContent,
+          lastSenderId,
+          token,
+          setLoadingMessage,
+          setTextInputContent
+        );
+      }
+    } else {
+      console.log("No hay mensajes en el array.");
+      handleSendMessage(
+        dispatch,
+        textInputContent,
+        userId,
+        token,
+        setLoadingMessage,
+        setTextInputContent
+      );
+    }
+  };
+
   return (
     <SafeAreaView
       style={[
@@ -205,21 +333,128 @@ const MessageScreen = ({ route }) => {
         userFirstName={userFirstName}
         userLastName={userLastName}
         messageContent={messageContent}
-        totalMessage={totalMessage}
         messageState={messageState}
+        totalMessage={totalMessage}
       />
       <View style={{ flex: 1 }}>
-        <FlatList
-          inverted
-          data={messages}
-          renderItem={renderMessage}
-          keyExtractor={(item) => item._id}
-          contentContainerStyle={{ flexGrow: 1, borderWidth: 0 }}
-          onEndReached={handleEndReached}
-          onEndReachedThreshold={0.2}
-          refreshing={loading}
-          onRefresh={() => navigation.goBack()}
-        />
+        <View style={{ flex: 1 }}>
+          <FlatList
+            inverted
+            ListHeaderComponent={
+              loadingMessage ? (
+                <View className=" items-end justify-end py-2">
+                  <ActivityIndicator size="small" color={darkMode.text} />
+                </View>
+              ) : null
+            }
+            data={messages}
+            renderItem={renderMessage}
+            keyExtractor={(item) => item._id}
+            contentContainerStyle={{ flexGrow: 1, borderWidth: 0 }}
+            onEndReached={handleEndReached}
+            onEndReachedThreshold={0.2}
+            refreshing={loading}
+            onRefresh={() => navigation.goBack()}
+            onScroll={handleScroll}
+            ref={flatListRef}
+          />
+          <Animated.View
+            style={{
+              opacity,
+              position: "absolute",
+              bottom: 30,
+              right: 30,
+            }}
+          >
+            {isScrollingDown && (
+              <TouchableOpacity
+                onPress={() => {
+                  scrollToBottom();
+                }}
+                style={[
+                  styles.button,
+                  {
+                    backgroundColor: darkMode.text,
+                    borderRadius: 9999,
+                    borderWidth: 1,
+                    borderColor: darkMode.borderBox,
+                    padding: 3,
+                  },
+                ]}
+              >
+                <MaterialIcons
+                  name="keyboard-arrow-down"
+                  size={24}
+                  color={darkMode.buttonScrollToBottomColor}
+                />
+              </TouchableOpacity>
+            )}
+          </Animated.View>
+          {showNotificacion && (
+            <Animated.View
+              style={[
+                {
+                  position: "absolute",
+                  right: "50%",
+                  transform: [{ translateX: 20 }],
+                  top: translateY,
+                },
+              ]}
+            >
+              <View
+                style={{
+                  position: "relative",
+                }}
+              >
+                <Image
+                  source={{ uri: userImageUrl }}
+                  style={[
+                    {
+                      backgroundColor: darkMode.backgroundDark,
+                      borderColor: darkMode.borderBox,
+                      width: 30,
+                      height: 30,
+                      borderRadius: 9999,
+                      borderWidth: 1,
+                      marginRight: 5,
+                    },
+                  ]}
+                  resizeMode="cover"
+                />
+                {messageCounter > 0 && (
+                  <View
+                    style={{
+                      position: "absolute",
+                      backgroundColor: "#CF0A0A",
+                      width: 20,
+                      height: 20,
+                      borderRadius: 9999,
+                      right: 0,
+                      top: -5,
+                      overflow: "hidden",
+                      borderWidth: 1,
+                      borderColor: "#000",
+                    }}
+                  >
+                    <Text
+                      style={{
+                        color: "#fff",
+                        borderRadius: 9999,
+                        textAlign: "center",
+                        marginBottom: 4,
+                        fontSize: 12,
+                        fontWeight: "bold",
+                      }}
+                    >
+                      {messageCounter}
+                    </Text>
+                  </View>
+                )}
+              </View>
+            </Animated.View>
+          )}
+        </View>
+
         <Animated.View
           style={[
             styles.inputContainer(darkMode, textInputChange),
@@ -251,7 +486,10 @@ const MessageScreen = ({ route }) => {
             }}
             value={textInputContent}
           />
-          <TouchableOpacity style={styles.sendButton}>
+          <TouchableOpacity
+            style={styles.sendButton}
+            onPress={handleSendMessageResquest}
+          >
             <Text style={styles.sendButtonText}>Enviar</Text>
           </TouchableOpacity>
         </Animated.View>
@@ -264,7 +502,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
- 
 
   sendButton: {
     backgroundColor: "#007bff",
@@ -308,15 +545,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 7,
     borderRadius: 10,
-    marginTop:8,
-    marginHorizontal:4,
-
+    marginTop: 8,
+    marginHorizontal: 4,
   }),
   input: (darkMode, textInputChange) => ({
     flex: 1,
-    borderRadius: textInputChange
-    ? 10
-    : 9999,
+    borderRadius: textInputChange ? 10 : 9999,
     padding: 5,
     paddingHorizontal: 15,
     borderWidth: 1,

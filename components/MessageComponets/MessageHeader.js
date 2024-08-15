@@ -18,6 +18,8 @@ export default function MessageHeader({
   userFirstName,
   userLastName,
   IsAtTop,
+  totalMessage
+  
 }) {
   return (
     <View
@@ -86,7 +88,7 @@ export default function MessageHeader({
         </View>
       </View>
       <View>
-      {RenderDateHeader({ darkMode })}
+      {RenderDateHeader({ darkMode, totalMessage })}
       </View>
     </View>
   );

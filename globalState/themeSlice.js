@@ -49,7 +49,11 @@ export const colors = {
       screenBg: '#F0F2F4',
     
     // Presentation
-    PreBgColor: '#fff'
+    PreBgColor: '#fff',
+
+    // buttonScrollToBottom 
+    buttonScrollToBottomColor: '#fff',
+    
   },
   dark: {
     background: "#0D1117",
@@ -97,6 +101,10 @@ export const colors = {
 
     // Presentation
     PreBgColor: '#000',
+    
+    
+    // buttonScrollToBottom 
+    buttonScrollToBottomColor: '#000',
 
   },
 };
