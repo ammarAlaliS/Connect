@@ -33,7 +33,7 @@ import PlusIcon from "../../icons/PlusIcon";
 const SearchInput = ({ setShowQuickCarDetails }) => {
   const dispatch = useDispatch();
 
-  const GOOGLE_PLACES_API_KEY = "";
+  const GOOGLE_PLACES_API_KEY = "AIzaSyAAwUd5bO7daxQUktwliIcG4YA8M5mWhrY";
 
   const [originCleaning, setOriginCleaning] = useState(false);
   const [destininationCleaning, setDestininationCleaning] = useState(false);
@@ -61,12 +61,13 @@ const SearchInput = ({ setShowQuickCarDetails }) => {
   const inputIsActive = useSelector((state) => state.travel.inputIsActive);
 
   const handleLocationSelectDestination = (data, details) => {
-    dispatch(setIsInputActive(true));
-    const { lat, lng } = details.geometry.location;
+    if (!placesSelected) {
+      dispatch(setIsInputActive(true));
+      const { lat, lng } = details.geometry.location;
 
-    dispatch(setTripDestination({ latitude: lat, longitude: lng }));
-    dispatch(setTripDestinationName(data.description));
-
+      dispatch(setTripDestination({ latitude: lat, longitude: lng }));
+      dispatch(setTripDestinationName(data.description));
+    }
     // setMapRegion({
     //   latitude: lat,
     //   longitude: lng,
@@ -80,11 +81,13 @@ const SearchInput = ({ setShowQuickCarDetails }) => {
   };
 
   const handleLocationSelect = (data, details) => {
-    dispatch(setIsInputActive(true));
-    const { lat, lng } = details.geometry.location;
+    if (!placesSelected) {
+      dispatch(setIsInputActive(true));
+      const { lat, lng } = details.geometry.location;
 
-    dispatch(setTripOrigin({ latitude: lat, longitude: lng }));
-    dispatch(setTripOriginName(data.description));
+      dispatch(setTripOrigin({ latitude: lat, longitude: lng }));
+      dispatch(setTripOriginName(data.description));
+    }
 
     // setMapRegion({
     //   latitude: lat,
@@ -295,13 +298,19 @@ const SearchInput = ({ setShowQuickCarDetails }) => {
         }
       }
     }
-  }, [
-    userType,
-    quickcar_info,
-    refInputAutoComplete,
-    refInputAutoCompleteDestination,
-    inputIsActive,
-  ]);
+  }, [userType, quickcar_info, inputIsActive]);
+
+  //Verificando que los lugares ya esten seleccionados
+  useEffect(() => {
+    if (placesSelected) {
+      console.log("Actualizando");
+
+      // refInputAutoComplete.current.setAddressText(tripOriginName);
+      // refInputAutoCompleteDestination.current.setAddressText(
+      //   tripDestinationName
+      // );
+    }
+  }, [placesSelected, tripDestinationName, tripOriginName]);
 
   return (
     <>

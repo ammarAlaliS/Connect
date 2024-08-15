@@ -452,10 +452,11 @@ const IndividualQuickCarDetails = ({
             flexWrap: "wrap",
           }}
         >
-          {quickCarInfo.regularDays.map((item) => {
+          {quickCarInfo.regularDays.map((item, index) => {
             return (
               <View
                 style={{ width: "50%", height: 30, alignItems: "flex-start" }}
+                key={index}
               >
                 <Text
                   style={{

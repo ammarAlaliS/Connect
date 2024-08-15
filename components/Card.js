@@ -17,6 +17,7 @@ const Card = ({ darkMode, handlePress, activeScreen }) => {
   const [showNewQuickCarModal, setShowNewQuickCarModal] = useState(false);
   const [showQuickCarSearcher, setShowQuickCarSearcher] = useState(false);
   const [showQuickCarDetails, setShowQuickCarDetails] = useState(false);
+
   const dispatch = useDispatch();
 
   if (!fontsLoaded) {
@@ -49,14 +50,11 @@ const Card = ({ darkMode, handlePress, activeScreen }) => {
     }
   };
 
-  useEffect(() => {
-    console.log("El estado tiene por valor: ");
-    console.log(showQuickCarDetails);
-  }, [showQuickCarDetails]);
-
   return (
     <View
-      className=" px-6 py-2  space-y-1 bg-red-500"
+      className={
+        (!showQuickCarDetails ? "px-6 py-2 " : "") + " space-y-1 bg-red-500"
+      }
       style={{
         width: "100%",
         backgroundColor: darkMode.background,
