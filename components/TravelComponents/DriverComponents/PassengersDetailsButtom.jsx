@@ -2,14 +2,14 @@ import { FontAwesome } from "@expo/vector-icons";
 import { Text } from "react-native";
 import { TouchableOpacity } from "react-native";
 
-const PassengersDetailsButtom = () => {
+const PassengersDetailsButtom = ({ setShowPassengerSearchesDetails }) => {
   return (
     <TouchableOpacity
       style={{
         position: "absolute",
         bottom: "5%",
         right: "35%",
-        zIndex: 101,
+        zIndex: 50,
         backgroundColor: "#ffbb1c",
         borderRadius: 24,
         display: "flex",
@@ -21,7 +21,7 @@ const PassengersDetailsButtom = () => {
         paddingBottom: 16,
       }}
       onPress={() => {
-        // setShowQuickCarDetails(true);
+        setShowPassengerSearchesDetails(true);
       }}
     >
       <FontAwesome name="angle-up" size={35} color="#000" />

@@ -101,10 +101,10 @@ const QuickCarsSearchesDetails = ({ setShowQuickCarDetails }) => {
         height: "100%",
         width: "100%",
         backgroundColor: "#f4f5f6",
-        position: "absolute",
-        top: 0,
-        left: 0,
-        zIndex: 102,
+        // position: "absolute",
+        // top: 0,
+        // left: 0,
+        // zIndex: 102,
       }}
     >
       {showQuickCarProfile && (
