@@ -32,7 +32,7 @@ const RenderDateHeader = ({ darkMode, totalMessage }) => {
         style={[
           styles.dateWrapper,
           {
-            backgroundColor: darkMode.backgroundDark,
+            backgroundColor: darkMode.background,
             paddingHorizontal: 4,
             borderTopWidth: 1,
             borderColor: darkMode.contentMessageBorderColor,

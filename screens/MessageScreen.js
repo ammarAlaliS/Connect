@@ -11,6 +11,7 @@ import {
   Image,
   ActivityIndicator,
   Animated,
+  ImageBackground,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
@@ -25,6 +26,7 @@ import { useNavigation } from "@react-navigation/native";
 import { formatDate, formatTime } from "../utils/formatTime";
 import socket from "../socket";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { BlurView } from "expo-blur";
 
 import {
   useIsScrollingDown,
@@ -155,7 +157,7 @@ const MessageScreen = ({ route }) => {
 
     Animated.timing(animatedBackgroundColor, {
       toValue: textInputChange ? 1 : 0,
-      duration: 300,
+      duration: 10,
       useNativeDriver: false,
     }).start();
   }, [textInputChange]);
@@ -218,18 +220,33 @@ const MessageScreen = ({ route }) => {
     return (
       <View key={item._id}>
         {isLastMessageOfDay && (
-          <Text
+          <View
             style={{
-              fontFamily: "PlusJakartaSans-Bold",
-              fontSize: 12,
-              lineHeight: 18,
-              color: darkMode.text,
-              textAlign: "center",
               marginVertical: 10,
             }}
           >
-            {formatDate(item.timestamp)}
-          </Text>
+            <Text
+              style={{
+                backgroundColor: '#000',
+                color: darkMode.text,
+                paddingHorizontal: 8,
+                marginVertical: 4,
+                borderRadius: 9999,
+                margin: "auto",
+                fontSize: 12,
+                color: "#fff",
+                textAlign: "center",
+                textAlignVertical: "center",
+                paddingBottom:1,
+                borderWidth:1,
+                borderColor:darkMode.borderBox,
+                fontWeight:'bold'
+
+              }}
+            >
+              {formatDate(item.timestamp)}
+            </Text>
+          </View>
         )}
         <View
           style={[
@@ -324,7 +341,7 @@ const MessageScreen = ({ route }) => {
     <SafeAreaView
       style={[
         styles.container,
-        { backgroundColor: darkMode.screenBg, marginTop: statusBarHeight },
+        { backgroundColor: darkMode.background ? "#119d29" : "#113d29", marginTop: statusBarHeight },
       ]}
     >
       <MessageHeader
@@ -338,161 +355,179 @@ const MessageScreen = ({ route }) => {
       />
       <View style={{ flex: 1 }}>
         <View style={{ flex: 1 }}>
-          <FlatList
-            inverted
-            ListHeaderComponent={
-              loadingMessage ? (
-                <View className=" items-end justify-end py-2">
-                  <ActivityIndicator size="small" color={darkMode.text} />
-                </View>
-              ) : null
-            }
-            data={messages}
-            renderItem={renderMessage}
-            keyExtractor={(item) => item._id}
-            contentContainerStyle={{ flexGrow: 1, borderWidth: 0 }}
-            onEndReached={handleEndReached}
-            onEndReachedThreshold={0.2}
-            refreshing={loading}
-            onRefresh={() => navigation.goBack()}
-            onScroll={handleScroll}
-            ref={flatListRef}
-          />
-          <Animated.View
-            style={{
-              opacity,
-              position: "absolute",
-              bottom: 30,
-              right: 30,
+          <ImageBackground
+            source={{
+              uri: "https://storage.googleapis.com/quickcar-storage/chatDeFonde-removebg-preview.png",
             }}
+            style={{ flex: 1 }}
+            resizeMode="repeat"
           >
-            {isScrollingDown && (
-              <TouchableOpacity
-                onPress={() => {
-                  scrollToBottom();
-                }}
+            <BlurView
+              style={{
+                position: "absolute",
+                top: 0,
+                bottom: 0,
+                left: 0,
+                right: 0,
+              }}
+              intensity={100} 
+              tint="dark"
+            />
+            <FlatList
+              inverted
+              ListHeaderComponent={
+                loadingMessage ? (
+                  <View className=" items-end justify-end py-2">
+                    <ActivityIndicator size="small" color={darkMode.text} />
+                  </View>
+                ) : null
+              }
+              data={messages}
+              renderItem={renderMessage}
+              keyExtractor={(item) => item._id}
+              contentContainerStyle={{ flexGrow: 1, borderWidth: 0 }}
+              onEndReached={handleEndReached}
+              onEndReachedThreshold={0.2}
+              refreshing={loading}
+              onRefresh={() => navigation.goBack()}
+              onScroll={handleScroll}
+              ref={flatListRef}
+            />
+            <Animated.View
+              style={{
+                opacity,
+                position: "absolute",
+                bottom: 80,
+                right: 30,
+              }}
+            >
+              {isScrollingDown && (
+                <TouchableOpacity
+                  onPress={() => {
+                    scrollToBottom();
+                  }}
+                  style={[
+                    styles.button,
+                    {
+                      backgroundColor: darkMode.text,
+                      borderRadius: 9999,
+                      borderWidth: 1,
+                      borderColor: darkMode.borderBox,
+                      padding: 3,
+                    },
+                  ]}
+                >
+                  <MaterialIcons
+                    name="keyboard-arrow-down"
+                    size={24}
+                    color={darkMode.buttonScrollToBottomColor}
+                  />
+                </TouchableOpacity>
+              )}
+            </Animated.View>
+            {showNotificacion && (
+              <Animated.View
                 style={[
-                  styles.button,
                   {
-                    backgroundColor: darkMode.text,
-                    borderRadius: 9999,
-                    borderWidth: 1,
-                    borderColor: darkMode.borderBox,
-                    padding: 3,
+                    position: "absolute",
+                    right: "50%",
+                    transform: [{ translateX: 20 }],
+                    top: translateY,
                   },
                 ]}
               >
-                <MaterialIcons
-                  name="keyboard-arrow-down"
-                  size={24}
-                  color={darkMode.buttonScrollToBottomColor}
-                />
-              </TouchableOpacity>
+                <View
+                  style={{
+                    position: "relative",
+                  }}
+                >
+                  <Image
+                    source={{ uri: userImageUrl }}
+                    style={[
+                      {
+                        backgroundColor: darkMode.backgroundDark,
+                        borderColor: darkMode.borderBox,
+                        width: 30,
+                        height: 30,
+                        borderRadius: 9999,
+                        borderWidth: 1,
+                        marginRight: 5,
+                      },
+                    ]}
+                    resizeMode="cover"
+                  />
+                  {messageCounter > 0 && (
+                    <View
+                      style={{
+                        position: "absolute",
+                        backgroundColor: "#CF0A0A",
+                        width: 20,
+                        height: 20,
+                        borderRadius: 9999,
+                        right: 0,
+                        top: -5,
+                        overflow: "hidden",
+                        borderWidth: 1,
+                        borderColor: "#000",
+                      }}
+                    >
+                      <Text
+                        style={{
+                          color: "#fff",
+                          borderRadius: 9999,
+                          textAlign: "center",
+                          marginBottom: 4,
+                          fontSize: 12,
+                          fontWeight: "bold",
+                        }}
+                      >
+                        {messageCounter}
+                      </Text>
+                    </View>
+                  )}
+                </View>
+              </Animated.View>
             )}
-          </Animated.View>
-          {showNotificacion && (
             <Animated.View
               style={[
+                styles.inputContainer(darkMode, textInputChange),
                 {
-                  position: "absolute",
-                  right: "50%",
-                  transform: [{ translateX: 20 }],
-                  top: translateY,
+                  backgroundColor: animatedBackgroundColor.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: ["transparent", darkMode.background],
+                  }),
+                  borderColor: animatedBorderColor.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: ["transparent", darkMode.borderBox],
+                  }),
                 },
               ]}
             >
-              <View
-                style={{
-                  position: "relative",
+              <Image
+                source={{ uri: profile_img_url }}
+                style={styles.profileImage(darkMode)}
+                resizeMode="cover"
+              />
+              <TextInput
+                style={styles.input(darkMode, textInputChange)}
+                placeholder="Escribe un mensaje..."
+                placeholderTextColor={darkMode.text}
+                multiline
+                onChangeText={(text) => {
+                  setTextInputContent(text);
+                  setTextInputChange(text.length > 0);
                 }}
+                value={textInputContent}
+              />
+              <TouchableOpacity
+                style={styles.sendButton}
+                onPress={handleSendMessageResquest}
               >
-                <Image
-                  source={{ uri: userImageUrl }}
-                  style={[
-                    {
-                      backgroundColor: darkMode.backgroundDark,
-                      borderColor: darkMode.borderBox,
-                      width: 30,
-                      height: 30,
-                      borderRadius: 9999,
-                      borderWidth: 1,
-                      marginRight: 5,
-                    },
-                  ]}
-                  resizeMode="cover"
-                />
-                {messageCounter > 0 && (
-                  <View
-                    style={{
-                      position: "absolute",
-                      backgroundColor: "#CF0A0A",
-                      width: 20,
-                      height: 20,
-                      borderRadius: 9999,
-                      right: 0,
-                      top: -5,
-                      overflow: "hidden",
-                      borderWidth: 1,
-                      borderColor: "#000",
-                    }}
-                  >
-                    <Text
-                      style={{
-                        color: "#fff",
-                        borderRadius: 9999,
-                        textAlign: "center",
-                        marginBottom: 4,
-                        fontSize: 12,
-                        fontWeight: "bold",
-                      }}
-                    >
-                      {messageCounter}
-                    </Text>
-                  </View>
-                )}
-              </View>
+                <Text style={styles.sendButtonText}>Enviar</Text>
+              </TouchableOpacity>
             </Animated.View>
-          )}
+          </ImageBackground>
         </View>
-
-        <Animated.View
-          style={[
-            styles.inputContainer(darkMode, textInputChange),
-            {
-              backgroundColor: animatedBackgroundColor.interpolate({
-                inputRange: [0, 1],
-                outputRange: [darkMode.backgroundDark, darkMode.background],
-              }),
-              borderColor: animatedBorderColor.interpolate({
-                inputRange: [0, 1],
-                outputRange: ["transparent", darkMode.borderBox],
-              }),
-            },
-          ]}
-        >
-          <Image
-            source={{ uri: profile_img_url }}
-            style={styles.profileImage(darkMode)}
-            resizeMode="cover"
-          />
-          <TextInput
-            style={styles.input(darkMode, textInputChange)}
-            placeholder="Escribe un mensaje..."
-            placeholderTextColor={darkMode.text}
-            multiline
-            onChangeText={(text) => {
-              setTextInputContent(text);
-              setTextInputChange(text.length > 0);
-            }}
-            value={textInputContent}
-          />
-          <TouchableOpacity
-            style={styles.sendButton}
-            onPress={handleSendMessageResquest}
-          >
-            <Text style={styles.sendButtonText}>Enviar</Text>
-          </TouchableOpacity>
-        </Animated.View>
       </View>
     </SafeAreaView>
   );
