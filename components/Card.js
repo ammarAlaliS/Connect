@@ -9,6 +9,8 @@ import FormCreateNewQuickCar from "./TravelComponents/DriverComponents/FormCreat
 import { setQuickCarInfo } from "../globalState/userSlice";
 import SearchInput from "./TravelComponents/SearchInput";
 import QuickCarsSearchesDetails from "./TravelComponents/QuickCarsSearchesDetails";
+import { Image } from "react-native";
+import quickcarSearchBackground from "../assets/quickcarSearchBackground.png";
 
 const Card = ({ darkMode, handlePress, activeScreen }) => {
   const user = useSelector((state) => state.user);
@@ -52,9 +54,7 @@ const Card = ({ darkMode, handlePress, activeScreen }) => {
 
   return (
     <View
-      className={
-        (!showQuickCarDetails ? "px-6 py-2 " : "") + " space-y-1 bg-red-500"
-      }
+      className={(!showQuickCarDetails ? " " : "") + " space-y-1 bg-red-500"}
       style={{
         width: "100%",
         backgroundColor: darkMode.background,
@@ -266,6 +266,26 @@ const Card = ({ darkMode, handlePress, activeScreen }) => {
         <QuickCarsSearchesDetails
           setShowQuickCarDetails={setShowQuickCarDetails}
         ></QuickCarsSearchesDetails>
+      )}
+      {showQuickCarSearcher && (
+        <View
+          style={{
+            height: "100%",
+            width: "100%",
+            // backgroundColor: "red",
+            position: "absolute",
+            bottom: 0,
+            left: 0,
+            zIndex: -1,
+            padding: 10,
+          }}
+        >
+          <Image
+            source={quickcarSearchBackground}
+            style={{ height: "100%" }}
+            resizeMode="cover"
+          ></Image>
+        </View>
       )}
     </View>
   );
