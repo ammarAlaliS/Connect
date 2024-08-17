@@ -11,6 +11,7 @@ import HeaderC from "../components/Header_C";
 import { useSelector } from "react-redux";
 import { selectTheme } from "../globalState/themeSlice";
 import useLocation from "../hooks/useLocation";
+import useCustomFonts from "../fonts/useCustomFonts";
 
 const statusBarHeight = StatusBar.currentHeight || 0;
 
@@ -19,12 +20,18 @@ const HomeAppScreen = () => {
   const [animation, setAnimation] = React.useState("fadeIn");
   const darkMode = useSelector(selectTheme);
 
-  const handlePress = (screen) => {
+  const { fontsLoaded } = useCustomFonts()
+
+  if(!fontsLoaded){
+    return
+  }
+
+  function handlePress(screen) {
     setAnimation("fadeOut");
-      setActiveScreen(screen);
-      setAnimation("fadeIn");
-  
-  };
+    setActiveScreen(screen);
+    setAnimation("fadeIn");
+
+  }
 
   const { RequestLocationPermissions } = useLocation();
 

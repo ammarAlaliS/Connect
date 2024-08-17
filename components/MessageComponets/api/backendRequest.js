@@ -1,8 +1,9 @@
-import axios from "axios";
+
 import { setGroupedMessages, setCurrentPage, setCurrentDate, addMessages, setTotalPages, setFirstFetch, setTotalMessages, setTimeZone, incrementTotalMessages } from "../../../globalState/MessageSlice";
 import { setLoading } from "../../../globalState/loadingSlice";
 import { useDispatch, useSelector } from 'react-redux';
 import { incrementRequestCount } from "../../../utils/ApiCounter";
+import api from "../../../api/api";
 
 
 const API_BASE_URL = "https://obbaramarket-backend.onrender.com";
@@ -18,7 +19,7 @@ export const handleSendMessage = async (dispatch, textInputContent, receiverId, 
     setContent("");
 
     try {
-        const response = await axios.post(
+        const response = await api.post(
             `${API_BASE_URL}/api/ObbaraMarket/send/${receiverId}`,
             {
                 content: textInputContent.trim(),
@@ -53,7 +54,7 @@ export const fetchConversations = async (dispatch, userId, token, page, limit, l
         if (userId) {
             incrementRequestCount(); 
 
-            const response = await axios.get(
+            const response = await api.get(
                 `${API_BASE_URL}/api/ObbaraMarket/conversations/${userId}?page=${page}&limit=${limit}&timeZone=${timeZone}`,
                 {
                     headers: { Authorization: `Bearer ${token}` },

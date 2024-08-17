@@ -5,9 +5,11 @@ import MainNavigator from './MainNavigator';
 import { store } from './globalState/Store';
 import Toast, { BaseToast } from 'react-native-toast-message';
 
+
 const ToastComponent = React.forwardRef((props, ref) => (
   <Toast ref={ref} {...props} />
 ));
+
 
 export default function App() {
   return (

@@ -13,6 +13,7 @@ import io from "socket.io-client";
 import { useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
+import api from "../api/api";
 import EvilIcons from "@expo/vector-icons/EvilIcons";
 import { AntDesign } from "@expo/vector-icons";
 
@@ -49,7 +50,7 @@ const BlogCard = ({
 
   const fetchData = async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/like/check/${blogId}`, {
+      const response = await api.get(`${API_BASE_URL}/like/check/${blogId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -67,7 +68,7 @@ const BlogCard = ({
   useEffect(() => {
     const getTotalLikes = async () => {
       try {
-        const response = await axios.get(
+        const response = await api.get(
           `${API_BASE_URL}/blogs/${blogId}/likes`
         );
         setLikes(response.data.totalLikes);
@@ -130,7 +131,7 @@ const BlogCard = ({
     setLikeSubcribe(!likeSubcribe);
 
     try {
-      const response = await axios.post(
+      const response = await api.post(
         `${API_BASE_URL}/like/${blogId}`,
         {},
         {
@@ -150,7 +151,7 @@ const BlogCard = ({
   };
   const getTotalComment = async () => {
     try {
-      const response = await axios.get(
+      const response = await api.get(
         `${API_BASE_URL}/blogs/${blogId}/totalComment`
       );
       setTotalComment(response.data.totalComment);

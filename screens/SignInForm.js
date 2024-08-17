@@ -154,12 +154,10 @@ const SignInForm = () => {
 
                     if (response.ok) {
                       const data = await response.json();
-                      console.log(data)
-                      await AsyncStorage.setItem(
-                        "userData",
-                        JSON.stringify(data)
-                      );
+      
+                      await AsyncStorage.setItem("userData", JSON.stringify(data));
                       await AsyncStorage.setItem("token", data.token);
+
                       dispatch(
                         setUser({
                           global_user: {
@@ -178,15 +176,8 @@ const SignInForm = () => {
                         text1: "Inicio de sesión exitoso",
                         text2: "Redirigiendo...",
                       });
-                      // Redirigir al usuario a la pantalla principal después de un breve retraso
-                      setTimeout(() => {
-                        navigation.dispatch(
-                          CommonActions.reset({
-                            index: 0,
-                            routes: [{ name: "MainScreen" }],
-                          })
-                        );
-                      }, 1000);
+                      navigation.navigate('MainScreen')
+                     
                       // Limpiar el formulario
                       resetForm();
                       setButtonText(false);
@@ -226,10 +217,10 @@ const SignInForm = () => {
                     <View
                       style={[
                         styles[
-                          inputColor.email ||
-                            (touched.email && errors.email
-                              ? "inputError"
-                              : "input")
+                        inputColor.email ||
+                        (touched.email && errors.email
+                          ? "inputError"
+                          : "input")
                         ],
                         {
                           backgroundColor: darkMode.singInInputBgColor,
@@ -262,10 +253,10 @@ const SignInForm = () => {
                     <View
                       style={[
                         styles[
-                          inputColor.email ||
-                            (touched.email && errors.email
-                              ? "inputError"
-                              : "input")
+                        inputColor.email ||
+                        (touched.email && errors.email
+                          ? "inputError"
+                          : "input")
                         ],
                         {
                           backgroundColor: darkMode.singInInputBgColor,

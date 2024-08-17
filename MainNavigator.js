@@ -15,28 +15,33 @@ import AdviseMessage from './screens/AdviseMessage';
 import MessageScreen from './screens/MessageScreen';
 import ContactScreen from './screens/ContactScreen';
 import CommentsScreen from './screens/CommentScreen';
-
+import useAuthCheck from './api/checkSession';
 
 const Stack = createNativeStackNavigator();
 
 export default function MainNavigator() {
   const [isLoading, setIsLoading] = useState(true);
   const [fadeAnim] = useState(new Animated.Value(1));
-  const global_user = useSelector(state => state.user?.global_user);
+  const { checkSession } = useAuthCheck();
 
   useEffect(() => {
-    Animated.timing(
-      fadeAnim,
-      {
-        toValue: 0,
-        duration: 2000,
-        easing: Easing.linear,
-        useNativeDriver: true
-      }
-    ).start(() => {
-      setIsLoading(false);
-    });
-  }, []);
+    const initialize = async () => {
+      await checkSession(); 
+      Animated.timing(
+        fadeAnim,
+        {
+          toValue: 0,
+          duration: 2000,
+          easing: Easing.linear,
+          useNativeDriver: true
+        }
+      ).start(() => {
+        setIsLoading(false);
+      });
+    };
+
+    initialize();
+  }, [checkSession, fadeAnim]);
 
   if (isLoading) {
     return (
@@ -47,23 +52,18 @@ export default function MainNavigator() {
   }
 
   return (
-
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-    
-     
-      <Stack.Screen name="Home" component={AdviseMessage} options={{ headerShown: false }} />
-      <Stack.Screen name="Register" component={Register} options={{ headerShown: false }} />
-      <Stack.Screen name="Market" component={MarketScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="Blog" component={BlogScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="Driver" component={DriversScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="SignInForm" component={SignInForm} options={{ headerShown: false }} />
+      <Stack.Screen name="Home" component={AdviseMessage} />
+      <Stack.Screen name="Register" component={Register} />
+      <Stack.Screen name="Market" component={MarketScreen} />
+      <Stack.Screen name="Blog" component={BlogScreen} />
+      <Stack.Screen name="Driver" component={DriversScreen} />
+      <Stack.Screen name="SignInForm" component={SignInForm} />
       <Stack.Screen name="MainScreen" component={HomeAppScreen} />
-      <Stack.Screen name="ArticleScreen" component={ArticleScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="Contact" component={ContactScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="commentScreen" component={CommentsScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="MessageScreen" component={MessageScreen} options={{ headerShown: false }} />
-
+      <Stack.Screen name="ArticleScreen" component={ArticleScreen} />
+      <Stack.Screen name="Contact" component={ContactScreen} />
+      <Stack.Screen name="commentScreen" component={CommentsScreen} />
+      <Stack.Screen name="MessageScreen" component={MessageScreen} />
     </Stack.Navigator>
-
   );
 }

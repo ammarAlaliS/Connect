@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import axios from "axios";
+import api from "../api/api";
 import MessagerContainer from "../components/MessageComponets/MessagerContainer";
 import { useSelector } from "react-redux";
 import socket from "../socket";
@@ -34,7 +35,7 @@ const ContactScreen = ({ darkMode }) => {
       try {
         if (globalUserId) {
           setLoading(true);
-          const response = await axios.get(
+          const response = await api.get(
             `${API_BASE_URL}/api/ObbaraMarket/user/information/conversations/${globalUserId}?page=1&limit=20`,
             {
               headers: { Authorization: `Bearer ${token}` },
@@ -177,13 +178,12 @@ const ContactScreen = ({ darkMode }) => {
     setSearchTerm(text);
 
     if (text.trim() === "") {
-      // Handle empty search term case
       setMessageUserData({ conversations: [] });
       return;
     }
 
     try {
-      const response = await axios.get(
+      const response = await api.get(
         `${API_BASE_URL}/api/ObbaraMarket/user/information/conversations/search/${globalUserId}?query=${text}`,
         {
           headers: { Authorization: `Bearer ${token}` },
