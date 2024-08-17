@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { View, StatusBar } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Card from "../components/Card";
@@ -16,28 +16,25 @@ import useCustomFonts from "../fonts/useCustomFonts";
 const statusBarHeight = StatusBar.currentHeight || 0;
 
 const HomeAppScreen = () => {
-  const [activeScreen, setActiveScreen] = React.useState("Card");
-  const [animation, setAnimation] = React.useState("fadeIn");
+  const [activeScreen, setActiveScreen] = useState("Card");
+  const [animation, setAnimation] = useState("fadeIn");
   const darkMode = useSelector(selectTheme);
+  const { fontsLoaded } = useCustomFonts();
+  const { RequestLocationPermissions } = useLocation();
 
-  const { fontsLoaded } = useCustomFonts()
+  useEffect(() => {
+    RequestLocationPermissions();
+  }, [RequestLocationPermissions]);
 
-  if(!fontsLoaded){
-    return
+  if (!fontsLoaded) {
+    return null; // Asegúrate de que el componente no hace nada más si las fuentes no están cargadas
   }
 
   function handlePress(screen) {
     setAnimation("fadeOut");
     setActiveScreen(screen);
     setAnimation("fadeIn");
-
   }
-
-  const { RequestLocationPermissions } = useLocation();
-
-  useEffect(() => {
-    RequestLocationPermissions();
-  }, []);
 
   const renderContent = () => {
     switch (activeScreen) {
@@ -66,7 +63,7 @@ const HomeAppScreen = () => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={{ flex: 1 }}>
-        <HeaderC activeScreen={activeScreen} handlePress={handlePress}  darkMode={darkMode} />
+        <HeaderC activeScreen={activeScreen} handlePress={handlePress} darkMode={darkMode} />
         <View
           style={{
             backgroundColor: darkMode.backgroundDark || "#000",

@@ -6,6 +6,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
+  ImageBackground,
 } from "react-native";
 import useCustomFonts from "../fonts/useCustomFonts";
 import { FontAwesome } from "@expo/vector-icons";
@@ -31,6 +32,7 @@ export default function AdviseMessage() {
         "QuickCar te conecta con el mundo. Regístrate, inicia sesión y disfruta de un viaje sin complicaciones.",
       showNext: true,
       showPrev: false,
+      backgroundImage: require("../assets/imgs/verde2.png"), 
     },
     {
       title: "¿CÓMO EMPEZAR HA SER CONDUCTOR EN QUICKCAR?",
@@ -56,6 +58,7 @@ export default function AdviseMessage() {
       ],
       showNext: true,
       showPrev: true,
+      backgroundImage: require("../assets/imgs/lightAndBlueBg.jpg"), 
     },
     {
       title: "MARKETPLACE DE QUICKCAR",
@@ -81,6 +84,7 @@ export default function AdviseMessage() {
       ],
       showNext: true,
       showPrev: true,
+      backgroundImage: require("../assets/imgs/lightAndBlueBg.jpg"), 
     },
     {
       title: "BLOG DE QUICKCAR",
@@ -93,14 +97,16 @@ export default function AdviseMessage() {
       ],
       showNext: true,
       showPrev: true,
+      backgroundImage: require("../assets/imgs/lightAndBlueBg.jpg"), 
     },
     {
-      title: "¡BIENVENIDO A QUICKCAR!",
+      title: "¡BIENVENIDO!",
       message:
         "Inicia sesión como invitado para explorar nuestra interfaz y ver nuestras tiendas y blogs. Para interactuar plenamente, te recomendamos registrarte o iniciar sesión.",
       showNext: false,
       showPrev: true,
       showFinish: true,
+      backgroundImage: require("../assets/imgs/lightAndBlueBg.jpg"), 
     },
   ];
 
@@ -129,112 +135,127 @@ export default function AdviseMessage() {
   };
 
   return (
-    <SafeAreaView
-      style={[styles.container, { backgroundColor: darkMode.PreBgColor}]}
-    >
+    <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollView}>
-        <View style={styles.content}>
-          <View style={styles.topRightContainer}>
-            <TouchableOpacity onPress={toggleDarkModeHandler}>
-              <FontAwesome
-                name={darkMode.darkMode ? "sun-o" : "moon-o"}
-                size={32}
-                color={darkMode.darkMode ? colors.dark.icon : darkMode.icon}
-              />
-            </TouchableOpacity>
-          </View>
-          <Text style={[styles.title, { color: darkMode.text }]}>
-            {screens[currentScreen].title}
-          </Text>
-          {currentScreen === 1 || currentScreen === 2 ? (
-            screens[currentScreen].steps.map((step, index) => (
-              <View key={index} style={styles.stepContainer}>
+        <ImageBackground
+          source={screens[currentScreen].backgroundImage}
+          style={styles.backgroundImage}
+          imageStyle={styles.backgroundImageStyle}
+        >
+          <View style={styles.content}>
+            <View style={styles.topRightContainer}>
+              <TouchableOpacity
+                onPress={toggleDarkModeHandler}
+                style={{ paddingVertical: 40 }}
+              >
                 <FontAwesome
-                  name={step.icon}
-                  size={30}
-                  color={darkMode.icon}
-                  style={styles.icon}
+                  name={darkMode.darkMode ? "sun-o" : "moon-o"}
+                  size={32}
+                  color={darkMode.darkMode ? colors.dark.icon : darkMode.icon}
                 />
-                <View style={styles.stepTextContainer}>
-                  <Text style={[styles.stepTitle, { color: darkMode.text }]}>
-                    {step.title}
-                  </Text>
-                  <Text
-                    style={[styles.stepDescription, { color: darkMode.text }]}
-                  >
-                    {step.description}
-                  </Text>
-                </View>
-              </View>
-            ))
-          ) : (
-            <View style={styles.messageContainer}>
-              <Text style={[styles.message, { color: darkMode.text }]}>
-                {screens[currentScreen].message}
-              </Text>
-              {screens[currentScreen].icons && (
-                <View style={styles.iconContainer}>
-                  {screens[currentScreen].icons.map((icon, index) => (
-                    <TouchableOpacity key={index} style={styles.iconButton}>
-                      <FontAwesome
-                        name={icon.name}
-                        size={30}
-                        color={darkMode.icon}
-                        style={styles.icon}
-                      />
-                      <Text
-                        style={[styles.iconLabel, { color: darkMode.text }]}
-                      >
-                        {icon.label}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              )}
+              </TouchableOpacity>
             </View>
-          )}
-          <View style={styles.buttonContainer} className=" space-x-4">
-            {screens[currentScreen].showPrev && (
-              <TouchableOpacity
-                style={[styles.button, styles.prevButton]}
-                onPress={handlePrevious}
-              >
-                <FontAwesome name="chevron-left" size={20} color="white" />
-                <Text style={styles.buttonText}>Anterior</Text>
-              </TouchableOpacity>
+            <Text style={[styles.title, { color: darkMode.text }]}>
+              {screens[currentScreen].title}
+            </Text>
+            {currentScreen === 1 || currentScreen === 2 ? (
+              screens[currentScreen].steps.map((step, index) => (
+                <View key={index} style={styles.stepContainer}>
+                  <FontAwesome
+                    name={step.icon}
+                    size={30}
+                    color={darkMode.icon}
+                    style={styles.icon}
+                  />
+                  <View style={styles.stepTextContainer}>
+                    <Text style={[styles.stepTitle, { color: darkMode.text }]}>
+                      {step.title}
+                    </Text>
+                    <Text
+                      style={[styles.stepDescription, { color: darkMode.text }]}
+                    >
+                      {step.description}
+                    </Text>
+                  </View>
+                </View>
+              ))
+            ) : (
+              <View style={styles.messageContainer}>
+                <Text style={[styles.message, { color: darkMode.text }]}>
+                  {screens[currentScreen].message}
+                </Text>
+                {screens[currentScreen].icons && (
+                  <View style={styles.iconContainer}>
+                    {screens[currentScreen].icons.map((icon, index) => (
+                      <TouchableOpacity key={index} style={styles.iconButton}>
+                        <FontAwesome
+                          name={icon.name}
+                          size={30}
+                          color={darkMode.icon}
+                          style={styles.icon}
+                        />
+                        <Text
+                          style={[styles.iconLabel, { color: darkMode.text }]}
+                        >
+                          {icon.label}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                )}
+              </View>
             )}
-            {screens[currentScreen].showNext && (
-              <TouchableOpacity
-                style={[styles.button, styles.nextButton]}
-                onPress={handleNext}
-              >
-                <Text style={styles.buttonText}>Siguiente</Text>
-                <FontAwesome name="chevron-right" size={20} color="white" />
-              </TouchableOpacity>
-            )}
-            {screens[currentScreen].showFinish && (
-              <TouchableOpacity
-                style={[styles.button, styles.finishButton]}
-                onPress={handleFinish}
-              >
-                <Text style={styles.buttonText}>Finalizar</Text>
-                <FontAwesome name="chevron-right" size={20} color="white" />
-              </TouchableOpacity>
-            )}
+            <View style={{
+              justifyContent: "center",
+              width: "100%",
+              marginVertical: 20,
+              position:'absolute',
+              bottom:50
+            }}>
+              <View style={styles.buttonContainer} className=" space-x-16">
+                {screens[currentScreen].showPrev && (
+                  <TouchableOpacity
+                    style={[styles.button, styles.prevButton]}
+                    onPress={handlePrevious}
+                  >
+                    <FontAwesome name="chevron-left" size={20} color="white" />
+                    <Text style={styles.buttonText}>Anterior</Text>
+                  </TouchableOpacity>
+                )}
+                {screens[currentScreen].showNext && (
+                  <TouchableOpacity
+                    style={[styles.button, styles.nextButton]}
+                    onPress={handleNext}
+                  >
+                    <Text style={styles.buttonText}>Siguiente</Text>
+                    <FontAwesome name="chevron-right" size={20} color="white" />
+                  </TouchableOpacity>
+                )}
+                {screens[currentScreen].showFinish && (
+                  <TouchableOpacity
+                    style={[styles.button, styles.finishButton]}
+                    onPress={handleFinish}
+                  >
+                    <Text style={styles.buttonText}>Finalizar</Text>
+                    <FontAwesome name="chevron-right" size={20} color="white" />
+                  </TouchableOpacity>
+                )}
+              </View>
+              <View style={styles.dotsContainer}>
+                {screens.map((_, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    style={[
+                      styles.dot,
+                      currentScreen === index && styles.activeDot,
+                    ]}
+                    onPress={() => handleDotPress(index)}
+                  />
+                ))}
+              </View>
+            </View>
           </View>
-          <View style={styles.dotsContainer}>
-            {screens.map((_, index) => (
-              <TouchableOpacity
-                key={index}
-                style={[
-                  styles.dot,
-                  currentScreen === index && styles.activeDot,
-                ]}
-                onPress={() => handleDotPress(index)}
-              />
-            ))}
-          </View>
-        </View>
+        </ImageBackground>
       </ScrollView>
     </SafeAreaView>
   );
@@ -243,11 +264,17 @@ export default function AdviseMessage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingVertical: 40,
   },
   scrollView: {
     flexGrow: 1,
     justifyContent: "center",
+  },
+  backgroundImage: {
+    flex: 1,
+    justifyContent: "center",
+  },
+  backgroundImageStyle: {
+    opacity: 0.5, 
   },
   content: {
     flex: 1,
@@ -259,46 +286,20 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 20,
     right: 20,
-    zIndex: 10,
   },
   title: {
-    fontSize: 32,
+    fontSize: 35,
     fontWeight: "bold",
     textAlign: "center",
     marginBottom: 20,
-  },
-  messageContainer: {
-    paddingHorizontal: 20,
-    alignItems: "center",
-    marginBottom: 20,
-  },
-  message: {
-    fontSize: 18,
-    textAlign: "center",
-  },
-  iconContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 20,
-  },
-  iconButton: {
-    alignItems: "center",
-    marginHorizontal: 20,
-  },
-  icon: {
-    marginRight: 10,
-    marginVertical: 10,
-  },
-  iconLabel: {
-    fontSize: 12,
-    textAlign: "center",
   },
   stepContainer: {
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 20,
-    paddingHorizontal: 20,
+  },
+  icon: {
+    marginRight: 10,
   },
   stepTextContainer: {
     flex: 1,
@@ -309,14 +310,35 @@ const styles = StyleSheet.create({
   },
   stepDescription: {
     fontSize: 16,
+    marginTop: 5,
+    fontWeight: "bold",
+  },
+  messageContainer: {
+    alignItems: "center",
+  },
+  message: {
+    fontSize: 20,
+    textAlign: "center",
+    marginBottom: 20,
+    fontWeight: "bold",
+  },
+  iconContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginVertical: 20,
+  },
+  iconButton: {
+    alignItems: "center",
+  },
+  iconLabel: {
+    fontSize: 14,
+    marginTop: 5,
   },
   buttonContainer: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginTop: 20,
-    marginBottom: 10,
-    paddingHorizontal: 20,
+    justifyContent: "center",
+    width: "100%",
+    marginVertical: 20,
   },
   button: {
     flexDirection: "row",
@@ -326,34 +348,32 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   prevButton: {
-    backgroundColor: "#666",
+    backgroundColor: "#007bff",
   },
   nextButton: {
-    backgroundColor: "#1E90FF",
+    backgroundColor: "#28a745",
   },
   finishButton: {
-    backgroundColor: "#1E90FF",
+    backgroundColor: "#dc3545",
   },
   buttonText: {
-    color: "white",
+    color: "#fff",
     fontSize: 16,
-    marginLeft: 10,
-    marginRight: 10,
+    marginHorizontal: 5,
   },
   dotsContainer: {
     flexDirection: "row",
     justifyContent: "center",
-    alignItems: "center",
-    marginTop: 10,
+    marginTop: 20,
   },
   dot: {
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: "#ccc",
+    backgroundColor: "#ddd",
     marginHorizontal: 5,
   },
   activeDot: {
-    backgroundColor: "#1E90FF",
+    backgroundColor: "#333",
   },
 });

@@ -27,7 +27,7 @@ api.interceptors.response.use(
         return api(originalRequest);
       } catch (refreshError) {
         console.error('Error al renovar el token', refreshError);
-        navigate('SignInForm'); // Redirige al usuario a la pantalla de inicio de sesión
+        navigate('SignInForm'); 
       }
     }
 
