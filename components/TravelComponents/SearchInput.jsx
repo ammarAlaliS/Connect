@@ -29,8 +29,9 @@ import {
 } from "../../globalState/travelSlice";
 import ClockIcon from "../../icons/ClockIcon";
 import PlusIcon from "../../icons/PlusIcon";
+import { useNavigation } from "@react-navigation/native";
 
-const SearchInput = ({ setShowQuickCarDetails }) => {
+const SearchInput = () => {
   const dispatch = useDispatch();
 
   const GOOGLE_PLACES_API_KEY = "AIzaSyAAwUd5bO7daxQUktwliIcG4YA8M5mWhrY";
@@ -156,6 +157,22 @@ const SearchInput = ({ setShowQuickCarDetails }) => {
     dispatch(setStartTime({ hour: hours, minutes: minutes }));
   };
 
+  useEffect(() => {
+    if (startTime) {
+      const hours = startTime.hour;
+      const minutes = startTime.minutes;
+      const formattedTime = `${hours}:${minutes < 10 ? "0" : ""}${minutes}`;
+      setDateTimeSelectedString(formattedTime);
+      console.log("El pinche origen es: ");
+      console.log(tripOriginName);
+
+      refInputAutoComplete.current.setAddressText(tripOriginName);
+      refInputAutoCompleteDestination.current.setAddressText(
+        tripDestinationName
+      );
+    }
+  }, [startTime]);
+
   const tripOriginLocation = useSelector((state) => state.travel.tripOrigin);
   const tripDestinationLocation = useSelector(
     (state) => state.travel.tripDestination
@@ -230,9 +247,18 @@ const SearchInput = ({ setShowQuickCarDetails }) => {
 
       console.log(data);
 
+      let thereIsData = false;
+
       if (data && data.conductores && data.conductores[0]) {
         dispatch(setQuickarData(data.conductores));
-        setShowQuickCarDetails(true);
+        thereIsData = true;
+        navigation.navigate("QuickCarDetailsScreen", {
+          thereIsData,
+        });
+      } else {
+        navigation.navigate("QuickCarDetailsScreen", {
+          thereIsData,
+        });
       }
     } catch (error) {
       console.log("Ocurrio un error");
@@ -311,6 +337,8 @@ const SearchInput = ({ setShowQuickCarDetails }) => {
       // );
     }
   }, [placesSelected, tripDestinationName, tripOriginName]);
+
+  const navigation = useNavigation();
 
   return (
     <>

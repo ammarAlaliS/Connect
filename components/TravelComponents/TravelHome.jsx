@@ -11,7 +11,7 @@ import userLocationImage from "../../assets/userLocationIcon.png";
 import destinationLocationImage from "../../assets/destinationLocationIcon.png";
 import originLocationImage from "../../assets/originLocationIcon.png";
 import QuickCarDetailsButtom from "./QuickCarDetailsButtom";
-import QuickCarsSearchesDetails from "./QuickCarsSearchesDetails";
+// import QuickCarsSearchesDetails from "./QuickCarsSearchesDetails";
 import SearchNearQuickCarButton from "./SearchNearQuickCarButton";
 import { io } from "socket.io-client";
 import {
