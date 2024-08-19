@@ -157,7 +157,7 @@ const TravelHome = () => {
   // }, []);
 
   return (
-    <View>
+    <View >
       {/* <SearchInput></SearchInput> */}
       {/* {showQuickCarDetails && (
         <QuickCarsSearchesDetails

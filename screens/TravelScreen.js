@@ -9,7 +9,7 @@ const TravelScreen = () => {
   const darkMode = useSelector(selectTheme);
 
   return (
-    <View>
+    <View className=" ">
       <TravelHome />
     </View>
   );

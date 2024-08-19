@@ -4,6 +4,7 @@ import { CommonActions } from "@react-navigation/native";
 
 const initialState = {
   global_user: null,
+  
   driver_information: null,
   quickcar_info: {
     CurrentQuickCarLocation: { latitude: 40.473687, longitude: -3.709342 },
@@ -52,6 +53,5 @@ export const userSlice = createSlice({
     },
   },
 });
-
 export const { setUser, clearUser, setQuickCarInfo } = userSlice.actions;
 export default userSlice.reducer;

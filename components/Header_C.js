@@ -54,25 +54,14 @@ const HeaderC = ({ activeScreen, handlePress }) => {
         dispatch(clearUser());
         dispatch(clearBlogs());
 
-        navigation.dispatch(
-          CommonActions.reset({
-            index: 0,
-            routes: [{ name: "SignInForm" }],
-          })
-        );
-        console.log("Cierre de sesión completado y navegación reseteada");
+        navigation.navigate('SignInForm')
       } else {
         console.error("Token inválido al intentar cerrar sesión:", tokenAsyc);
       }
     } catch (error) {
       console.error("Error al cerrar sesión:", error);
 
-      navigation.dispatch(
-        CommonActions.reset({
-          index: 0,
-          routes: [{ name: "SignInForm" }],
-        })
-      );
+      navigation.navigate('SignInForm')
     }
   };
   

@@ -11,15 +11,14 @@ import {
 import Back from "../../icons/Back";
 import MenuPoints from "../../icons/MenuPoints";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import RenderDateHeader from "../../components/MessageComponets/RenderDateHeader"; 
+import RenderDateHeader from "../../components/MessageComponets/RenderDateHeader";
 export default function MessageHeader({
   darkMode,
   userImageUrl,
   userFirstName,
   userLastName,
   IsAtTop,
-  totalMessage
-  
+  totalMessage,
 }) {
   return (
     <View
@@ -27,11 +26,10 @@ export default function MessageHeader({
         backgroundColor: darkMode.background,
         // borderBottomWidth: 1,
         // borderColor: !IsAtTop ? 'transparent' : darkMode.borderBox,
-       paddingBottom:0,
-       paddingHorizontal:10,
-       paddingTop:10
+        paddingBottom: 0,
+        paddingHorizontal: 10,
+        paddingTop: 10,
       }}
-      
     >
       <View className=" flex-row space-x-2 items-center">
         <View>
@@ -69,7 +67,7 @@ export default function MessageHeader({
               </View>
             )}
           </View>
-          <View>
+          <View style={{marginTop:10}}>
             <Text
               className=""
               style={{
@@ -81,15 +79,16 @@ export default function MessageHeader({
             >
               {userFirstName} {userLastName}
             </Text>
+            <Text style={{ fontSize:13, fontWeight:'bold', color: '#016b0f'}}>
+                Activo
+            </Text>
           </View>
         </View>
         <View>
           <MenuPoints size={30} color={darkMode.text} />
         </View>
       </View>
-      <View>
-      {RenderDateHeader({ darkMode, totalMessage })}
-      </View>
+      <View>{RenderDateHeader({ darkMode, totalMessage })}</View>
     </View>
   );
 }

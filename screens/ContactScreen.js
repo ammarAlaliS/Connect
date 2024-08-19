@@ -4,7 +4,7 @@ import {
   View,
   Text,
   TouchableOpacity,
-  ScrollView,
+  FlatList,
   TextInput,
   ActivityIndicator,
   Image,
@@ -12,9 +12,10 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import axios from "axios";
+import api from "../api/api";
 import MessagerContainer from "../components/MessageComponets/MessagerContainer";
 import { useSelector } from "react-redux";
-import socket from "../socket"; 
+import socket from "../socket";
 
 const statusBarHeight = StatusBar.currentHeight || 0;
 const ContactScreen = ({ darkMode }) => {
@@ -34,7 +35,7 @@ const ContactScreen = ({ darkMode }) => {
       try {
         if (globalUserId) {
           setLoading(true);
-          const response = await axios.get(
+          const response = await api.get(
             `${API_BASE_URL}/api/ObbaraMarket/user/information/conversations/${globalUserId}?page=1&limit=20`,
             {
               headers: { Authorization: `Bearer ${token}` },
@@ -126,6 +127,10 @@ const ContactScreen = ({ darkMode }) => {
   }, [globalUserId]);
 
   const getUniqueConversations = (conversations) => {
+    if (!Array.isArray(conversations)) {
+      return [];
+    }
+
     const uniqueConversations = {};
 
     conversations.forEach((conversation) => {
@@ -135,12 +140,12 @@ const ContactScreen = ({ darkMode }) => {
       if (!uniqueConversations[otherUser._id]) {
         uniqueConversations[otherUser._id] = {
           user: otherUser.global_user,
-          userId: otherUser._id, // ID del usuario
+          userId: otherUser._id,
           messages: [
             {
               ...conversation.lastMessage,
               senderId: conversation.sender._id,
-              receiverId: conversation.receiver._id, // ID del receptor
+              receiverId: conversation.receiver._id,
             },
           ],
         };
@@ -148,7 +153,7 @@ const ContactScreen = ({ darkMode }) => {
         uniqueConversations[otherUser._id].messages.push({
           ...conversation.lastMessage,
           senderId: conversation.sender._id,
-          receiverId: conversation.receiver._id, // ID del receptor
+          receiverId: conversation.receiver._id,
         });
       }
     });
@@ -169,18 +174,42 @@ const ContactScreen = ({ darkMode }) => {
     messageUserDataResult.conversations || []
   );
 
-  const handleSearch = (text) => {
+  const handleSearch = async (text) => {
     setSearchTerm(text);
+
+    if (text.trim() === "") {
+      setMessageUserData({ conversations: [] });
+      return;
+    }
+
+    try {
+      const response = await api.get(
+        `${API_BASE_URL}/api/ObbaraMarket/user/information/conversations/search/${globalUserId}?query=${text}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (response.data && Array.isArray(response.data.conversations)) {
+        setMessageUserData(response.data);
+      } else {
+        setMessageUserData({ conversations: [] });
+      }
+    } catch (error) {
+      setError(
+        error.response?.data || { message: "Error al realizar la solicitud" }
+      );
+    }
   };
 
   return (
     <View style={{ flex: 1 }}>
       {loading ? (
         <View
-          className=" items-center justify-center flex-1"
+          className="items-center justify-center flex-1"
           style={{ backgroundColor: darkMode.background }}
         >
-          <View  style={{ marginBottom: 120 + statusBarHeight}}>
+          <View style={{ marginBottom: 120 + statusBarHeight }}>
             <Image
               source={{
                 uri: "https://storage.googleapis.com/quickcar-storage/quickcar-removebg-preview%20(1).png",
@@ -195,12 +224,7 @@ const ContactScreen = ({ darkMode }) => {
           </View>
         </View>
       ) : (
-        <ScrollView
-          style={{ flex: 1 }}
-          showsVerticalScrollIndicator={false}
-          scrollEventThrottle={16}
-          stickyHeaderIndices={[0]}
-        >
+        <View style={{ flex: 1, backgroundColor: darkMode.background }}>
           <View
             style={[
               styles.header,
@@ -243,40 +267,41 @@ const ContactScreen = ({ darkMode }) => {
               </View>
             </View>
           </View>
-          <View style={{ backgroundColor: darkMode.background, flex: 1 }}>
-            {error ? (
-              <Text style={{ color: darkMode.text }}>
-                {typeof error === "string" ? error : "Error desconocido"}
-              </Text>
-            ) : (
-              <View>
-                {uniqueConversations.map((conversation, index) => {
-                  const { user, messages, userId } = conversation;
-                  const lastMessage = messages[0];
+          {error ? (
+            <Text style={{ color: darkMode.text }}>
+              {typeof error === "string" ? error : "Error desconocido"}
+            </Text>
+          ) : (
+            <FlatList
+              data={uniqueConversations}
+              keyExtractor={(item) => item.userId}
+              renderItem={({ item }) => {
+                const { user, messages, userId } = item;
+                const lastMessage = messages[0];
 
-                  if (!lastMessage || !user) {
-                    return null;
-                  }
+                if (!lastMessage || !user) {
+                  return null;
+                }
 
-                  return (
-                    <MessagerContainer
-                      key={index}
-                      userId={userId}
-                      userImageUrl={user.profile_img_url}
-                      userFirstName={user.first_name}
-                      userLastName={user.last_name}
-                      messageContent={lastMessage.content}
-                      totalMessage={messages.length}
-                      messageState={lastMessage.read ? "Leído" : "No leído"}
-                      date={lastMessage.timestamp}
-                      darkMode={darkMode}
-                    />
-                  );
-                })}
-              </View>
-            )}
-          </View>
-        </ScrollView>
+                return (
+                  <MessagerContainer
+                    userId={userId}
+                    userImageUrl={user.profile_img_url}
+                    userFirstName={user.first_name}
+                    userLastName={user.last_name}
+                    messageContent={lastMessage.content}
+                    totalMessage={messages.length}
+                    messageState={lastMessage.read ? "Leído" : "No leído"}
+                    date={lastMessage.timestamp}
+                    darkMode={darkMode}
+                  />
+                );
+              }}
+              showsVerticalScrollIndicator={false}
+              ListEmptyComponent={<Text>No hay conversaciones</Text>}
+            />
+          )}
+        </View>
       )}
     </View>
   );
@@ -284,33 +309,32 @@ const ContactScreen = ({ darkMode }) => {
 
 const styles = StyleSheet.create({
   header: {
-    paddingBottom: 10,
-    paddingTop: 10,
-    paddingHorizontal: 10,
+    width: "100%",
+    height: 60,
     borderBottomWidth: 1,
+    paddingHorizontal: 15,
+    justifyContent: "center",
   },
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
-    overflow: "hidden",
   },
   searchBar: {
     flex: 1,
+    borderRadius: 20,
     flexDirection: "row",
     alignItems: "center",
-    borderWidth: 1,
-    borderRadius: 999,
+    paddingHorizontal: 10,
   },
   searchInput: {
     flex: 1,
-    paddingLeft: 12,
-    paddingRight: 12,
+    fontSize: 16,
+    padding: 10,
   },
   searchButton: {
-    padding: 11,
-    borderLeftWidth: 1,
-    borderTopRightRadius: 20,
-    borderBottomRightRadius: 20,
+    padding: 10,
+    borderRadius: 20,
+    marginLeft: 10,
   },
 });
 
