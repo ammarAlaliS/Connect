@@ -8,7 +8,7 @@ import { setIsInputActive, setUserType } from "../globalState/travelSlice";
 import FormCreateNewQuickCar from "./TravelComponents/DriverComponents/FormCreateNewQuickCar";
 import { setQuickCarInfo } from "../globalState/userSlice";
 import SearchInput from "./TravelComponents/SearchInput";
-import QuickCarsSearchesDetails from "./TravelComponents/QuickCarsSearchesDetails";
+// import QuickCarsSearchesDetails from "./TravelComponents/QuickCarsSearchesDetails";
 import { Image } from "react-native";
 import quickcarSearchBackground from "../assets/quickcarSearchBackground.png";
 
@@ -18,7 +18,6 @@ const Card = ({ darkMode, handlePress, activeScreen }) => {
   const { fontsLoaded, onLayoutRootView } = useCustomFonts();
   const [showNewQuickCarModal, setShowNewQuickCarModal] = useState(false);
   const [showQuickCarSearcher, setShowQuickCarSearcher] = useState(false);
-  const [showQuickCarDetails, setShowQuickCarDetails] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -54,7 +53,7 @@ const Card = ({ darkMode, handlePress, activeScreen }) => {
 
   return (
     <View
-      className={(!showQuickCarDetails ? " " : "") + " space-y-1 bg-red-500"}
+      className=" space-y-1 bg-red-500"
       style={{
         width: "100%",
         backgroundColor: darkMode.background,
@@ -257,16 +256,7 @@ const Card = ({ darkMode, handlePress, activeScreen }) => {
           Que pedo guey
         </FormCreateNewQuickCar>
       </Modal>
-      {showQuickCarSearcher && !showQuickCarDetails && (
-        <SearchInput
-          setShowQuickCarDetails={setShowQuickCarDetails}
-        ></SearchInput>
-      )}
-      {showQuickCarDetails && (
-        <QuickCarsSearchesDetails
-          setShowQuickCarDetails={setShowQuickCarDetails}
-        ></QuickCarsSearchesDetails>
-      )}
+      {showQuickCarSearcher && <SearchInput></SearchInput>}
       {showQuickCarSearcher && (
         <View
           style={{
