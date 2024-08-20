@@ -8,6 +8,7 @@ import stylesMap from "./MapViewStyles";
 import { selectTheme } from "../../globalState/themeSlice";
 import { Marker } from "react-native-svg";
 import MapView from "react-native-maps";
+import MapQuickCarDetails from "./DriverComponents/MapQuickCarDetails";
 
 const IndividualQuickCarDetails = ({
   setShowQuickCarProfile,
@@ -16,8 +17,6 @@ const IndividualQuickCarDetails = ({
   const seatRequested = useSelector((state) => state.travel.seatRequested);
   const [showReviews, setShowReviews] = useState(false);
   const [showMapView, setShowMapView] = useState(false);
-  const darkMode = useSelector(selectTheme);
-  const mapRef = useRef(null);
   return (
     <View
       style={{
@@ -599,8 +598,9 @@ const IndividualQuickCarDetails = ({
         </ScrollView>
       )}
       {showMapView && (
-        <View style={{ flex: 1, backgroundColor: "red" }}>
-          <MapView
+        <MapQuickCarDetails quickCarInfo={quickCarInfo}></MapQuickCarDetails>
+      )}
+      {/* <MapView
             customMapStyle={
               darkMode.text != "#fff"
                 ? stylesMap.mapStyleLight
@@ -618,9 +618,9 @@ const IndividualQuickCarDetails = ({
               longitudeDelta: 0.221,
             }}
             ref={mapRef}
-          >
-            {/* {marker && <Marker coordinate={marker} />} */}
-            {/* {!inputIsActive &&
+          > */}
+      {/* {marker && <Marker coordinate={marker} />} */}
+      {/* {!inputIsActive &&
           quickCarsData &&
           quickCarsData.length > 0 &&
           quickCarsData.map((item, index) => {
@@ -634,7 +634,7 @@ const IndividualQuickCarDetails = ({
               </Marker>
             );
           })} */}
-            {/* {!(tripOrigin.latitude == 0 && tripOrigin.longitude == 0) &&
+      {/* {!(tripOrigin.latitude == 0 && tripOrigin.longitude == 0) &&
           !(
             tripDestination.latitude == 0 && tripDestination.longitude == 0
           ) && (
@@ -653,7 +653,7 @@ const IndividualQuickCarDetails = ({
               strokeWidth={6} // Ancho de la línea
             />
           )} */}
-            {/* {(placesSelected || (!placesSelected && inputIsActive)) &&
+      {/* {(placesSelected || (!placesSelected && inputIsActive)) &&
           !(tripOrigin.latitude == 0 && tripOrigin.longitude == 0) && (
             <Marker
               coordinate={{
@@ -668,7 +668,7 @@ const IndividualQuickCarDetails = ({
               ></Image>
             </Marker>
           )} */}
-            {/* {(placesSelected || (!placesSelected && inputIsActive)) &&
+      {/* {(placesSelected || (!placesSelected && inputIsActive)) &&
           !(
             tripDestination.latitude == 0 && tripDestination.longitude == 0
           ) && (
@@ -685,7 +685,7 @@ const IndividualQuickCarDetails = ({
               ></Image>
             </Marker>
           )} */}
-            {/* {!(userLocation.latitude == 0 && userLocation.longitude == 0) && (
+      {/* {!(userLocation.latitude == 0 && userLocation.longitude == 0) && (
           <Marker
             coordinate={{
               latitude: userLocation.latitude,
@@ -699,9 +699,6 @@ const IndividualQuickCarDetails = ({
             ></Image>
           </Marker>
         )} */}
-          </MapView>
-        </View>
-      )}
 
       {/*Cuarta linea divisoria  */}
       <View

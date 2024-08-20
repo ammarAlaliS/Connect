@@ -62,44 +62,19 @@ const SearchInput = () => {
   const inputIsActive = useSelector((state) => state.travel.inputIsActive);
 
   const handleLocationSelectDestination = (data, details) => {
-    if (!placesSelected) {
-      dispatch(setIsInputActive(true));
-      const { lat, lng } = details.geometry.location;
+    dispatch(setIsInputActive(true));
+    const { lat, lng } = details.geometry.location;
 
-      dispatch(setTripDestination({ latitude: lat, longitude: lng }));
-      dispatch(setTripDestinationName(data.description));
-    }
-    // setMapRegion({
-    //   latitude: lat,
-    //   longitude: lng,
-    //   latitudeDelta: 0.0922,
-    //   longitudeDelta: 0.0421,
-    // });
-    // setMarker({
-    //   latitude: lat,
-    //   longitude: lng,
-    // });
+    dispatch(setTripDestination({ latitude: lat, longitude: lng }));
+    dispatch(setTripDestinationName(data.description));
   };
 
   const handleLocationSelect = (data, details) => {
-    if (!placesSelected) {
-      dispatch(setIsInputActive(true));
-      const { lat, lng } = details.geometry.location;
+    dispatch(setIsInputActive(true));
+    const { lat, lng } = details.geometry.location;
 
-      dispatch(setTripOrigin({ latitude: lat, longitude: lng }));
-      dispatch(setTripOriginName(data.description));
-    }
-
-    // setMapRegion({
-    //   latitude: lat,
-    //   longitude: lng,
-    //   latitudeDelta: 0.0922,
-    //   longitudeDelta: 0.0421,
-    // });
-    // setMarker({
-    //   latitude: lat,
-    //   longitude: lng,
-    // });
+    dispatch(setTripOrigin({ latitude: lat, longitude: lng }));
+    dispatch(setTripOriginName(data.description));
   };
 
   useEffect(() => {
@@ -244,8 +219,6 @@ const SearchInput = () => {
           "&numberOfSeatRequested=" +
           seatRequested
       ).then((res) => res.json());
-
-      console.log(data);
 
       let thereIsData = false;
 
