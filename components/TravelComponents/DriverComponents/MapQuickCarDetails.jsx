@@ -1,12 +1,13 @@
-import MapView from "react-native-maps";
+import MapView, { Marker, Polyline } from "react-native-maps";
 import { useSelector } from "react-redux";
 import stylesMap from "../MapViewStyles";
 import { useEffect, useRef } from "react";
 import { selectTheme } from "../../../globalState/themeSlice";
-import { Marker } from "react-native-svg";
 import { Image } from "react-native";
 import originLocationImage from "../../../assets/originLocationIcon.png";
 import destinationLocationImage from "../../../assets/destinationLocationIcon.png";
+import userLocationImage from "../../../assets/userLocationIcon.png";
+import car from "../../../assets/car.png";
 
 const MapQuickCarDetails = ({ quickCarInfo }) => {
   const darkMode = useSelector(selectTheme);
@@ -15,7 +16,6 @@ const MapQuickCarDetails = ({ quickCarInfo }) => {
   const tripDestinationLocation = useSelector(
     (state) => state.travel.tripDestination
   );
-  useEffect(() => {}, []);
   return (
     <MapView
       customMapStyle={
@@ -33,14 +33,14 @@ const MapQuickCarDetails = ({ quickCarInfo }) => {
       }}
       ref={mapRef}
     >
-      {/* <Marker
+      <Marker
         coordinate={{
           latitude: tripOriginLocation.latitude,
           longitude: tripOriginLocation.longitude,
         }}
       >
         <Image
-          source={originLocationImage}
+          source={userLocationImage}
           style={{ height: 60, width: 20 }}
           resizeMode="contain"
         ></Image>
@@ -57,7 +57,85 @@ const MapQuickCarDetails = ({ quickCarInfo }) => {
           style={{ height: 60, width: 20 }}
           resizeMode="contain"
         ></Image>
-      </Marker> */}
+      </Marker>
+
+      <Marker
+        coordinate={{
+          latitude: quickCarInfo.CurrentQuickCarLocation.latitude,
+          longitude: quickCarInfo.CurrentQuickCarLocation.longitude,
+        }}
+      >
+        <Image
+          source={car}
+          style={{ height: 60, width: 20 }}
+          resizeMode="contain"
+        ></Image>
+      </Marker>
+
+      {!(
+        tripDestinationLocation.latitude == 0 &&
+        tripDestinationLocation.longitude == 0
+      ) &&
+        !(
+          tripOriginLocation.latitude == 0 && tripOriginLocation.longitude == 0
+        ) && (
+          <Polyline
+            coordinates={[
+              {
+                latitude: tripOriginLocation.latitude,
+                longitude: tripOriginLocation.longitude,
+              },
+              {
+                latitude: tripDestinationLocation.latitude,
+                longitude: tripDestinationLocation.longitude,
+              },
+            ]}
+            strokeColor="#2b00b6" // Color de la línea
+            strokeWidth={6} // Ancho de la línea
+            lineDashPattern={[2, 5]}
+          />
+        )}
+
+      <Marker
+        coordinate={{
+          latitude: quickCarInfo.starLocation.latitude,
+          longitude: quickCarInfo.starLocation.longitude,
+        }}
+      >
+        <Image
+          source={originLocationImage}
+          style={{ height: 60, width: 20 }}
+          resizeMode="contain"
+        ></Image>
+      </Marker>
+
+      <Marker
+        coordinate={{
+          latitude: quickCarInfo.endLocation.latitude,
+          longitude: quickCarInfo.endLocation.longitude,
+        }}
+      >
+        <Image
+          source={destinationLocationImage}
+          style={{ height: 60, width: 20 }}
+          resizeMode="contain"
+        ></Image>
+      </Marker>
+
+      <Polyline
+        coordinates={[
+          {
+            latitude: quickCarInfo.starLocation.latitude,
+            longitude: quickCarInfo.starLocation.longitude,
+          },
+          {
+            latitude: quickCarInfo.endLocation.latitude,
+            longitude: quickCarInfo.endLocation.longitude,
+          },
+        ]}
+        strokeColor="#2b00b6" // Color de la línea
+        strokeWidth={6} // Ancho de la línea
+      />
     </MapView>
   );
 };
