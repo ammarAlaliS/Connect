@@ -472,6 +472,9 @@ const QuickCarsSearchesDetails = ({ route }) => {
                           justifyContent: "center",
                           borderRadius: 7,
                         }}
+                        onPressOut={() => {
+                          Alert.alert("Proponiendo viaje");
+                        }}
                       >
                         <Text
                           style={{
@@ -482,9 +485,7 @@ const QuickCarsSearchesDetails = ({ route }) => {
                             marginHorizontal: 10,
                           }}
                         >
-                          {seatRequested == 0
-                            ? "Proponer Viaje"
-                            : "Suscribirse al viaje"}
+                          Proponer Viaje
                         </Text>
                       </TouchableOpacity>
                     </View>
