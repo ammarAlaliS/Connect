@@ -53,15 +53,20 @@ const HeaderC = ({ activeScreen, handlePress }) => {
         await AsyncStorage.removeItem("token");
         dispatch(clearUser());
         dispatch(clearBlogs());
-
-        navigation.navigate('SignInForm')
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'SignInForm' }],
+        });
       } else {
         console.error("Token inválido al intentar cerrar sesión:", tokenAsyc);
       }
     } catch (error) {
       console.error("Error al cerrar sesión:", error);
 
-      navigation.navigate('SignInForm')
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'SignInForm' }],
+      });
     }
   };
   

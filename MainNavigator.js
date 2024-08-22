@@ -48,7 +48,19 @@ export default function MainNavigator() {
       <Stack.Screen
         name="Home"
         component={AdviseMessage}
-        options={{ headerShown: false }}
+        options={{
+          headerShown: false,
+          gestureEnabled: false, // Desactiva el gesto de retroceso
+        }}
+        
+      />
+      <Stack.Screen
+        name="MainScreen"
+        component={HomeAppScreen}
+        options={{
+          headerShown: false,
+          gestureEnabled: false, // Desactiva el gesto de retroceso
+        }}
       />
       <Stack.Screen
         name="Register"
@@ -73,9 +85,11 @@ export default function MainNavigator() {
       <Stack.Screen
         name="SignInForm"
         component={SignInForm}
-        options={{ headerShown: false }}
+        options={{
+          headerShown: false,
+          gestureEnabled: false, // Desactiva el gesto de retroceso
+        }}
       />
-      <Stack.Screen name="MainScreen" component={HomeAppScreen} />
       <Stack.Screen
         name="ArticleScreen"
         component={ArticleScreen}

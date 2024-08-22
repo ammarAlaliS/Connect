@@ -6,6 +6,7 @@ export const colors = {
   light: {
     background: "#fff",
     text: "#333",
+    textOpacity:  'rgba(128, 128, 128, 1)',
     icon: "#333",
     buttonBackground: "#FFCD57",
     buttonTextColor: "#fff",
@@ -33,10 +34,10 @@ export const colors = {
     singInBgColor: '#fff',
     singInInputBgColor: "rgba(173, 216, 230, 0.09)",
     singInButtonTextColor: '#fff',
-    singInBorderColor: '#ccc',
+    singInBorderColor:'rgba(128, 128, 128, 0.5)',
     singInRegisterTextColor: '#008000',
     singInForgotPtextColor: '#EB4166',
-    singInEmailIconColor : '#008000',
+    singInEmailIconColor : 'rgba(128, 128, 128, 0.9)',
     singInPasswordIconColor : '#EB4166',
 
       // ContenMesagge 
@@ -58,6 +59,7 @@ export const colors = {
   dark: {
     background: "#0D1117",
     text: "#fff",
+    textOpacity:  'rgba(128, 128, 128, 0.9)',
     icon: "#f5f5f5",
     buttonBackground: "#1E90FF",
     buttonTextColor: "#fff",
@@ -84,10 +86,10 @@ export const colors = {
     singInBgColor: '#000',
     singInInputBgColor: "#000",
     singInButtonTextColor: '#fff',
-    singInBorderColor: '#ccc',
+    singInBorderColor:'rgba(128, 128, 128, 0.5)',
     singInRegisterTextColor: '#06BCEE',
     singInForgotPtextColor: '#EB4166',
-    singInEmailIconColor : '#06BCEE',
+    singInEmailIconColor : 'rgba(128, 128, 128, 0.8)',
     singInPasswordIconColor : '#EB4166',
 
     // ContenMesagge 

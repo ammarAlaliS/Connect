@@ -35,7 +35,10 @@ const LoadScreen = () => {
         const token = await AsyncStorage.getItem("token");
         if (!token) {
           setTimeout(() => {
-            navigation.navigate("Home");
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'Home' }],
+            });
           }, 2000);
           return;
         }
@@ -67,17 +70,26 @@ const LoadScreen = () => {
             useNativeDriver: true,
           }).start(() => {
             setTimeout(() => {
-              navigation.navigate("MainScreen");
+              navigation.reset({
+                index: 0,
+                routes: [{ name: 'MainScreen' }],
+              });
             }, 1000);
           });
         } else {
           setTimeout(() => {
-            navigation.navigate("Home");
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'Home' }],
+            });
           }, 1000);
         }
       } catch (error) {
         setTimeout(() => {
-          navigation.navigate("Home");
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'Home' }],
+          });
         }, 1000);
       }
     };
@@ -179,19 +191,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  textContainer: {
-    marginBottom: 10,
-  },
   text: {
+    color: "#000",
     fontSize: 40,
-    color: "#03EBEF",
-    textShadowColor: "#000",
-    textShadowOffset: { width: 0, height: 5 },
-    textShadowRadius: 2,
-    fontFamily: "Eina01-BoldItalic",
+    fontWeight: "bold",
+    fontFamily: "PlusJakartaSans-Bold",
+  },
+  textContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 10,
   },
   indicatorContainer: {
-    marginTop: 20,
+    marginTop: 40,
+    alignItems: "center",
   },
 });
 
