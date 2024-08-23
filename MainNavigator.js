@@ -16,6 +16,7 @@ import MessageScreen from "./screens/MessageScreen";
 import ContactScreen from "./screens/ContactScreen";
 import CommentsScreen from "./screens/CommentScreen";
 import QuickCarsSearchesDetails from "./screens/QuickCarsSearchesDetails";
+import TravelScreen from "./screens/TravelScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -50,7 +51,7 @@ export default function MainNavigator() {
         component={AdviseMessage}
         options={{
           headerShown: false,
-          gestureEnabled: false, // Desactiva el gesto de retroceso
+          gestureEnabled: false,
         }}
         
       />
@@ -59,7 +60,7 @@ export default function MainNavigator() {
         component={HomeAppScreen}
         options={{
           headerShown: false,
-          gestureEnabled: false, // Desactiva el gesto de retroceso
+          gestureEnabled: false, 
         }}
       />
       <Stack.Screen
@@ -87,9 +88,16 @@ export default function MainNavigator() {
         component={SignInForm}
         options={{
           headerShown: false,
-          gestureEnabled: false, // Desactiva el gesto de retroceso
+          gestureEnabled: false,
         }}
       />
+      <Stack.Screen
+      name="Travel"
+      component={TravelScreen}
+      options={{
+        headerShown: false,
+      }}
+    />
       <Stack.Screen
         name="ArticleScreen"
         component={ArticleScreen}

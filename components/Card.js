@@ -1,111 +1,73 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, TouchableOpacity, Alert, Modal } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
+import React from "react";
+import { View, Text, TouchableOpacity } from "react-native";
+import { useSelector } from "react-redux";
 import useCustomFonts from "../fonts/useCustomFonts";
 import * as Animatable from "react-native-animatable";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import { setIsInputActive, setUserType } from "../globalState/travelSlice";
-import FormCreateNewQuickCar from "./TravelComponents/DriverComponents/FormCreateNewQuickCar";
-import { setQuickCarInfo } from "../globalState/userSlice";
-import SearchInput from "./TravelComponents/SearchInput";
-// import QuickCarsSearchesDetails from "./TravelComponents/QuickCarsSearchesDetails";
-import { Image } from "react-native";
-import quickcarSearchBackground from "../assets/quickcarSearchBackground.png";
+import { useNavigation } from "@react-navigation/native";
 
 const Card = ({ darkMode, handlePress, activeScreen }) => {
   const user = useSelector((state) => state.user);
-  const globalUser = useSelector((state) => state.user.global_user);
   const { fontsLoaded, onLayoutRootView } = useCustomFonts();
-  const [showNewQuickCarModal, setShowNewQuickCarModal] = useState(false);
-  const [showQuickCarSearcher, setShowQuickCarSearcher] = useState(false);
-
-  const dispatch = useDispatch();
+  const navegation = useNavigation();
 
   if (!fontsLoaded) {
     return null;
   }
 
-  const VerifyQuickCarExists = async () => {
-    try {
-      console.log("ENTRANDO");
-      console.log(globalUser?._id);
-
-      let data = await fetch(
-        "https://obbaramarket-backend.onrender.com/api/ObbaraMarket/driver/" +
-          globalUser?._id
-      );
-      console.log(data);
-
-      if (data.ok) {
-        let res = await data.json();
-        if (res && res.length > 0) {
-          dispatch(setQuickCarInfo(res[0]));
-          dispatch(setUserType("driver"));
-          handlePress("Travel"); // Cambia a "Travel" al hacer clic
-          return;
-        }
-      }
-      setShowNewQuickCarModal(true);
-    } catch (error) {
-      console.log("Ocurrio un error: " + error.message);
-    }
-  };
-
   return (
     <View
-      className=" space-y-1 bg-red-500"
+      className=" px-6 py-2 "
       style={{
         width: "100%",
         backgroundColor: darkMode.background,
         borderBottomWidth: 1,
         borderColor: darkMode.borderBox,
-        height: showQuickCarSearcher ? "100%" : "auto",
-        display: "flex",
-        justifyContent: "center",
       }}
     >
-      {!showQuickCarSearcher && (
-        <View className="flex-row space-x-2 items-center">
-          <View className="flex items-center">
-            {user && user.global_user && user.global_user.profile_img_url ? (
-              <Animatable.Image
-                source={{
-                  uri: user.global_user.profile_img_url,
-                }}
-                style={{
-                  width: 70,
-                  height: 70,
-                  borderRadius: 9999,
-                  borderWidth: 2,
-                  borderColor: "rgba(255, 205, 87, 0.6)",
-                }}
-                resizeMode="cover"
-              />
-            ) : (
-              <View
-                style={{
-                  width: 70,
-                  height: 70,
-                  borderRadius: 9999,
-                  borderWidth: 2,
-                  borderColor: "rgba(255, 205, 87, 0.6)",
-                  backgroundColor: darkMode.backgroundDark,
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              ></View>
-            )}
-            <Text
-              style={{
-                fontFamily: "PlusJakartaSans-SemiBold",
-                color: darkMode.text,
+      <View className="flex-row space-x-2 items-center">
+        <View className="flex items-center">
+          {user && user.global_user && user.global_user.profile_img_url ? (
+            <Animatable.Image
+              source={{
+                uri: user.global_user.profile_img_url,
               }}
-              className="text-sm"
-            >
-              Usuario
-            </Text>
-          </View>
-          <View className="p-2 space-y-2 " style={{ flex: 1 }}>
+              style={{
+                width: 70,
+                height: 70,
+                borderRadius: 9999,
+                borderWidth: 2,
+                borderColor: "rgba(255, 205, 87, 0.6)",
+                backgroundColor: darkMode.backgroundDark,
+              }}
+              resizeMode="cover"
+            />
+          ) : (
+            <View
+              style={{
+                width: 70,
+                height: 70,
+                borderRadius: 9999,
+                borderWidth: 2,
+                borderColor: "rgba(255, 205, 87, 0.6)",
+                backgroundColor: darkMode.backgroundDark,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            ></View>
+          )}
+          <Text
+            style={{
+              fontFamily: "PlusJakartaSans-SemiBold",
+              color: darkMode.text,
+            }}
+            className="text-sm"
+          >
+            Usuario
+          </Text>
+        </View>
+        <View className="p-2 space-y-2 " style={{ flex: 1 }}>
+          <View className="flex-row items-baseline justify-between ml-2">
             <View>
               {user && user.global_user && (
                 <View className="text-base flex flex-wrap">
@@ -121,8 +83,9 @@ const Card = ({ darkMode, handlePress, activeScreen }) => {
                     style={{
                       fontFamily: "PlusJakartaSans-Bold",
                       color: darkMode.text,
+                      lineHeight: 25,
                     }}
-                    className="text-lg"
+                    className="text-lg ml-2"
                   >
                     {" "}
                     {user.global_user.first_name} {user.global_user.last_name}{" "}
@@ -130,153 +93,139 @@ const Card = ({ darkMode, handlePress, activeScreen }) => {
                 </View>
               )}
             </View>
-            <Animatable.View
-              animation="fadeIn"
-              duration={1000}
-              style={{
-                backgroundColor: darkMode.backgroundDark,
-                padding: 8,
-                borderRadius: 5,
-                textAlign: "left",
-                borderWidth: 1,
-                borderColor: "rgba(0, 0, 0, 0.1)",
-              }}
-            >
-              <Animatable.Text
-                animation="bounceIn"
-                delay={500}
+            <View className=" justify-center items-center">
+              <Text
+                className=" w-7 h-7 rounded-full"
                 style={{
-                  fontFamily: "PlusJakartaSans-SemiBold",
-                  fontSize: 12,
-                  color: darkMode.text,
+                  textAlignVertical: "center",
+                  textAlign: "center",
+                  fontSize: 14,
+                  fontFamily: "PlusJakartaSans-Bold",
+                  backgroundColor: darkMode.backgroundDark,
+                  borderWidth:1,
+                  borderColor: darkMode.borderBox,
+                  color: darkMode.text
                 }}
               >
-                ¿Listo para tu próximo viaje en QuickCar?
-              </Animatable.Text>
-              <Animatable.Text
-                animation="bounceIn"
-                delay={1000}
+                0
+              </Text>
+              <Text
+              
                 style={{
-                  fontFamily: "PlusJakartaSans-SemiBold",
+                  textAlignVertical: "center",
+                  textAlign: "center",
                   fontSize: 12,
-                  color: darkMode.text,
+                  fontFamily: "PlusJakartaSans-Bold",
+                  color: darkMode.text
                 }}
               >
-                Elige tu conductor y tu asiento.
-              </Animatable.Text>
-            </Animatable.View>
-            <View className=" flex-row items-center space-x-2">
-              <TouchableOpacity
-                onPress={() => {
-                  dispatch(setUserType("passenger"));
-                  dispatch(setIsInputActive(true));
-                  setShowQuickCarSearcher(true);
-                  // handlePress("Travel"); // Cambia a "Travel" al hacer clic
-                }}
-              >
-                <View
-                  style={{
-                    borderWidth: 1,
-                    borderColor: "rgba(0, 0, 0, 0.6)",
-                    backgroundColor: "#0000ff",
-                    shadowColor: "rgba(0, 0, 0, 0.05)",
-                    shadowOpacity: 0.8,
-                    shadowRadius: 5,
-                    borderRadius: 5,
-                    paddingVertical: 5,
-                    paddingHorizontal: 10,
-                    alignSelf: "flex-start",
-                  }}
-                >
-                  <Text
-                    style={{
-                      color: "white",
-                      fontSize: 14,
-                      fontFamily: "PlusJakartaSans-SemiBold",
-                      paddingBottom: 2,
-                    }}
-                  >
-                    Buscar viaje
-                  </Text>
-                </View>
-              </TouchableOpacity>
-              <TouchableOpacity>
-                <View
-                  style={{
-                    borderWidth: 1,
-                    borderColor: "rgba(0, 0, 0, 0.6)",
-                    backgroundColor: "#FFCD57",
-                    shadowColor: "rgba(0, 0, 0, 0.05)",
-                    shadowOpacity: 0.8,
-                    shadowRadius: 5,
-                    borderRadius: 5,
-                    paddingVertical: 5,
-                    paddingHorizontal: 10,
-                    alignSelf: "flex-start",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    gap: 10,
-                  }}
-                  onTouchEnd={() => {
-                    VerifyQuickCarExists();
-                  }}
-                >
-                  <AntDesign name="pluscircle" size={16} color="white" />
-                  <Text
-                    style={{
-                      color: "black",
-                      fontSize: 14,
-                      fontFamily: "PlusJakartaSans-SemiBold",
-                      paddingBottom: 2,
-                    }}
-                  >
-                    Ser conductor
-                  </Text>
-                </View>
-              </TouchableOpacity>
+                viajes totales
+              </Text>
             </View>
           </View>
+          <Animatable.View
+            animation="fadeIn"
+            duration={1000}
+            style={{
+              backgroundColor: darkMode.backgroundDark,
+              paddingHorizontal:8,
+              paddingVertical:5,
+              paddingBottom:7,
+              borderRadius: 5,
+              textAlign: "left",
+              borderWidth: 1,
+              borderColor: darkMode.borderBox,
+            }}
+          >
+            <Animatable.Text
+              animation="bounceIn"
+              delay={500}
+              style={{
+                fontFamily: "PlusJakartaSans-SemiBold",
+                fontSize: 12,
+                color: darkMode.text,
+              }}
+            >
+              ¿Listo para tu próximo viaje en QuickCar?
+            </Animatable.Text>
+            <Animatable.Text
+              animation="bounceIn"
+              delay={1000}
+              style={{
+                fontFamily: "PlusJakartaSans-SemiBold",
+                fontSize: 12,
+                color: darkMode.text,
+              }}
+            >
+              Elige tu conductor y tu asiento.
+            </Animatable.Text>
+          </Animatable.View>
+          <View className=" flex-row items-center space-x-2">
+            <TouchableOpacity
+              onPress={() => {
+                navegation.navigate("Travel");
+              }}
+            >
+              <View
+                style={{
+                  borderWidth: 1,
+                  borderColor: darkMode.borderBox,
+                  backgroundColor: "#0000ff",
+                  shadowColor: "rgba(0, 0, 0, 0.05)",
+                  shadowOpacity: 0.8,
+                  shadowRadius: 5,
+                  borderRadius: 9999,
+                  paddingVertical: 5,
+                  paddingHorizontal: 10,
+                  alignSelf: "flex-start",
+                }}
+              >
+                <Text
+                  style={{
+                    color: "white",
+                    fontSize: 14,
+                    fontFamily: "PlusJakartaSans-SemiBold",
+                    paddingBottom: 2,
+                  }}
+                >
+                  Buscar viaje
+                </Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <View
+                style={{
+                  borderWidth: 1,
+                  borderColor: darkMode.borderBox,
+                  backgroundColor: "#FFCD57",
+                  shadowColor: "rgba(0, 0, 0, 0.05)",
+                  shadowOpacity: 0.8,
+                  shadowRadius: 5,
+                  borderRadius: 9999,
+                  paddingVertical: 5,
+                  paddingHorizontal: 10,
+                  alignSelf: "flex-start",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: 10,
+                }}
+              >
+                <AntDesign name="pluscircle" size={16} color="white" />
+                <Text
+                  style={{
+                    color: "black",
+                    fontSize: 14,
+                    fontFamily: "PlusJakartaSans-SemiBold",
+                    paddingBottom: 2,
+                  }}
+                >
+                  Ser conductor
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </View>
         </View>
-      )}
-      <Modal
-        visible={showNewQuickCarModal}
-        animationType="slide"
-        style={{
-          width: "100%",
-          marginTop: "25%",
-          backgroundColor: "red",
-          padding: 40,
-        }}
-        transparent={true}
-      >
-        <FormCreateNewQuickCar
-          setShowModal={setShowNewQuickCarModal}
-          handlePress={handlePress}
-        >
-          Que pedo guey
-        </FormCreateNewQuickCar>
-      </Modal>
-      {showQuickCarSearcher && <SearchInput></SearchInput>}
-      {showQuickCarSearcher && (
-        <View
-          style={{
-            height: "100%",
-            width: "100%",
-            // backgroundColor: "red",
-            position: "absolute",
-            bottom: 0,
-            left: 0,
-            zIndex: -1,
-            padding: 10,
-          }}
-        >
-          <Image
-            source={quickcarSearchBackground}
-            style={{ height: "100%" }}
-            resizeMode="cover"
-          ></Image>
-        </View>
-      )}
+      </View>
     </View>
   );
 };
