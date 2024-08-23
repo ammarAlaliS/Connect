@@ -21,10 +21,9 @@ import { FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 const statusBarHeight = StatusBar.currentHeight || 0;
 const { height: screenHeight } = Dimensions.get("window");
 
-const TravelScreen = () => {
+const TravelScreen = ({ navigation }) => {
   const darkMode = useSelector(selectTheme);
-  const colors = darkMode;
-  const navigation = useNavigation();
+  const colors = darkMode;2 
 
   const [fromLocation, setFromLocation] = useState("");
   const [toLocation, setToLocation] = useState("");
@@ -36,13 +35,13 @@ const TravelScreen = () => {
   const images = [
     require("../assets/imgs/bg.jpg"),
     require("../assets/imgs/bg2.jpg"),
-    
+    require("../assets/imgs/bg3.jpg"),
+    require("../assets/imgs/bg4.jpg"),
   ];
 
   const bsRef = useRef(null);
   const snapPoints = useMemo(() => ["53%"], []);
 
-  
   const imageOpacity = useRef(new Animated.Value(1)).current;
   const newImageOpacity = useRef(new Animated.Value(0)).current;
 
@@ -71,7 +70,6 @@ const TravelScreen = () => {
   }, [images.length, imageOpacity, newImageOpacity]);
 
   useEffect(() => {
-   
     Animated.timing(newImageOpacity, {
       toValue: 1,
       duration: 700,
@@ -98,12 +96,12 @@ const TravelScreen = () => {
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
         <View style={styles.backgroundContainer}>
           <Animated.Image
-            source={images[imageIndex]} // Use the current image
+            source={images[imageIndex]}
             style={[styles.backgroundImage, { opacity: imageOpacity }]}
             resizeMode="cover"
           />
           <Animated.Image
-            source={images[(imageIndex + 1) % images.length]} // Next image
+            source={images[(imageIndex + 1) % images.length]}
             style={[
               styles.backgroundImage,
               { opacity: newImageOpacity, position: "absolute" },
@@ -230,9 +228,21 @@ const TravelScreen = () => {
               </Text>
             </TouchableOpacity>
           </View>
-          <View>
+          <View style={{ width: "100%" }}>
             <TouchableOpacity
-              style={styles.button}
+              style={{
+                flexDirection: "row",
+                borderRadius: 9999,
+                backgroundColor: "#6200EE",
+                marginVertical: 20,
+                paddingHorizontal: 16,
+                paddingVertical: 8,
+                width: "100%",
+                justifyContent:'center',
+                borderWidth:1,
+                borderColor: colors.borderBox
+
+              }}
               onPress={() => {
                 console.log("Search button pressed");
               }}
@@ -241,10 +251,20 @@ const TravelScreen = () => {
               <FontAwesome5
                 name="search"
                 size={20}
-                color={colors.text}
+                color={'#fff'}
                 style={styles.icon}
               />
-              <Text style={styles.buttonText}>Buscar viaje</Text>
+              <Text
+                style={{
+                  color: "#FFFFFF",
+                  fontSize: 16,
+              
+                  
+                 
+                }}
+              >
+                Buscar viaje
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -317,20 +337,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
   },
-  button: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 15,
-    borderRadius: 20,
-    backgroundColor: "#6200EE",
-    marginVertical: 20,
-  },
-  buttonText: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    marginLeft: 10,
-  },
+
   bottomSheetContent: {
     flex: 1,
     alignItems: "center",
