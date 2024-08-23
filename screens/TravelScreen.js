@@ -13,7 +13,6 @@ import {
 } from "react-native";
 import { useSelector } from "react-redux";
 import { selectTheme } from "../globalState/themeSlice";
-import { useNavigation } from "@react-navigation/native";
 import BottomSheet from "@gorhom/bottom-sheet";
 import TravelHeader from "../components/TravelComponents/TravelHeader";
 import { FontAwesome5, MaterialIcons } from "@expo/vector-icons";
@@ -26,8 +25,14 @@ const TravelScreen = () => {
   const darkMode = useSelector(selectTheme);
   const colors = darkMode;
 
+  const startLocationName = useSelector((state) => state.trip.startLocation.name);
+  const startLocationLatitude = useSelector((state) => state.trip.startLocation.latitude);
+  const startLocationLongitude = useSelector((state) => state.trip.startLocation.longitude);
+
+  console.log("Start Location Name:", startLocationName);
+
   const [formValues, setFormValues] = useState({
-    fromLocation: "",
+    fromLocation: startLocationName || "",
     toLocation: "",
     time: "",
     sit: "",
@@ -81,6 +86,14 @@ const TravelScreen = () => {
     }).start();
   }, [imageIndex, newImageOpacity]);
 
+  useEffect(() => {
+   
+    setFormValues((prevValues) => ({
+      ...prevValues,
+      fromLocation: startLocationName || "",
+    }));
+  }, [startLocationName]);
+
   const handleSheetChanges = (index) => {
     console.log("BottomSheet index:", index);
   };
@@ -97,6 +110,7 @@ const TravelScreen = () => {
         return <Text>Seleccione una opción</Text>;
     }
   };
+
 
   return (
     <SafeAreaView

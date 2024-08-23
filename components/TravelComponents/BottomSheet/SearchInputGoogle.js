@@ -2,18 +2,59 @@ import React, { useState, useRef } from "react";
 import { View, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
+import * as Location from 'expo-location';
+import { useDispatch } from 'react-redux';
+import { setStarLocation, setEndLocation } from '../../../globalState/tripSlice';
 
 const GOOGLE_MAPS_API_KEY = "AIzaSyAAwUd5bO7daxQUktwliIcG4YA8M5mWhrY";
 
-const SearchInputGoogle = () => {
+const SearchInputGoogle = ({ isStartLocation }) => {
   const [inputValue, setInputValue] = useState("");
-  const googlePlacesRef = useRef();
+  const googlePlacesRef = useRef(null); 
+  const dispatch = useDispatch();
 
-  const handleCurrentLocation = () => {
-    Alert.alert(
-      "Ubicación actual",
-      "Funcionalidad de ubicación actual no implementada"
-    );
+  const handleCurrentLocation = async () => {
+    const { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('Permiso denegado', 'No se puede acceder a la ubicación');
+      return;
+    }
+
+    try {
+      const location = await Location.getCurrentPositionAsync({});
+      const { latitude, longitude } = location.coords;
+      const address = await getAddressFromCoordinates(latitude, longitude);
+
+      setInputValue(address || 'Dirección no disponible');
+
+      if (isStartLocation) {
+        dispatch(setStarLocation({ latitude, longitude, name: address }));
+      } else {
+        dispatch(setEndLocation({ latitude, longitude, name: address }));
+      }
+
+      console.log("Ubicación actual", `Latitud: ${latitude}\nLongitud: ${longitude}\nDirección: ${address || 'No disponible'}`);
+    } catch (error) {
+      console.error('Error al obtener la ubicación:', error);
+      Alert.alert('Error', 'No se pudo obtener la ubicación');
+    }
+  };
+
+  const getAddressFromCoordinates = async (latitude, longitude) => {
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${GOOGLE_MAPS_API_KEY}`;
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+      if (data.status === 'OK' && data.results.length > 0) {
+        return data.results[0].formatted_address;
+      } else {
+        console.error('Error en la respuesta de Geocoding:', data.status);
+        return 'No se encontró dirección';
+      }
+    } catch (error) {
+      console.error('Error al obtener la dirección:', error);
+      return 'Error al obtener dirección';
+    }
   };
 
   const handlePlaceSelect = (data, details) => {
@@ -22,17 +63,25 @@ const SearchInputGoogle = () => {
       const placeName = details.name || details.formatted_address;
 
       console.log("Lugar:", placeName, "Latitud:", lat, "Longitud:", lng);
-      Alert.alert(
-        "Ubicación seleccionada",
-        `Lugar: ${placeName}\nLatitud: ${lat}\nLongitud: ${lng}`
-      );
+      Alert.alert("Ubicación seleccionada", `Lugar: ${placeName}\nLatitud: ${lat}\nLongitud: ${lng}`);
+
+      setInputValue(placeName);
+
+      if (isStartLocation) {
+        dispatch(setStarLocation({ latitude: lat, longitude: lng, name: placeName }));
+      } else {
+        dispatch(setEndLocation({ latitude: lat, longitude: lng, name: placeName }));
+      }
     }
   };
 
   const clearInput = () => {
     setInputValue("");
-    googlePlacesRef.current?.setAddressText("");
+    if (googlePlacesRef.current) {
+      googlePlacesRef.current.setAddressText("");
+    }
   };
+
   return (
     <View style={styles.container}>
       <View style={styles.inputContainer}>
@@ -54,7 +103,12 @@ const SearchInputGoogle = () => {
           }}
           textInputProps={{
             value: inputValue,
-            onChangeText: setInputValue,
+            onChangeText: (text) => {
+              setInputValue(text);
+              if (googlePlacesRef.current) {
+                googlePlacesRef.current.setAddressText(text);
+              }
+            },
             placeholderTextColor: "#aaa",
           }}
         />

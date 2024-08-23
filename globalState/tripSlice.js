@@ -1,41 +1,66 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-const initialState = {
-  starLocationLatitude: null,
-  starLocationLongitude: null,
-  endLocationLatitude: null,
-  endLocationLongitude: null,
-  starTimeHour: null,
-  starTimeMinutes: null,
-  numberOfSeatRequested: 1,
-};
 
 const tripSlice = createSlice({
   name: 'trip',
-  initialState,
+  initialState: {
+    startLocation: {
+      latitude: null,
+      longitude: null,
+      name: 'Managua Nicaragua colonia',
+    },
+    endLocation: {
+      latitude: null,
+      longitude: null,
+      name: '',
+    },
+    startTime: {
+      hour: 0,
+      minutes: 0,
+    },
+    numberOfSeatRequested: 1,
+    seatRequested: 0,
+  },
+
   reducers: {
     setStarLocation: (state, action) => {
-      state.starLocationLatitude = action.payload.latitude;
-      state.starLocationLongitude = action.payload.longitude;
+      state.startLocation = {
+        latitude: action.payload.latitude,
+        longitude: action.payload.longitude,
+        name: action.payload.name || state.startLocation.name,
+      };
     },
     setEndLocation: (state, action) => {
-      state.endLocationLatitude = action.payload.latitude;
-      state.endLocationLongitude = action.payload.longitude;
+      state.endLocation = {
+        latitude: action.payload.latitude,
+        longitude: action.payload.longitude,
+        name: action.payload.name || state.endLocation.name,
+      };
     },
     setStartTime: (state, action) => {
-      state.starTimeHour = action.payload.hour;
-      state.starTimeMinutes = action.payload.minutes;
+      state.startTime = {
+        hour: action.payload.hour,
+        minutes: action.payload.minutes,
+      };
     },
     setNumberOfSeatRequested: (state, action) => {
       state.numberOfSeatRequested = action.payload;
     },
     resetTrip: (state) => {
-      state.starLocationLatitude = null;
-      state.starLocationLongitude = null;
-      state.endLocationLatitude = null;
-      state.endLocationLongitude = null;
-      state.starTimeHour = null;
-      state.starTimeMinutes = null;
+      state.startLocation = {
+        latitude: null,
+        longitude: null,
+        name: null,
+      };
+      state.endLocation = {
+        latitude: null,
+        longitude: null,
+        name: null,
+      };
+      state.startTime = {
+        hour: 0,
+        minutes: 0,
+      };
       state.numberOfSeatRequested = 1;
     },
   },
@@ -48,6 +73,5 @@ export const {
   setNumberOfSeatRequested,
   resetTrip,
 } = tripSlice.actions;
-
 
 export default tripSlice.reducer;
