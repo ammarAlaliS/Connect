@@ -17,13 +17,15 @@ import { useNavigation } from "@react-navigation/native";
 import BottomSheet from "@gorhom/bottom-sheet";
 import TravelHeader from "../components/TravelComponents/TravelHeader";
 import { FontAwesome5, MaterialIcons } from "@expo/vector-icons";
+import SearchInputGoogle from "../components/TravelComponents/BottomSheet/SearchInputGoogle";
 
 const statusBarHeight = StatusBar.currentHeight || 0;
 const { height: screenHeight } = Dimensions.get("window");
 
-const TravelScreen = ({ navigation }) => {
+const TravelScreen = () => {
   const darkMode = useSelector(selectTheme);
-  const colors = darkMode;2 
+  const colors = darkMode;
+  2;
 
   const [fromLocation, setFromLocation] = useState("");
   const [toLocation, setToLocation] = useState("");
@@ -81,6 +83,16 @@ const TravelScreen = ({ navigation }) => {
   const handleSheetChanges = (index) => {
     console.log("BottomSheet index:", index);
   };
+  
+  const handleLocationChange = (location) => {
+    console.log("Selected Location:", location);
+    if (activeField === "fromLocation") {
+      setFromLocation(location);
+    } else if (activeField === "toLocation") {
+      setToLocation(location);
+    }
+    bsRef.current?.collapse(); 
+  };
 
   return (
     <SafeAreaView
@@ -92,7 +104,7 @@ const TravelScreen = ({ navigation }) => {
         },
       ]}
     >
-      <TravelHeader darkMode={darkMode} navigation={navigation} />
+      <TravelHeader darkMode={darkMode} />
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
         <View style={styles.backgroundContainer}>
           <Animated.Image
@@ -238,10 +250,9 @@ const TravelScreen = ({ navigation }) => {
                 paddingHorizontal: 16,
                 paddingVertical: 8,
                 width: "100%",
-                justifyContent:'center',
-                borderWidth:1,
-                borderColor: colors.borderBox
-
+                justifyContent: "center",
+                borderWidth: 1,
+                borderColor: colors.borderBox,
               }}
               onPress={() => {
                 console.log("Search button pressed");
@@ -251,16 +262,13 @@ const TravelScreen = ({ navigation }) => {
               <FontAwesome5
                 name="search"
                 size={20}
-                color={'#fff'}
+                color={"#fff"}
                 style={styles.icon}
               />
               <Text
                 style={{
                   color: "#FFFFFF",
                   fontSize: 16,
-              
-                  
-                 
                 }}
               >
                 Buscar viaje
@@ -277,19 +285,18 @@ const TravelScreen = ({ navigation }) => {
         onChange={handleSheetChanges}
         enablePanDownToClose={true}
       >
-        <View style={styles.bottomSheetContent}>
-          <Text style={{ color: colors.text }}>
-            {activeField === "fromLocation"
-              ? "Seleccione la ubicación de partida"
-              : activeField === "toLocation"
-              ? "Seleccione la ubicación de destino"
-              : activeField === "time"
-              ? "Seleccione la hora y fecha"
-              : activeField === "sit"
-              ? "Seleccione los asientos"
-              : "Contenido del BottomSheet"}
-          </Text>
-        </View>
+        
+          {activeField === "fromLocation" ? (
+            <SearchInputGoogle onLocationChange={handleLocationChange} />
+          ) : activeField === "toLocation" ? (
+            <Text>"Seleccione la ubicación de destino"</Text>
+          ) : activeField === "time" ? (
+            <Text>"Seleccione la ubicación de destino"</Text>
+          ) : activeField === "sit" ? (
+            <Text>"Seleccione la ubicación de destino"</Text>
+          ) : (
+            <Text>"Seleccione la ubicación de destino"</Text>
+          )}
       </BottomSheet>
     </SafeAreaView>
   );
@@ -305,12 +312,12 @@ const styles = StyleSheet.create({
   backgroundContainer: {
     width: "100%",
     height: screenHeight * 0.4,
-    position: "relative", // Ensure the image is positioned relative to this container
+    position: "relative",
   },
   backgroundImage: {
-    width: "100%", // Ensure the image covers the width of the container
-    height: "100%", // Ensure the image covers the height of the container
-    position: "absolute", // Position the image absolutely to ensure it fills the container
+    width: "100%",
+    height: "100%",
+    position: "absolute",
     top: 0,
     left: 0,
   },
@@ -339,10 +346,7 @@ const styles = StyleSheet.create({
   },
 
   bottomSheetContent: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 20,
+    backgroundColor: "red",
   },
 });
 

@@ -5,8 +5,10 @@ import {
   TouchableOpacity,
 } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { useNavigation } from "@react-navigation/native";
 
-export default function TravelHeader({ darkMode, navegation }) {
+export default function TravelHeader({ darkMode,  }) {
+  const navegation = useNavigation()
   return (
     <View
         style={{
