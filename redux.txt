@@ -1,0 +1,94 @@
+import React, { useState } from "react";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import * as Location from 'expo-location';
+import { FontAwesome5 } from "@expo/vector-icons";
+
+const GetCurrentLocation = ({ onLocationChange }) => {
+  const [location, setLocation] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleGetCurrentLocation = async () => {
+    setIsLoading(true);
+    setError("");
+
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== 'granted') {
+      setIsLoading(false);
+      setError('Permission to access location was denied');
+      return;
+    }
+
+    try {
+      let { coords } = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.High,
+      });
+
+      const { latitude, longitude } = coords;
+
+      const address = `Lat: ${latitude.toFixed(4)}, Lon: ${longitude.toFixed(4)}`;
+      setLocation(address); 
+      onLocationChange({ latitude, longitude }); 
+    } catch (error) {
+      console.error(error);
+      setError('Error fetching location: ' + error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <View style={styles.container}>
+      <TouchableOpacity
+        style={styles.currentLocationButton}
+        onPress={handleGetCurrentLocation}
+        disabled={isLoading}
+      >
+        <FontAwesome5 name="location-arrow" size={20} color="#fff" />
+        <Text style={styles.currentLocationText}>
+          {isLoading ? "Getting Location..." : "Use Current Location"}
+        </Text>
+      </TouchableOpacity>
+      {error ? <Text style={styles.errorText}>{error}</Text> : null}
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: "#f9f9f9",
+    borderRadius: 8,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  currentLocationButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#6200EE",
+    padding: 10,
+    borderRadius: 8,
+    marginVertical: 10,
+  },
+  currentLocationText: {
+    color: "#fff",
+    fontSize: 16,
+    marginLeft: 10,
+  },
+  selectedLocation: {
+    marginTop: 10,
+    fontSize: 16,
+    color: "#333",
+  },
+  errorText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: "red",
+  },
+});
+
+export default GetCurrentLocation;

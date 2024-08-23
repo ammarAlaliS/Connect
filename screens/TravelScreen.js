@@ -25,12 +25,13 @@ const { height: screenHeight } = Dimensions.get("window");
 const TravelScreen = () => {
   const darkMode = useSelector(selectTheme);
   const colors = darkMode;
-  2;
 
-  const [fromLocation, setFromLocation] = useState("");
-  const [toLocation, setToLocation] = useState("");
-  const [time, setTime] = useState("");
-  const [sit, setSit] = useState("");
+  const [formValues, setFormValues] = useState({
+    fromLocation: "",
+    toLocation: "",
+    time: "",
+    sit: "",
+  });
   const [activeField, setActiveField] = useState("");
   const [imageIndex, setImageIndex] = useState(0);
 
@@ -83,15 +84,18 @@ const TravelScreen = () => {
   const handleSheetChanges = (index) => {
     console.log("BottomSheet index:", index);
   };
-  
-  const handleLocationChange = (location) => {
-    console.log("Selected Location:", location);
-    if (activeField === "fromLocation") {
-      setFromLocation(location);
-    } else if (activeField === "toLocation") {
-      setToLocation(location);
+
+  const renderBottomSheetContent = () => {
+    switch (activeField) {
+      case "fromLocation":
+        return <SearchInputGoogle />;
+      case "toLocation":
+      case "time":
+      case "sit":
+        return <Text>Seleccione {activeField}</Text>;
+      default:
+        return <Text>Seleccione una opción</Text>;
     }
-    bsRef.current?.collapse(); 
   };
 
   return (
@@ -140,139 +144,43 @@ const TravelScreen = () => {
               overflow: "hidden",
             }}
           >
-            <TouchableOpacity
-              onPress={() => {
-                setActiveField("fromLocation");
-                bsRef.current?.expand();
-              }}
-              style={[
-                styles.inputField,
-                { backgroundColor: colors.background },
-              ]}
-              activeOpacity={1}
-            >
-              <FontAwesome5
-                name="location-arrow"
-                size={20}
-                color={colors.text}
-                style={styles.icon}
-              />
-              <Text style={[styles.inputText, { color: colors.text }]}>
-                {fromLocation || "De"}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => {
-                setActiveField("toLocation");
-                bsRef.current?.expand();
-              }}
-              style={[
-                styles.inputField,
-                styles.borderTop,
-                {
-                  backgroundColor: colors.background,
-                  borderTopWidth: 1,
-                  borderColor: colors.borderBox,
-                },
-              ]}
-              activeOpacity={1}
-            >
-              <MaterialIcons
-                name="place"
-                size={20}
-                color={colors.text}
-                style={styles.icon}
-              />
-              <Text style={[styles.inputText, { color: colors.text }]}>
-                {toLocation || "A"}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => {
-                setActiveField("time");
-                bsRef.current?.expand();
-              }}
-              style={[
-                styles.inputField,
-                styles.borderTop,
-                {
-                  backgroundColor: colors.background,
-                  borderTopWidth: 1,
-                  borderColor: colors.borderBox,
-                },
-              ]}
-              activeOpacity={1}
-            >
-              <FontAwesome5
-                name="calendar-alt"
-                size={20}
-                color={colors.text}
-                style={styles.icon}
-              />
-              <Text style={[styles.inputText, { color: colors.text }]}>
-                {time || "Hora y Fecha"}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => {
-                setActiveField("sit");
-                bsRef.current?.expand();
-              }}
-              style={[
-                styles.inputField,
-                styles.borderTop,
-                {
-                  backgroundColor: colors.background,
-                  borderTopWidth: 1,
-                  borderColor: colors.borderBox,
-                },
-              ]}
-              activeOpacity={1}
-            >
-              <FontAwesome5
-                name="chair"
-                size={20}
-                color={colors.text}
-                style={styles.icon}
-              />
-              <Text style={[styles.inputText, { color: colors.text }]}>
-                {sit || "Asientos"}
-              </Text>
-            </TouchableOpacity>
+            {["fromLocation", "toLocation", "time", "sit"].map((field, index) => (
+              <TouchableOpacity
+                key={field}
+                onPress={() => {
+                  setActiveField(field);
+                  bsRef.current?.expand();
+                }}
+                style={[
+                  styles.inputField,
+                  index > 0 && styles.borderTop,
+                  {
+                    backgroundColor: colors.background,
+                    borderTopWidth: index > 0 ? 1 : 0,
+                    borderColor: colors.borderBox,
+                  },
+                ]}
+                activeOpacity={1}
+                accessibilityLabel={`Select ${field}`}
+                accessibilityHint={`Tap to choose your ${field}`}
+              >
+                <Icon field={field} color={colors.text} />
+                <Text style={[styles.inputText, { color: colors.text }]}>
+                  {formValues[field] || placeholderText[field]}
+                </Text>
+              </TouchableOpacity>
+            ))}
           </View>
           <View style={{ width: "100%" }}>
             <TouchableOpacity
-              style={{
-                flexDirection: "row",
-                borderRadius: 9999,
-                backgroundColor: "#6200EE",
-                marginVertical: 20,
-                paddingHorizontal: 16,
-                paddingVertical: 8,
-                width: "100%",
-                justifyContent: "center",
-                borderWidth: 1,
-                borderColor: colors.borderBox,
-              }}
+              style={[buttonStyles.primaryButton, { borderColor: colors.borderBox }]}
               onPress={() => {
                 console.log("Search button pressed");
               }}
               activeOpacity={0.8}
             >
-              <FontAwesome5
-                name="search"
-                size={20}
-                color={"#fff"}
-                style={styles.icon}
-              />
-              <Text
-                style={{
-                  color: "#FFFFFF",
-                  fontSize: 16,
-                }}
-              >
-                Buscar viaje
-              </Text>
+              <FontAwesome5 name="search" size={20} color={"#fff"} style={styles.icon} />
+              <Text style={buttonStyles.primaryButtonText}>Buscar viaje</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -285,22 +193,51 @@ const TravelScreen = () => {
         onChange={handleSheetChanges}
         enablePanDownToClose={true}
       >
-        
-          {activeField === "fromLocation" ? (
-            <SearchInputGoogle onLocationChange={handleLocationChange} />
-          ) : activeField === "toLocation" ? (
-            <Text>"Seleccione la ubicación de destino"</Text>
-          ) : activeField === "time" ? (
-            <Text>"Seleccione la ubicación de destino"</Text>
-          ) : activeField === "sit" ? (
-            <Text>"Seleccione la ubicación de destino"</Text>
-          ) : (
-            <Text>"Seleccione la ubicación de destino"</Text>
-          )}
+        {renderBottomSheetContent()}
       </BottomSheet>
     </SafeAreaView>
   );
 };
+
+const placeholderText = {
+  fromLocation: "De",
+  toLocation: "A",
+  time: "Hora y Fecha",
+  sit: "Asientos",
+};
+
+const Icon = ({ field, color }) => {
+  switch (field) {
+    case "fromLocation":
+      return <FontAwesome5 name="location-arrow" size={20} color={color} style={styles.icon} />;
+    case "toLocation":
+      return <MaterialIcons name="place" size={20} color={color} style={styles.icon} />;
+    case "time":
+      return <FontAwesome5 name="calendar-alt" size={20} color={color} style={styles.icon} />;
+    case "sit":
+      return <FontAwesome5 name="chair" size={20} color={color} style={styles.icon} />;
+    default:
+      return null;
+  }
+};
+
+const buttonStyles = StyleSheet.create({
+  primaryButton: {
+    flexDirection: "row",
+    borderRadius: 9999,
+    backgroundColor: "#6200EE",
+    marginVertical: 20,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    width: "100%",
+    justifyContent: "center",
+    borderWidth: 1,
+  },
+  primaryButtonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+  },
+});
 
 const styles = StyleSheet.create({
   container: {
@@ -336,7 +273,9 @@ const styles = StyleSheet.create({
     padding: 20,
     width: "100%",
   },
-  borderTop: {},
+  borderTop: {
+    borderTopWidth: 1,
+  },
   icon: {
     marginRight: 10,
   },
@@ -344,7 +283,6 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
   },
-
   bottomSheetContent: {
     backgroundColor: "red",
   },
