@@ -9,8 +9,7 @@ import { setSelectedProduct } from "../../globalState/marketSlice";
 import { Entypo } from "@expo/vector-icons";
 import ModalInitialChat from "./ModalInitialChat";
 
-const 
-ArticleCard = ({
+const ArticleCard = ({
   setShowModal,
   item,
   setShowNewProductModal,
@@ -104,6 +103,7 @@ ArticleCard = ({
             if (userId === decodedToken.id) {
               setIsNewProduct(false);
               setShowNewProductModal(true);
+              dispatch(setSelectedProduct(item));
             }
           }}
         >
