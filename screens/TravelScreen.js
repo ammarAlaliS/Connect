@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import {
   View,
   Text,
@@ -10,16 +10,16 @@ import {
   TouchableOpacity,
   Animated,
   Easing,
-} from "react-native";
-import { useSelector } from "react-redux";
-import { selectTheme } from "../globalState/themeSlice";
-import BottomSheet from "@gorhom/bottom-sheet";
-import TravelHeader from "../components/TravelComponents/TravelHeader";
-import { FontAwesome5, MaterialIcons } from "@expo/vector-icons";
-import SearchInputGoogle from "../components/TravelComponents/BottomSheet/SearchInputGoogle";
+} from 'react-native';
+import { useSelector } from 'react-redux';
+import { selectTheme } from '../globalState/themeSlice';
+import BottomSheet from '@gorhom/bottom-sheet';
+import TravelHeader from '../components/TravelComponents/TravelHeader';
+import { FontAwesome5, MaterialIcons } from '@expo/vector-icons';
+import SearchInputGoogle from '../components/TravelComponents/BottomSheet/SearchInputGoogle';
 
 const statusBarHeight = StatusBar.currentHeight || 0;
-const { height: screenHeight } = Dimensions.get("window");
+const { height: screenHeight } = Dimensions.get('window');
 
 const TravelScreen = () => {
   const darkMode = useSelector(selectTheme);
@@ -29,26 +29,24 @@ const TravelScreen = () => {
   const startLocationLatitude = useSelector((state) => state.trip.startLocation.latitude);
   const startLocationLongitude = useSelector((state) => state.trip.startLocation.longitude);
 
-  console.log("Start Location Name:", startLocationName);
-
   const [formValues, setFormValues] = useState({
-    fromLocation: startLocationName || "",
-    toLocation: "",
-    time: "",
-    sit: "",
+    fromLocation: startLocationName || '',
+    toLocation: '',
+    time: '',
+    sit: '',
   });
-  const [activeField, setActiveField] = useState("");
+  const [activeField, setActiveField] = useState('');
   const [imageIndex, setImageIndex] = useState(0);
 
   const images = [
-    require("../assets/imgs/bg.jpg"),
-    require("../assets/imgs/bg2.jpg"),
-    require("../assets/imgs/bg3.jpg"),
-    require("../assets/imgs/bg4.jpg"),
+    require('../assets/imgs/bg.jpg'),
+    require('../assets/imgs/bg2.jpg'),
+    require('../assets/imgs/bg3.jpg'),
+    require('../assets/imgs/bg4.jpg'),
   ];
 
   const bsRef = useRef(null);
-  const snapPoints = useMemo(() => ["53%"], []);
+  const snapPoints = useMemo(() => ['53%'], []);
 
   const imageOpacity = useRef(new Animated.Value(1)).current;
   const newImageOpacity = useRef(new Animated.Value(0)).current;
@@ -87,30 +85,32 @@ const TravelScreen = () => {
   }, [imageIndex, newImageOpacity]);
 
   useEffect(() => {
-   
     setFormValues((prevValues) => ({
       ...prevValues,
-      fromLocation: startLocationName || "",
+      fromLocation: startLocationName || '',
     }));
   }, [startLocationName]);
 
   const handleSheetChanges = (index) => {
-    console.log("BottomSheet index:", index);
+    console.log('BottomSheet index:', index);
+  };
+
+  const closeBottomSheet = () => {
+    bsRef.current?.close();
   };
 
   const renderBottomSheetContent = () => {
     switch (activeField) {
-      case "fromLocation":
-        return <SearchInputGoogle />;
-      case "toLocation":
-      case "time":
-      case "sit":
+      case 'fromLocation':
+        return <SearchInputGoogle onClose={closeBottomSheet} />;
+      case 'toLocation':
+      case 'time':
+      case 'sit':
         return <Text>Seleccione {activeField}</Text>;
       default:
         return <Text>Seleccione una opción</Text>;
     }
   };
-
 
   return (
     <SafeAreaView
@@ -134,20 +134,20 @@ const TravelScreen = () => {
             source={images[(imageIndex + 1) % images.length]}
             style={[
               styles.backgroundImage,
-              { opacity: newImageOpacity, position: "absolute" },
+              { opacity: newImageOpacity, position: 'absolute' },
             ]}
             resizeMode="cover"
           />
         </View>
         <View
           style={{
-            position: "absolute",
-            top: "50%",
+            position: 'absolute',
+            top: '50%',
             left: 0,
             right: 0,
             transform: [{ translateY: -screenHeight * 0.1 }],
             marginHorizontal: 20,
-            alignItems: "center",
+            alignItems: 'center',
           }}
         >
           <View
@@ -155,10 +155,10 @@ const TravelScreen = () => {
               borderWidth: 1,
               borderColor: colors.borderBox,
               borderRadius: 16,
-              overflow: "hidden",
+              overflow: 'hidden',
             }}
           >
-            {["fromLocation", "toLocation", "time", "sit"].map((field, index) => (
+            {['fromLocation', 'toLocation', 'time', 'sit'].map((field, index) => (
               <TouchableOpacity
                 key={field}
                 onPress={() => {
@@ -185,15 +185,15 @@ const TravelScreen = () => {
               </TouchableOpacity>
             ))}
           </View>
-          <View style={{ width: "100%" }}>
+          <View style={{ width: '100%' }}>
             <TouchableOpacity
               style={[buttonStyles.primaryButton, { borderColor: colors.borderBox }]}
               onPress={() => {
-                console.log("Search button pressed");
+                console.log('Search button pressed');
               }}
               activeOpacity={0.8}
             >
-              <FontAwesome5 name="search" size={20} color={"#fff"} style={styles.icon} />
+              <FontAwesome5 name="search" size={20} color="#fff" style={styles.icon} />
               <Text style={buttonStyles.primaryButtonText}>Buscar viaje</Text>
             </TouchableOpacity>
           </View>
@@ -214,21 +214,21 @@ const TravelScreen = () => {
 };
 
 const placeholderText = {
-  fromLocation: "De",
-  toLocation: "A",
-  time: "Hora y Fecha",
-  sit: "Asientos",
+  fromLocation: 'De',
+  toLocation: 'A',
+  time: 'Hora y Fecha',
+  sit: 'Asientos',
 };
 
 const Icon = ({ field, color }) => {
   switch (field) {
-    case "fromLocation":
+    case 'fromLocation':
       return <FontAwesome5 name="location-arrow" size={20} color={color} style={styles.icon} />;
-    case "toLocation":
+    case 'toLocation':
       return <MaterialIcons name="place" size={20} color={color} style={styles.icon} />;
-    case "time":
+    case 'time':
       return <FontAwesome5 name="calendar-alt" size={20} color={color} style={styles.icon} />;
-    case "sit":
+    case 'sit':
       return <FontAwesome5 name="chair" size={20} color={color} style={styles.icon} />;
     default:
       return null;
@@ -237,18 +237,18 @@ const Icon = ({ field, color }) => {
 
 const buttonStyles = StyleSheet.create({
   primaryButton: {
-    flexDirection: "row",
+    flexDirection: 'row',
     borderRadius: 9999,
-    backgroundColor: "#6200EE",
+    backgroundColor: '#6200EE',
     marginVertical: 20,
     paddingHorizontal: 16,
     paddingVertical: 8,
-    width: "100%",
-    justifyContent: "center",
+    width: '100%',
+    justifyContent: 'center',
     borderWidth: 1,
   },
   primaryButtonText: {
-    color: "#FFFFFF",
+    color: '#FFFFFF',
     fontSize: 16,
   },
 });
@@ -261,31 +261,31 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   backgroundContainer: {
-    width: "100%",
+    width: '100%',
     height: screenHeight * 0.4,
-    position: "relative",
+    position: 'relative',
   },
   backgroundImage: {
-    width: "100%",
-    height: "100%",
-    position: "absolute",
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
     top: 0,
     left: 0,
   },
   card: {
     borderRadius: 20,
-    alignItems: "center",
-    shadowColor: "#FFFFFF",
+    alignItems: 'center',
+    shadowColor: '#FFFFFF',
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.1,
     shadowRadius: 10,
     elevation: 5,
   },
   inputField: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     padding: 20,
-    width: "100%",
+    width: '100%',
   },
   borderTop: {
     borderTopWidth: 1,
@@ -298,7 +298,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   bottomSheetContent: {
-    backgroundColor: "red",
+    backgroundColor: 'red',
   },
 });
 

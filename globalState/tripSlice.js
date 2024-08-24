@@ -1,18 +1,17 @@
-import { createSlice } from '@reduxjs/toolkit';
-
+import { createSlice } from "@reduxjs/toolkit";
 
 const tripSlice = createSlice({
-  name: 'trip',
+  name: "trip",
   initialState: {
     startLocation: {
       latitude: null,
       longitude: null,
-      name: 'Managua Nicaragua colonia',
+      name: "",
     },
     endLocation: {
       latitude: null,
       longitude: null,
-      name: '',
+      name: "",
     },
     startTime: {
       hour: 0,
@@ -23,7 +22,7 @@ const tripSlice = createSlice({
   },
 
   reducers: {
-    setStarLocation: (state, action) => {
+    setStartLocation: (state, action) => {
       state.startLocation = {
         latitude: action.payload.latitude,
         longitude: action.payload.longitude,
@@ -50,12 +49,12 @@ const tripSlice = createSlice({
       state.startLocation = {
         latitude: null,
         longitude: null,
-        name: null,
+        name: "",
       };
       state.endLocation = {
         latitude: null,
         longitude: null,
-        name: null,
+        name: "",
       };
       state.startTime = {
         hour: 0,
@@ -63,15 +62,23 @@ const tripSlice = createSlice({
       };
       state.numberOfSeatRequested = 1;
     },
+    startLocationReset: (state) => {
+      state.startLocation = {
+        latitude: null,
+        longitude: null,
+        name: "",
+      };
+    },
   },
 });
 
 export const {
-  setStarLocation,
+  setStartLocation,
   setEndLocation,
   setStartTime,
   setNumberOfSeatRequested,
   resetTrip,
+  startLocationReset
 } = tripSlice.actions;
 
 export default tripSlice.reducer;

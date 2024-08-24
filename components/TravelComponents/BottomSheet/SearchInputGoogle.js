@@ -3,15 +3,20 @@ import { View, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import * as Location from 'expo-location';
-import { useDispatch } from 'react-redux';
-import { setStarLocation, setEndLocation } from '../../../globalState/tripSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { setStartLocation, startLocationReset } from '../../../globalState/tripSlice';
 
 const GOOGLE_MAPS_API_KEY = "AIzaSyAAwUd5bO7daxQUktwliIcG4YA8M5mWhrY";
 
-const SearchInputGoogle = ({ isStartLocation }) => {
-  const [inputValue, setInputValue] = useState("");
+const SearchInputGoogle = ({ onClose }) => {
+  const startLocationName = useSelector((state) => state.trip.startLocation.name);
+  const [inputValue, setInputValue] = useState(startLocationName);
   const googlePlacesRef = useRef(null); 
   const dispatch = useDispatch();
+
+  const closeBottomSheetHandler = () => {
+    onClose();
+  };
 
   const handleCurrentLocation = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync();
@@ -27,13 +32,12 @@ const SearchInputGoogle = ({ isStartLocation }) => {
 
       setInputValue(address || 'Dirección no disponible');
 
-      if (isStartLocation) {
-        dispatch(setStarLocation({ latitude, longitude, name: address }));
-      } else {
-        dispatch(setEndLocation({ latitude, longitude, name: address }));
-      }
-
-      console.log("Ubicación actual", `Latitud: ${latitude}\nLongitud: ${longitude}\nDirección: ${address || 'No disponible'}`);
+      dispatch(setStartLocation({
+        latitude: latitude,
+        longitude: longitude,
+        name: address,
+      }));
+      closeBottomSheetHandler();
     } catch (error) {
       console.error('Error al obtener la ubicación:', error);
       Alert.alert('Error', 'No se pudo obtener la ubicación');
@@ -60,26 +64,27 @@ const SearchInputGoogle = ({ isStartLocation }) => {
   const handlePlaceSelect = (data, details) => {
     if (details && details.geometry) {
       const { lat, lng } = details.geometry.location;
-      const placeName = details.name || details.formatted_address;
+      const placeName = details.formatted_address;
+  
+      console.log(placeName);
+      console.log("Start Location Name:", placeName);
 
-      console.log("Lugar:", placeName, "Latitud:", lat, "Longitud:", lng);
-      Alert.alert("Ubicación seleccionada", `Lugar: ${placeName}\nLatitud: ${lat}\nLongitud: ${lng}`);
-
-      setInputValue(placeName);
-
-      if (isStartLocation) {
-        dispatch(setStarLocation({ latitude: lat, longitude: lng, name: placeName }));
-      } else {
-        dispatch(setEndLocation({ latitude: lat, longitude: lng, name: placeName }));
-      }
+      dispatch(setStartLocation({
+        latitude: lat,
+        longitude: lng,
+        name: placeName,
+      }));
+      closeBottomSheetHandler();
     }
   };
+  
 
   const clearInput = () => {
     setInputValue("");
     if (googlePlacesRef.current) {
       googlePlacesRef.current.setAddressText("");
     }
+    dispatch(startLocationReset());
   };
 
   return (
@@ -160,13 +165,14 @@ const styles = StyleSheet.create({
   },
   iconButtonDelete: {
     position: "absolute",
-    right: 35,
+    right: 30,
     top: "50%",
-    transform: [{ translateY: -13 }],
+    transform: [{ translateY: -18 }],
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 999,
     zIndex: 10,
+    padding:5
   },
   iconButton: {
     position: "absolute",
