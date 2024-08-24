@@ -42,8 +42,6 @@ const TravelScreen = () => {
 
   const numberOfSeatRequested = useSelector((state) => state.trip.numberOfSeatRequested);
 
-  console.log(numberOfSeatRequested)
-
   const [formValues, setFormValues] = useState({
     fromLocation: startLocationName || '',
     toLocation: endLocationName || '',
@@ -123,7 +121,7 @@ const TravelScreen = () => {
     });
     setFormValues((prevValues) => ({
       ...prevValues,
-      sit: numberOfSeatRequested?.numberOfSeatRequested || 0
+      sit: `Asientos totales ${numberOfSeatRequested?.numberOfSeatRequested || 0}`
     }));
   }, [startLocationName, endLocationName, hour, minutes, period, numberOfSeatRequested]);
 
@@ -144,7 +142,7 @@ const TravelScreen = () => {
       case 'time':
         return <ChoiceTravelDayAndTime  onClose={closeBottomSheet} />
       case 'sit':
-        return <ChoiceTravelSits onClose={closeBottomSheet}/>
+        return <ChoiceTravelSits   onClose={closeBottomSheet} />
       default:
         return <Text>Seleccione una opción</Text>;
     }
@@ -232,7 +230,7 @@ const TravelScreen = () => {
               activeOpacity={0.8}
             >
               <FontAwesome5 name="search" size={20} color="#fff" style={styles.icon} />
-              <Text style={buttonStyles.primaryButtonText}>Buscar viaje</Text>
+              <Text style={buttonStyles.primaryButtonText}>Buscar viaje en Quickcar</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -277,7 +275,7 @@ const buttonStyles = StyleSheet.create({
   primaryButton: {
     flexDirection: 'row',
     borderRadius: 9999,
-    backgroundColor: '#6200EE',
+    backgroundColor: '#007AFF',
     marginVertical: 20,
     paddingHorizontal: 16,
     paddingVertical: 8,

@@ -64,7 +64,6 @@ const SearchDestinationInputGoogle = ({ onClose }) => {
       backgroundColor: '#fff',
       fontSize: 16,
       color: '#333',
-      marginRight: 25,
       paddingRight: 35,
     },
     iconButtonDelete: {
