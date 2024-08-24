@@ -1,94 +1,114 @@
-import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import * as Location from 'expo-location';
-import { FontAwesome5 } from "@expo/vector-icons";
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, Platform, StyleSheet } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { Ionicons } from '@expo/vector-icons';
 
-const GetCurrentLocation = ({ onLocationChange }) => {
-  const [location, setLocation] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+export default function ChoiceTravelDayAndTime() {
+  const [date, setDate] = useState(new Date());
+  const [mode, setMode] = useState('date');
+  const [show, setShow] = useState(false);
 
-  const handleGetCurrentLocation = async () => {
-    setIsLoading(true);
-    setError("");
+  const onChange = (event, selectedDate) => {
+    const currentDate = selectedDate || date;
+    setShow(Platform.OS === 'ios');
+    setDate(currentDate);
+  };
 
-    let { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== 'granted') {
-      setIsLoading(false);
-      setError('Permission to access location was denied');
-      return;
-    }
+  const showMode = (currentMode) => {
+    setShow(true);
+    setMode(currentMode);
+  };
 
-    try {
-      let { coords } = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.High,
-      });
+  const showDatepicker = () => {
+    showMode('date');
+  };
 
-      const { latitude, longitude } = coords;
-
-      const address = `Lat: ${latitude.toFixed(4)}, Lon: ${longitude.toFixed(4)}`;
-      setLocation(address); 
-      onLocationChange({ latitude, longitude }); 
-    } catch (error) {
-      console.error(error);
-      setError('Error fetching location: ' + error.message);
-    } finally {
-      setIsLoading(false);
-    }
+  const showTimepicker = () => {
+    showMode('time');
   };
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-        style={styles.currentLocationButton}
-        onPress={handleGetCurrentLocation}
-        disabled={isLoading}
-      >
-        <FontAwesome5 name="location-arrow" size={20} color="#fff" />
-        <Text style={styles.currentLocationText}>
-          {isLoading ? "Getting Location..." : "Use Current Location"}
-        </Text>
+      <Text style={styles.title}>Selecciona el día y la hora de tu viaje</Text>
+
+      <View style={styles.infoContainer}>
+        <View style={styles.infoBox}>
+          <Ionicons name="calendar-outline" size={24} color="#4A90E2" />
+          <Text style={styles.infoText}>
+            {date.toLocaleDateString()}
+          </Text>
+        </View>
+
+        <View style={styles.infoBox}>
+          <Ionicons name="time-outline" size={24} color="#4A90E2" />
+          <Text style={styles.infoText}>
+            {date.toLocaleTimeString()}
+          </Text>
+        </View>
+      </View>
+
+      <TouchableOpacity style={styles.button} onPress={showDatepicker}>
+        <Text style={styles.buttonText}>Seleccionar fecha</Text>
       </TouchableOpacity>
-      {error ? <Text style={styles.errorText}>{error}</Text> : null}
+
+      <TouchableOpacity style={styles.button} onPress={showTimepicker}>
+        <Text style={styles.buttonText}>Seleccionar hora</Text>
+      </TouchableOpacity>
+
+      {show && (
+        <DateTimePicker
+          testID="dateTimePicker"
+          value={date}
+          mode={mode}
+          is24Hour={true}
+          display="default"
+          onChange={onChange}
+        />
+      )}
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F4F4F6',
     padding: 20,
-    backgroundColor: "#f9f9f9",
-    borderRadius: 8,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 5,
   },
-  currentLocationButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#6200EE",
-    padding: 10,
-    borderRadius: 8,
-    marginVertical: 10,
+  title: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 20,
   },
-  currentLocationText: {
-    color: "#fff",
-    fontSize: 16,
-    marginLeft: 10,
+  infoContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '100%',
+    marginBottom: 30,
   },
-  selectedLocation: {
+  infoBox: {
+    alignItems: 'center',
+  },
+  infoText: {
     marginTop: 10,
     fontSize: 16,
-    color: "#333",
+    color: '#333',
   },
-  errorText: {
-    marginTop: 10,
+  button: {
+    backgroundColor: '#4A90E2',
+    paddingVertical: 12,
+    paddingHorizontal: 25,
+    borderRadius: 25,
+    marginBottom: 15,
+    width: '80%',
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#fff',
     fontSize: 16,
-    color: "red",
+    fontWeight: 'bold',
   },
 });
-
-export default GetCurrentLocation;

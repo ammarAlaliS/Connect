@@ -18,6 +18,8 @@ import TravelHeader from '../components/TravelComponents/TravelHeader';
 import { FontAwesome5, MaterialIcons } from '@expo/vector-icons';
 import SearchInputGoogle from '../components/TravelComponents/BottomSheet/SearchInputGoogle';
 import SearchDestinationInputGoogle from '../components/TravelComponents/BottomSheet/SearchDestinationInputGoogle';
+import ChoiceTravelDayAndTime from '../components/TravelComponents/BottomSheet/ChoiceTravelDayAndTime';
+import ChoiceTravelSits from '../components/TravelComponents/BottomSheet/ChoiceTravelSits';
 
 const statusBarHeight = StatusBar.currentHeight || 0;
 const { height: screenHeight } = Dimensions.get('window');
@@ -33,6 +35,14 @@ const TravelScreen = () => {
   const endLocationName = useSelector((state) => state.trip.endLocation.name);
   const endLocationLatitude = useSelector((state) => state.trip.endLocation.latitude);
   const endLocationLongitude = useSelector((state) => state.trip.endLocation.longitude);
+
+  const hour = useSelector((state) => state.trip.startTime.hour);
+  const minutes = useSelector((state) => state.trip.startTime.minutes);
+  const period = useSelector((state) => state.trip.startTime.period);
+
+  const numberOfSeatRequested = useSelector((state) => state.trip.numberOfSeatRequested);
+
+  console.log(numberOfSeatRequested)
 
   const [formValues, setFormValues] = useState({
     fromLocation: startLocationName || '',
@@ -98,7 +108,24 @@ const TravelScreen = () => {
       ...prevValues,
       toLocation: endLocationName || '',
     }));
-  }, [startLocationName, endLocationName]);
+    setFormValues((prevValues) => {
+      const hasTimeValues = hour && minutes && period;
+      const timeString = hasTimeValues 
+        ? `Hora del viaje ${hour}:${minutes} ${period}` 
+        : '';
+  
+      return {
+        ...prevValues,
+        fromLocation: startLocationName || '',
+        toLocation: endLocationName || '',
+        time: timeString,
+      };
+    });
+    setFormValues((prevValues) => ({
+      ...prevValues,
+      sit: numberOfSeatRequested?.numberOfSeatRequested || 0
+    }));
+  }, [startLocationName, endLocationName, hour, minutes, period, numberOfSeatRequested]);
 
   const handleSheetChanges = (index) => {
     console.log('BottomSheet index:', index);
@@ -115,8 +142,9 @@ const TravelScreen = () => {
       case 'toLocation':
         return <SearchDestinationInputGoogle onClose={closeBottomSheet} />;
       case 'time':
+        return <ChoiceTravelDayAndTime  onClose={closeBottomSheet} />
       case 'sit':
-        return <Text>Seleccione {activeField}</Text>;
+        return <ChoiceTravelSits onClose={closeBottomSheet}/>
       default:
         return <Text>Seleccione una opción</Text>;
     }
@@ -188,7 +216,7 @@ const TravelScreen = () => {
                 accessibilityLabel={`Select ${field}`}
                 accessibilityHint={`Tap to choose your ${field}`}
               >
-                <Icon field={field} color={colors.text} />
+                <Icon field={field} color={'#06BCEE'} />
                 <Text style={[styles.inputText, { color: colors.text }]}>
                   {formValues[field] || placeholderText[field]}
                 </Text>
@@ -226,7 +254,7 @@ const TravelScreen = () => {
 const placeholderText = {
   fromLocation: 'De',
   toLocation: 'A',
-  time: 'Hora y Fecha',
+  time: 'Hora de viaje ',
   sit: 'Asientos',
 };
 
@@ -237,7 +265,7 @@ const Icon = ({ field, color }) => {
     case 'toLocation':
       return <MaterialIcons name="place" size={20} color={color} style={styles.icon} />;
     case 'time':
-      return <FontAwesome5 name="calendar-alt" size={20} color={color} style={styles.icon} />;
+      return <FontAwesome5 name="clock" size={20} color={color} style={styles.icon} />;
     case 'sit':
       return <FontAwesome5 name="chair" size={20} color={color} style={styles.icon} />;
     default:

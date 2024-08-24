@@ -16,9 +16,10 @@ const tripSlice = createSlice({
     startTime: {
       hour: 0,
       minutes: 0,
+      period: '', 
     },
     numberOfSeatRequested: 1,
-    seatRequested: 0,
+    seatRequested: 0, 
   },
 
   reducers: {
@@ -40,6 +41,7 @@ const tripSlice = createSlice({
       state.startTime = {
         hour: action.payload.hour,
         minutes: action.payload.minutes,
+        period: action.payload.period || state.startTime.period, // Asegúrate de manejar el período AM/PM
       };
     },
     setNumberOfSeatRequested: (state, action) => {
@@ -59,6 +61,7 @@ const tripSlice = createSlice({
       state.startTime = {
         hour: 0,
         minutes: 0,
+        period: 'AM',
       };
       state.numberOfSeatRequested = 1;
     },
@@ -70,12 +73,12 @@ const tripSlice = createSlice({
       };
     },
     endLocationReset: (state) => {
-        state.endLocation = {
-          latitude: null,
-          longitude: null,
-          name: "",
-        };
-      },
+      state.endLocation = {
+        latitude: null,
+        longitude: null,
+        name: "",
+      };
+    },
   },
 });
 
