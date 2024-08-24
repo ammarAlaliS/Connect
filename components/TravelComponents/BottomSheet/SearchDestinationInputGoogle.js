@@ -4,14 +4,12 @@ import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplet
 import { FontAwesome5, Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import { useDispatch, useSelector } from 'react-redux';
-import { setStartLocation, startLocationReset } from '../../../globalState/tripSlice';
+import { setEndLocation, endLocationReset } from '../../../globalState/tripSlice';
 
 const GOOGLE_MAPS_API_KEY = 'AIzaSyAAwUd5bO7daxQUktwliIcG4YA8M5mWhrY';
 
-const SearchInputGoogle = ({ onClose }) => {
-  const startLocationName = useSelector((state) => state.trip.startLocation.name);
-  const [inputValue, setInputValue] = useState(startLocationName);
-  const [isLoading, setIsLoading] = useState(false);
+const SearchDestinationInputGoogle = ({ onClose }) => {
+  const [inputValue, setInputValue] = useState(setEndLocation);
   const googlePlacesRef = useRef(null); 
   const dispatch = useDispatch();
 
@@ -19,55 +17,6 @@ const SearchInputGoogle = ({ onClose }) => {
     console.log('Current inputValue:', inputValue);
   }, [inputValue]);
 
-  const handleCurrentLocation = useCallback(async () => {
-    const { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert('Permiso denegado', 'No se puede acceder a la ubicación');
-      return;
-    }
-
-    setIsLoading(true);
-
-    try {
-      const location = await Location.getCurrentPositionAsync({});
-      const { latitude, longitude } = location.coords;
-      const address = await getAddressFromCoordinates(latitude, longitude);
-
-      setInputValue(address || 'Dirección no disponible');
-      if (googlePlacesRef.current) {
-        googlePlacesRef.current.setAddressText(address || 'Dirección no disponible');
-      }
-      dispatch(setStartLocation({
-        latitude: latitude,
-        longitude: longitude,
-        name: address,
-      }));
-
-      onClose();12
-    } catch (error) {
-      console.error('Error al obtener la ubicación:', error);
-      Alert.alert('Error', 'No se pudo obtener la ubicación');
-    } finally {
-      setIsLoading(false);
-    }
-  }, [dispatch]);
-
-  const getAddressFromCoordinates = useCallback(async (latitude, longitude) => {
-    const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${GOOGLE_MAPS_API_KEY}`;
-    try {
-      const response = await fetch(url);
-      const data = await response.json();
-      if (data.status === 'OK' && data.results.length > 0) {
-        return data.results[0].formatted_address;
-      } else {
-        console.error('Error en la respuesta de Geocoding:', data.status);
-        return 'No se encontró dirección';
-      }
-    } catch (error) {
-      console.error('Error al obtener la dirección:', error);
-      return 'Error al obtener dirección';
-    }
-  }, []);
 
   const handlePlaceSelect = useCallback((data, details) => {
     if (details && details.geometry) {
@@ -75,7 +24,7 @@ const SearchInputGoogle = ({ onClose }) => {
       const placeName = details.formatted_address;
 
       setInputValue(placeName); 
-      dispatch(setStartLocation({
+      dispatch(setEndLocation({
         latitude: lat,
         longitude: lng,
         name: placeName,
@@ -89,7 +38,7 @@ const SearchInputGoogle = ({ onClose }) => {
     if (googlePlacesRef.current) {
       googlePlacesRef.current.setAddressText('');
     }
-    dispatch(startLocationReset());
+    dispatch(endLocationReset());
   }, [dispatch]);
 
   const styles = useMemo(() => StyleSheet.create({
@@ -203,19 +152,9 @@ const SearchInputGoogle = ({ onClose }) => {
             <Ionicons name="close" size={20} color="#000" />
           </TouchableOpacity>
         )}
-        {isLoading ? (
-          <ActivityIndicator style={styles.loader} size="small" color="#000" />
-        ) : (
-          <TouchableOpacity
-            style={styles.iconButton}
-            onPress={handleCurrentLocation}
-          >
-            <FontAwesome5 name="map-marker-alt" size={16} color="#fff" />
-          </TouchableOpacity>
-        )}
       </View>
     </View>
   );
 };
 
-export default SearchInputGoogle;
+export default SearchDestinationInputGoogle;

@@ -69,6 +69,13 @@ const tripSlice = createSlice({
         name: "",
       };
     },
+    endLocationReset: (state) => {
+        state.endLocation = {
+          latitude: null,
+          longitude: null,
+          name: "",
+        };
+      },
   },
 });
 
@@ -78,7 +85,8 @@ export const {
   setStartTime,
   setNumberOfSeatRequested,
   resetTrip,
-  startLocationReset
+  startLocationReset,
+  endLocationReset
 } = tripSlice.actions;
 
 export default tripSlice.reducer;

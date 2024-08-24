@@ -17,6 +17,7 @@ import BottomSheet from '@gorhom/bottom-sheet';
 import TravelHeader from '../components/TravelComponents/TravelHeader';
 import { FontAwesome5, MaterialIcons } from '@expo/vector-icons';
 import SearchInputGoogle from '../components/TravelComponents/BottomSheet/SearchInputGoogle';
+import SearchDestinationInputGoogle from '../components/TravelComponents/BottomSheet/SearchDestinationInputGoogle';
 
 const statusBarHeight = StatusBar.currentHeight || 0;
 const { height: screenHeight } = Dimensions.get('window');
@@ -29,9 +30,13 @@ const TravelScreen = () => {
   const startLocationLatitude = useSelector((state) => state.trip.startLocation.latitude);
   const startLocationLongitude = useSelector((state) => state.trip.startLocation.longitude);
 
+  const endLocationName = useSelector((state) => state.trip.endLocation.name);
+  const endLocationLatitude = useSelector((state) => state.trip.endLocation.latitude);
+  const endLocationLongitude = useSelector((state) => state.trip.endLocation.longitude);
+
   const [formValues, setFormValues] = useState({
     fromLocation: startLocationName || '',
-    toLocation: '',
+    toLocation: endLocationName || '',
     time: '',
     sit: '',
   });
@@ -89,7 +94,11 @@ const TravelScreen = () => {
       ...prevValues,
       fromLocation: startLocationName || '',
     }));
-  }, [startLocationName]);
+    setFormValues((prevValues) => ({
+      ...prevValues,
+      toLocation: endLocationName || '',
+    }));
+  }, [startLocationName, endLocationName]);
 
   const handleSheetChanges = (index) => {
     console.log('BottomSheet index:', index);
@@ -104,6 +113,7 @@ const TravelScreen = () => {
       case 'fromLocation':
         return <SearchInputGoogle onClose={closeBottomSheet} />;
       case 'toLocation':
+        return <SearchDestinationInputGoogle onClose={closeBottomSheet} />;
       case 'time':
       case 'sit':
         return <Text>Seleccione {activeField}</Text>;
