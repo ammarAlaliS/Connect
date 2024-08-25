@@ -48,12 +48,22 @@ const SignInForm = () => {
   if (!fontsLoaded) {
   }
 
+
   const [buttonText, setButtonText] = React.useState(false);
   const [inputColor, setInputColor] = React.useState([
     "input",
     "inputError",
     "inputSuccess",
   ]);
+
+  const handleLoginSuccess = () => {
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [{ name: "MainScreen" }],
+      })
+    );
+  };
 
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
@@ -141,7 +151,7 @@ const SignInForm = () => {
                       JSON.stringify(data)
                     );
                     await AsyncStorage.setItem("token", data.token);
-
+                    
                     dispatch(
                       setUser({
                         global_user: {
@@ -154,11 +164,9 @@ const SignInForm = () => {
                         driver_information: data.QuickCar,
                       })
                     );
-                    navigation.reset({
-                      index: 0,
-                      routes: [{ name: 'MainScreen' }],
-                    });
+                    
                     // Limpiar el formulario
+                    handleLoginSuccess()
                     resetForm();
                     setButtonText(false);
                   } else {

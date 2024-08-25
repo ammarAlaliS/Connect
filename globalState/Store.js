@@ -11,6 +11,7 @@ import travelReducer from './travelSlice';
 import messagesReducer from './MessageSlice';
 import loadingReducer from './loadingSlice'; 
 import tripReducer from './tripSlice'
+import sessionStatusReducer from './checkUserSessionSlice';
 
 export const store = configureStore({
   reducer: {
@@ -25,7 +26,8 @@ export const store = configureStore({
     travel: travelReducer,
     messages: messagesReducer, 
     loading: loadingReducer,
-    trip: tripReducer
+    trip: tripReducer,
+    sessionStatus: sessionStatusReducer,
   },
 });
 

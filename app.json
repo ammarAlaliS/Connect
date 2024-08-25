@@ -7,7 +7,7 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "https://storage.googleapis.com/quickcar-storage/quickcar-removebg-preview%20(1).png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
