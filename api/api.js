@@ -2,7 +2,8 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigationContext } from '../context/NavigationContext';
 
-const API_BASE_URL = "https://obbaramarket-backend.onrender.com/api/obbaramarket";
+
+export const API_BASE_URL = "https://obbaramarket-backend.onrender.com/api/obbaramarket";
 
 const api = axios.create({
   baseURL: API_BASE_URL,

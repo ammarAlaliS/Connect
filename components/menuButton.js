@@ -25,15 +25,17 @@ const MenuButton = ({
   const getButtonStyles = (screenName) => {
     if (screenName === activeScreen) {
       return {
-        borderBottomWidth: 3,
         width: 50,
         borderRadius: 10,
-        borderBottomColor: darkMode.headerBorderIcon,
-        marginBottom:3
+        marginBottom:8,
+        transform: [
+          { translateY: -2 }, 
+        ],
+        
       };
     } else {
       return {
-        borderBottomWidth: 3,
+        borderBottomWidth: 0,
         width: 50,
         borderRadius: 10,
         borderBottomColor: 'transparent', 

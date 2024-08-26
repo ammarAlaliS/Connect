@@ -4,10 +4,10 @@
     "slug": "Quickcar",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/imgs/logo.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "https://storage.googleapis.com/quickcar-storage/quickcar-removebg-preview%20(1).png",
+      "image": "./assets/imgs/presentation2.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -19,7 +19,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/imgs/logo.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.ammaralisali.Quickcar",

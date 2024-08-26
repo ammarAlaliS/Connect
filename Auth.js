@@ -11,8 +11,8 @@ import AdviseMessage from "./screens/AdviseMessage";
 import MessageScreen from "./screens/MessageScreen";
 import ContactScreen from "./screens/ContactScreen";
 import CommentsScreen from "./screens/CommentScreen";
-import QuickCarsSearchesDetails from "./screens/QuickCarsSearchesDetails";
 import TravelScreen from "./screens/TravelScreen";
+import QuickCarsSearchesDetails from "./screens/QuickCarsSearchesDetails";
 
 
 const Stack = createNativeStackNavigator();
@@ -22,6 +22,7 @@ export default function Auth() {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="SignInForm" component={SignInForm} />
       <Stack.Screen name="MainScreen" component={HomeAppScreen} />
+      <Stack.Screen name="comment" component={CommentsScreen} />
       <Stack.Screen name="Market" component={MarketScreen} />
       <Stack.Screen name="Blog" component={BlogScreen} />
       <Stack.Screen name="Driver" component={DriversScreen} />
@@ -29,8 +30,8 @@ export default function Auth() {
       <Stack.Screen name="Travel" component={TravelScreen} />
       <Stack.Screen name="ArticleScreen" component={ArticleScreen} />
       <Stack.Screen name="Contact" component={ContactScreen} />
-      <Stack.Screen name="CommentScreen" component={CommentsScreen} />
       <Stack.Screen name="MessageScreen" component={MessageScreen} />
+      <Stack.Screen name="QuickCarDetailsScreen" component={QuickCarsSearchesDetails}/>
     </Stack.Navigator>
   );
 }

@@ -5,7 +5,7 @@ import ClockIcon from "../../icons/ClockIcon";
 import { useSelector } from "react-redux";
 import SquarePlusIcon from "../../icons/SquarePlusIcon";
 
-const QuickCarHeaderTravelDetails = () => {
+const QuickCarHeaderTravelDetails = ( { darkMode }) => {
   const tripOriginName = useSelector((state) => state.travel.tripOriginName);
   const tripDestinationName = useSelector(
     (state) => state.travel.tripDestinationName
@@ -51,7 +51,7 @@ const QuickCarHeaderTravelDetails = () => {
               fontSize: 14,
               fontFamily: "PlusJakartaSans-Regular",
               padding: 1,
-              color: "#00000090",
+              color: "#fff",
               fontWeight: "800",
             }}
           >

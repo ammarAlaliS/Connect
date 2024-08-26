@@ -12,6 +12,8 @@ import { setQuickCarsDistances } from "../globalState/travelSlice";
 import IndividualQuickCarDetails from "../components/TravelComponents/IndividualQuickCarDetails";
 import { useNavigation } from "@react-navigation/native";
 import { StatusBar } from "react-native";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { selectTheme } from "../globalState/themeSlice";
 
 const QuickCarsSearchesDetails = ({ route }) => {
   const quickCarsData = useSelector((state) => state.travel.quickCarsData);
@@ -24,7 +26,15 @@ const QuickCarsSearchesDetails = ({ route }) => {
   const quickCarsDistances = useSelector(
     (state) => state.travel.quickCarsDistances
   );
+
+  const startLocationName = useSelector(
+    (state) => state.trip.startLocation.name
+  );
+
+  const endLocationName = useSelector((state) => state.trip.endLocation.name);
+
   const seatRequested = useSelector((state) => state.travel.seatRequested);
+  const darkMode = useSelector(selectTheme);
 
   const [showQuickCarProfile, setShowQuickCarProfile] = useState(false);
   const [quickCarIndex, setQuickCarIndex] = useState(0);
@@ -107,7 +117,7 @@ const QuickCarsSearchesDetails = ({ route }) => {
     <SafeAreaView
       style={{
         flex: 1,
-        backgroundColor: "#f4f5f6",
+        backgroundColor: darkMode.backgroundDark,
         marginTop: statusBarHeight,
         // position: "absolute",
         // top: 0,
@@ -119,50 +129,93 @@ const QuickCarsSearchesDetails = ({ route }) => {
         <IndividualQuickCarDetails
           setShowQuickCarProfile={setShowQuickCarProfile}
           quickCarInfo={quickCarsData[quickCarIndex]}
+          darkMode={darkMode}
         ></IndividualQuickCarDetails>
       )}
-
       <View
         style={{
-          height: 54,
-          backgroundColor: "#2b00b6",
-          justifyContent: "center",
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
+          paddingVertical: 20,
+          paddingHorizontal: 10,
+          backgroundColor: darkMode.background,
+          borderBottomWidth: 1,
+          borderColor: darkMode.contentMessageBorderColor,
         }}
+        className=" flex-row items-center space-x-[10]"
       >
         <TouchableOpacity
           onPress={() => {
-            navigation.navigate("MainScreen");
+            navigation.goBack();
           }}
           style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            height: "100%",
-            display: "flex",
-            flexDirection: "column",
+            backgroundColor: darkMode.backgroundDark,
+            width: 40,
+            height: 40,
+            borderWidth: 1,
+            borderColor: darkMode.borderBox,
+            borderRadius: 999,
+            alignItems: "center",
             justifyContent: "center",
           }}
         >
-          <ArrowLeftIcon color={"#f4f5f6"} height={30} width={30}>
-            {" "}
-          </ArrowLeftIcon>
+          <MaterialIcons
+            name="keyboard-return"
+            size={24}
+            color={darkMode.text}
+          />
         </TouchableOpacity>
-        <Text
+        <View
           style={{
-            fontSize: 20,
-            color: "#fff",
-            fontFamily: "PlusJakartaSans-Bold",
+            backgroundColor: darkMode.backgroundDark,
+            flex: 1,
+            padding: 10,
+            borderRadius: 10,
+            borderWidth: 1,
+            borderColor: darkMode.contentMessageBorderColor,
           }}
         >
-          Busca un QuickCar
-        </Text>
+          <View>
+            <Text
+              style={{
+                fontSize: 14,
+                fontFamily: "PlusJakartaSans-ExtraBold",
+                color: darkMode.headerIconColor,
+              }}
+            >
+              Punto de Inicio:{" "}
+              <Text
+                style={{
+                  fontSize: 12,
+                  fontFamily: "PlusJakartaSans-Bold",
+                  color: darkMode.text,
+                }}
+              >
+                {startLocationName}
+              </Text>
+            </Text>
+          </View>
+          <View>
+            <Text
+              style={{
+                fontSize: 14,
+                fontFamily: "PlusJakartaSans-ExtraBold",
+                color: darkMode.headerIconColor,
+              }}
+            >
+              Destino:{" "}
+              <Text
+                style={{
+                  fontSize: 12,
+                  fontFamily: "PlusJakartaSans-Bold",
+                  color: darkMode.text,
+                }}
+              >
+                {endLocationName}
+              </Text>
+            </Text>
+          </View>
+        </View>
       </View>
-      {seatRequested > 0 && (
-        <QuickCarHeaderTravelDetails></QuickCarHeaderTravelDetails>
-      )}
+      {seatRequested > 0 && <QuickCarHeaderTravelDetails darkMode={darkMode} />}
       {!quickCarsData && (
         <Text
           style={{
@@ -176,7 +229,7 @@ const QuickCarsSearchesDetails = ({ route }) => {
           No se encontraron QuickCars
         </Text>
       )}
-      <ScrollView>
+      <ScrollView contentContainerStyle={{ padding: 20 }}>
         {quickCarsData &&
           quickCarsData.map((item, index) => {
             return (
@@ -186,18 +239,21 @@ const QuickCarsSearchesDetails = ({ route }) => {
                   display: "flex",
                   flexDirection: "column",
                   alignItems: "center",
+                  justifyContent: "center",
                   width: "100%",
                   borderBottomWidth: 1,
                   borderStyle: "solid",
-                  borderColor: "#00000090",
-
                   borderBottomWidth: 1,
                   borderColor: "#00000010",
                   borderStyle: "solid",
                   shadowColor: "#000",
                   shadowOpacity: 0.1,
-                  shadowRadius: 1,
+                  shadowRadius: 30,
                   elevation: 1,
+                  backgroundColor: darkMode.background,
+                  borderRadius: 20,
+                  overflow: "hidden",
+                  marginBottom:30
                 }}
                 onTouchEnd={() => {
                   setQuickCarIndex(index);
@@ -211,6 +267,8 @@ const QuickCarsSearchesDetails = ({ route }) => {
                     justifyContent: "space-between",
                     alignItems: "center",
                     width: "100%",
+                    // backgroundColor: '#9DBDFF'
+                    backgroundColor: "#9DBDFF",
                   }}
                 >
                   <View
@@ -218,6 +276,8 @@ const QuickCarsSearchesDetails = ({ route }) => {
                       display: "flex",
                       flexDirection: "row",
                       alignItems: "center",
+                      justifyContent: "center",
+                      marginBottom: 10,
                     }}
                   >
                     <Image
@@ -232,14 +292,18 @@ const QuickCarsSearchesDetails = ({ route }) => {
                         borderRadius: 45,
                         margin: 15,
                         marginBottom: 5,
+                        borderWidth: 1,
+                        borderColor: darkMode.borderBox,
+                        backgroundColor: darkMode.backgroundDark,
                       }}
                     ></Image>
 
                     <View>
                       <Text
                         style={{
-                          fontSize: 17,
-                          fontFamily: "PlusJakartaSans-Regular",
+                          fontSize: 18,
+                          fontFamily: "PlusJakartaSans-bold",
+                          color: darkMode.text,
                         }}
                       >
                         {item.user?.name + " " + item.user?.lastName}
@@ -265,7 +329,8 @@ const QuickCarsSearchesDetails = ({ route }) => {
                         <Text
                           style={{
                             fontSize: 13,
-                            color: "#00000090",
+                            fontFamily: "PlusJakartaSans-bold",
+                            color: darkMode.text,
                             marginLeft: 10,
                           }}
                         >
@@ -278,15 +343,27 @@ const QuickCarsSearchesDetails = ({ route }) => {
                     style={{
                       display: "flex",
                       flexDirection: "column",
-                      alignItems: "flex-end",
+                      alignItems: "center",
                       marginRight: 15,
+                      backgroundColor: darkMode.backgroundDark,
+                      padding: 5,
+                      paddingHorizontal:7,
+                      borderRadius: 10,
+                      borderWidth: 1,
+                      borderColor: darkMode.borderBox,
                     }}
                   >
-                    <Text style={{ fontSize: 17, fontWeight: "900" }}>
+                    <Text style={{ fontSize: 17, fontWeight: "900", color:'#387F39' }}>
                       $ {item.pricePerSeat}
                     </Text>
-                    <Text style={{ fontSize: 13, color: "#00000090" }}>
-                      {item.availableSeats} asientos libres
+                    <Text
+                      style={{
+                        fontSize: 12,
+                        fontWeight: "bold",
+                        color:darkMode.text
+                      }}
+                    >
+                      {item.availableSeats} plazas libres
                     </Text>
                   </View>
                 </View>
@@ -298,6 +375,8 @@ const QuickCarsSearchesDetails = ({ route }) => {
                     flexDirection: "row",
                     justifyContent: "space-evenly",
                     marginVertical: 2,
+                    backgroundColor: darkMode.backgroundDark,
+                    paddingVertical: 5,
                   }}
                 >
                   <Text
@@ -305,13 +384,14 @@ const QuickCarsSearchesDetails = ({ route }) => {
                       fontFamily: "PlusJakartaSans-SemiBold",
                       color: "#52535a",
                       fontSize: 15.5,
+                      textAlignVertical: "center",
                     }}
                   >
                     A{" "}
                     <Text
                       style={{
                         fontFamily: "PlusJakartaSans-Bold",
-                        color: "#2b00b6",
+                        color: "#06BCEE",
                       }}
                     >
                       {quickCarsDistances && quickCarsDistances.length > 0
@@ -333,15 +413,16 @@ const QuickCarsSearchesDetails = ({ route }) => {
                   <Text
                     style={{
                       fontFamily: "PlusJakartaSans-SemiBold",
-                      color: "#52535a",
+                      color: darkMode.text,
                       fontSize: 15.5,
+                      textAlignVertical: "center",
                     }}
                   >
                     A{" "}
                     <Text
                       style={{
                         fontFamily: "PlusJakartaSans-Bold",
-                        color: "#2b00b6",
+                        color: "#06BCEE",
                       }}
                     >
                       {quickCarsDistances && quickCarsDistances.length > 0

@@ -7,12 +7,12 @@ import {
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useNavigation } from "@react-navigation/native";
 
+
 export default function TravelHeader({ darkMode,  }) {
   const navegation = useNavigation()
   return (
     <View
         style={{
-          backgroundColor: "red",
           paddingVertical: 20,
           paddingHorizontal: 10,
           backgroundColor: darkMode.background,

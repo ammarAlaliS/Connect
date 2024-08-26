@@ -23,7 +23,7 @@ export const colors = {
     backgroundBlodCard: '#fff',
     showText: '#1E90FF',
     backgroundCommentButton :  '#1E90FF',
-    headerIconColor: '#1A5319',
+    headerIconColor: '#06BCEE',
     headerBorderIcon: '#fff ',
     textColorLikeButton: '#ff226e',
     textCommentButton: '#1E90FF',

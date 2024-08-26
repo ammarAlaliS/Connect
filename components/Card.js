@@ -135,6 +135,7 @@ const Card = ({ darkMode, handlePress, activeScreen }) => {
               textAlign: "left",
               borderWidth: 1,
               borderColor: darkMode.borderBox,
+              marginBottom:6
             }}
           >
             <Animatable.Text
@@ -160,7 +161,7 @@ const Card = ({ darkMode, handlePress, activeScreen }) => {
               Elige tu conductor y tu asiento.
             </Animatable.Text>
           </Animatable.View>
-          <View className=" flex-row items-center space-x-2">
+          <View className=" flex-row items-center space-x-2 ">
             <TouchableOpacity
               onPress={() => {
                 navegation.navigate("Travel");
@@ -170,7 +171,7 @@ const Card = ({ darkMode, handlePress, activeScreen }) => {
                 style={{
                   borderWidth: 1,
                   borderColor: darkMode.borderBox,
-                  backgroundColor: "#0000ff",
+                  backgroundColor: "#007AFF",
                   shadowColor: "rgba(0, 0, 0, 0.05)",
                   shadowOpacity: 0.8,
                   shadowRadius: 5,
@@ -186,6 +187,7 @@ const Card = ({ darkMode, handlePress, activeScreen }) => {
                     fontSize: 14,
                     fontFamily: "PlusJakartaSans-SemiBold",
                     paddingBottom: 2,
+                    lineHeight:16
                   }}
                 >
                   Buscar viaje
@@ -217,6 +219,7 @@ const Card = ({ darkMode, handlePress, activeScreen }) => {
                     fontSize: 14,
                     fontFamily: "PlusJakartaSans-SemiBold",
                     paddingBottom: 2,
+                    lineHeight:16
                   }}
                 >
                   Ser conductor

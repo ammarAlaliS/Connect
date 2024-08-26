@@ -55,17 +55,19 @@ export default function ChoiceTravelSits({ onClose }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: "start",
     alignItems: "center",
     backgroundColor: "#FFFFFF",
     padding: 20,
-    width: windowWidth - 40, // Adjust width for better responsiveness
+    paddingTop: 80,
+    width: windowWidth , // Adjust width for better responsiveness
   },
   title: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: "600",
     color: "#333",
     marginBottom: 20,
+    textAlign:"center"
   },
   selectorContainer: {
     flexDirection: "row",
@@ -81,7 +83,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#000",
     justifyContent: "center",
     alignItems: "center",
-    marginHorizontal: 10,
+    marginHorizontal: 40,
   },
   buttonText: {
     fontSize: 24,
@@ -89,7 +91,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   seatCount: {
-    fontSize: 30,
+    fontSize: 40,
     fontWeight: "600",
     color: "#333",
   },

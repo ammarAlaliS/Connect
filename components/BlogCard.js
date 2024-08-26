@@ -399,7 +399,7 @@ const BlogCard = ({
                 backgroundColor: darkMode.backgroundDark,
               }}
               onPress={() =>
-                navigation.navigate("commentScreen", {
+                navigation.navigate("comment", {
                   blogId,
                   token,
                   darkMode,

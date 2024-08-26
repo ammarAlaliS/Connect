@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { selectTheme } from "../../globalState/themeSlice";
 import QuickCarDetails from "./DriverComponents/QuickCarDetails";
 import MapQuickCarDetails from "./DriverComponents/MapQuickCarDetails";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { io } from "socket.io-client";
 
 const IndividualQuickCarDetails = ({
@@ -49,7 +50,7 @@ const IndividualQuickCarDetails = ({
   return (
     <View
       style={{
-        backgroundColor: "#f4f5f6",
+        backgroundColor: darkMode.backgroundDark,
         height: "100%",
         width: "100%",
         position: "absolute",
@@ -58,46 +59,55 @@ const IndividualQuickCarDetails = ({
     >
       <View
         style={{
-          height: 54,
-          backgroundColor: "#2b00b6",
-          justifyContent: "center",
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-          // marginBottom: 20,
+          paddingVertical: 20,
+          paddingHorizontal: 10,
+          backgroundColor: darkMode.background,
+          borderBottomWidth: 1,
+          borderColor: darkMode.contentMessageBorderColor,
         }}
+        className=" flex-row items-center space-x-[10]"
       >
         <TouchableOpacity
           onPress={() => {
-            if (showMapView) {
-              setShowMapView(false);
-            } else {
-              setShowQuickCarProfile(false);
-            }
+            navigation.goBack();
           }}
           style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            height: "100%",
-            display: "flex",
-            flexDirection: "column",
+            backgroundColor: darkMode.backgroundDark,
+            width: 40,
+            height: 40,
+            borderWidth: 1,
+            borderColor: darkMode.borderBox,
+            borderRadius: 999,
+            alignItems: "center",
             justifyContent: "center",
           }}
         >
-          <ArrowLeftIcon color={"#f4f5f6"} height={30} width={30}>
-            {" "}
-          </ArrowLeftIcon>
+          <MaterialIcons
+            name="keyboard-return"
+            size={24}
+            color={darkMode.text}
+          />
         </TouchableOpacity>
-        <Text
+        <View
           style={{
-            fontSize: 20,
-            color: "#fff",
-            fontFamily: "PlusJakartaSans-Bold",
+           
+            flex: 1,
+            padding: 10,
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginRight:40
           }}
         >
-          {showMapView ? "Mapa" : "Perfil del QuickCar"}
-        </Text>
+          <Text
+            style={{
+              fontSize: 20,
+              fontFamily: "PlusJakartaSans-ExtraBold",
+              color: darkMode.text,
+            }}
+          >
+            Perfil del conductor
+          </Text>
+        </View>
       </View>
 
       {!showMapView && (
@@ -112,7 +122,9 @@ const IndividualQuickCarDetails = ({
               justifyContent: "space-between",
               alignItems: "center",
               width: "100%",
-              backgroundColor: "#f4f5f6",
+              backgroundColor: darkMode.backgroundDark,
+              // borderWidth:1,
+              // borderColor: darkMode.contentMessageBorderColor,
             }}
           >
             <View
@@ -138,6 +150,7 @@ const IndividualQuickCarDetails = ({
                   margin: 15,
                   marginBottom: 5,
                 }}
+                  resizeMode="cover"
               ></Image>
 
               <View>
@@ -145,6 +158,7 @@ const IndividualQuickCarDetails = ({
                   style={{
                     fontSize: 17,
                     fontFamily: "PlusJakartaSans-Bold",
+                    color: darkMode.text,
                   }}
                 >
                   {quickCarInfo.user?.name + " " + quickCarInfo.user?.lastName}
@@ -161,7 +175,7 @@ const IndividualQuickCarDetails = ({
                         key={item}
                         name="star"
                         size={12}
-                        color={"#ffbb1c"}
+                        color={darkMode.dotActive}
                         style={{ marginRight: 2 }}
                       ></FontAwesome>
                     );
@@ -170,7 +184,7 @@ const IndividualQuickCarDetails = ({
                   <Text
                     style={{
                       fontSize: 13,
-                      color: "#00000090",
+                      color: darkMode.text,
                       marginLeft: 10,
                     }}
                   >
@@ -196,7 +210,7 @@ const IndividualQuickCarDetails = ({
                 width: "40%",
                 height: "100%",
                 borderBottomWidth: !showReviews ? 4 : 0,
-                borderColor: "#2b00b6",
+                borderColor: darkMode.dotActive,
                 borderStyle: "solid",
                 alignItems: "center",
               }}
@@ -209,7 +223,7 @@ const IndividualQuickCarDetails = ({
                   marginBottom: 10,
                   fontFamily: "PlusJakartaSans-Bold",
                   fontSize: 15,
-                  color: "#2b00b6",
+                  color: darkMode.text,
                 }}
               >
                 Sobre el conductor
@@ -221,7 +235,7 @@ const IndividualQuickCarDetails = ({
                 height: "100%",
                 alignItems: "center",
                 borderBottomWidth: showReviews ? 4 : 0,
-                borderColor: "#2b00b6",
+                borderColor: darkMode.text,
                 borderStyle: "solid",
                 alignItems: "center",
               }}
@@ -234,7 +248,7 @@ const IndividualQuickCarDetails = ({
                   marginBottom: 10,
                   fontFamily: "PlusJakartaSans-SemiBold",
                   fontSize: 15,
-                  color: "#000",
+                  color: darkMode.text,
                 }}
               >
                 Reseñas
