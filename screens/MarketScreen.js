@@ -59,7 +59,6 @@ const MarketScreen = ({ darkMode }) => {
   const global_user = useSelector((state) => state.user.global_user);
   const token = global_user?.token;
 
-
   const listClasifications = [
     { id: 1, name: "Todos" },
     { id: 2, name: "Coche" },
@@ -231,10 +230,6 @@ const MarketScreen = ({ darkMode }) => {
           showsVerticalScrollIndicator={false}
           scrollEventThrottle={16}
           stickyHeaderIndices={[1]}
-          onScroll={(e) => {
-            ifScrollIsInTheEnd(e.nativeEvent);
-          }}
-          ref={scrollViewRef}
         >
           <View className="flex-row">
             <View
@@ -407,7 +402,13 @@ const MarketScreen = ({ darkMode }) => {
           </View>
         </ScrollView>
       </View>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        onScroll={(e) => {
+          ifScrollIsInTheEnd(e.nativeEvent);
+        }}
+        ref={scrollViewRef}
+      >
         {/* Cards de articulos */}
 
         <ScrollView
