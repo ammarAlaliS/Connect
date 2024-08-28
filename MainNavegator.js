@@ -12,6 +12,7 @@ import MessageScreen from "./screens/MessageScreen";
 import ContactScreen from "./screens/ContactScreen";
 import CommentsScreen from "./screens/CommentScreen";
 import QuickCarsSearchesDetails from "./screens/QuickCarsSearchesDetails";
+import ProfileScreenPreview from "./screens/ProfileScreenPreview";
 import TravelScreen from "./screens/TravelScreen";
 
 
@@ -33,6 +34,7 @@ export default function MainNavigator() {
       <Stack.Screen name="MessageScreen" component={MessageScreen} />
       <Stack.Screen name="QuickCarDetailsScreen" component={QuickCarsSearchesDetails}/>
       <Stack.Screen name="AdviseMessage" component={AdviseMessage}/>
+      <Stack.Screen name="ProfileScreenPreview" component={ProfileScreenPreview}/>
     </Stack.Navigator>
   );
 }

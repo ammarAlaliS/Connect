@@ -44,6 +44,11 @@ const Register = () => {
   const [passwordVisible, setPasswordVisible] = React.useState(false);
   const darkMode = useSelector(selectTheme);
 
+  const userName = useSelector((state) => state.register.firstName);
+  const userLastName = useSelector((state) => state.register.lastName);
+  const email = useSelector((state) => state.register.email);
+  const password = useSelector((state) => state.register.password);
+
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
   };
@@ -55,10 +60,6 @@ const Register = () => {
       email: email,
       password: password
     }))
-    Toast.show({
-      type: "success",
-      text1: "Registro exitoso",
-    });
   };
 
   return (
@@ -100,10 +101,10 @@ const Register = () => {
           <View>
             <Formik
               initialValues={{
-                firstName: "",
-                lastName: "",
-                email: "",
-                password: "",
+                firstName: userName,
+                lastName: userLastName,
+                email: email,
+                password: password,
               }}
               validationSchema={SignInSchema}
               onSubmit={handleSubmit}
@@ -291,6 +292,7 @@ const Register = () => {
                             justifyContent: 'space-between',
                             flex: 1,
                             paddingHorizontal: 16,
+                            marginLeft:4
                           },
                         ]}
                       >
@@ -332,7 +334,10 @@ const Register = () => {
                 
                   <View className=" mt-20  ">
                     <TouchableOpacity
-                      onPress={handleSubmit}
+                      onPress={()=>{
+                        handleSubmit()
+                        navigation.navigate('ProfileScreenPreview')
+                      }}
                       style={{
                         backgroundColor: darkMode.buttonNext,
                         alignItems: "center",
@@ -381,10 +386,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   title: {
-    fontSize: 28,
-    fontFamily: "PlusJakartaSans-Bold",
+    fontSize: 24,
+    fontFamily: "PlusJakartaSans-ExtraBold",
     textAlign: "center",
     marginBottom: 16,
+    lineHeight:32
   },
   subtitle: {
     color: "#888",

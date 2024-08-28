@@ -122,7 +122,7 @@ export const colors = {
 };
 
 const initialState = {
-  darkMode: false,
+  darkMode: true,
 };
 
 const themeSlice = createSlice({

@@ -13,6 +13,7 @@ import ContactScreen from "./screens/ContactScreen";
 import CommentsScreen from "./screens/CommentScreen";
 import TravelScreen from "./screens/TravelScreen";
 import QuickCarsSearchesDetails from "./screens/QuickCarsSearchesDetails";
+import ProfileScreenPreview from "./screens/ProfileScreenPreview";
 
 
 
@@ -34,6 +35,8 @@ export default function Auth() {
       <Stack.Screen name="MessageScreen" component={MessageScreen} />
       <Stack.Screen name="QuickCarDetailsScreen" component={QuickCarsSearchesDetails}/>
       <Stack.Screen name="AdviseMessage" component={AdviseMessage}/>
+      <Stack.Screen name="ProfileScreenPreview" component={ProfileScreenPreview}/>
+      
     </Stack.Navigator>
   );
 }
