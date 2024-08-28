@@ -54,6 +54,12 @@ export const colors = {
 
     // buttonScrollToBottom 
     buttonScrollToBottomColor: '#fff',
+
+    
+    // buttonFollow
+
+    buttonNext: '#18181b'
+
     
   },
   dark: {
@@ -69,7 +75,7 @@ export const colors = {
     iconBorderBottomActive: "#1E90FF",
     borderBox: "rgba(128, 128, 128, 0.9)",
     borderBoxCardList: "rgba(128, 128, 128, 1)",
-    backgroundDark: "#000",
+    backgroundDark: "#0C0C0C",
     backgroundList: "#1a5319",
     backgroundBlodCard: '#555555',
     backgroundCardList: 'rgba(128, 128, 128, 0.4)',
@@ -107,6 +113,10 @@ export const colors = {
     
     // buttonScrollToBottom 
     buttonScrollToBottomColor: '#000',
+
+    // buttonFollow
+
+    buttonNext: '#007AFF'
 
   },
 };

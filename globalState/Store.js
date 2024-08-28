@@ -12,6 +12,7 @@ import messagesReducer from './MessageSlice';
 import loadingReducer from './loadingSlice'; 
 import tripReducer from './tripSlice'
 import sessionStatusReducer from './checkUserSessionSlice';
+import registerReducer from "./RegisterSlice";
 
 export const store = configureStore({
   reducer: {
@@ -28,6 +29,7 @@ export const store = configureStore({
     loading: loadingReducer,
     trip: tripReducer,
     sessionStatus: sessionStatusReducer,
+    register: registerReducer
   },
 });
 

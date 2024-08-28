@@ -10,6 +10,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
+  Dimensions 
 } from "react-native";
 import { useNavigation, CommonActions } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
@@ -29,6 +30,8 @@ import Toast from "react-native-toast-message";
 import * as Animatable from "react-native-animatable";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+const { width, height } = Dimensions.get('window');
+
 const SignInSchema = Yup.object().shape({
   email: Yup.string()
     .email("Formato de correo electrónico no válido")
@@ -45,6 +48,7 @@ const SignInForm = () => {
   const dispatch = useDispatch();
   const [passwordVisible, setPasswordVisible] = React.useState(false);
   const { fontsLoaded } = useCustomFonts();
+
   if (!fontsLoaded) {
   }
 
@@ -179,14 +183,12 @@ const SignInForm = () => {
                     resetForm();
                   }
                 } catch (error) {
-                  // Manejar errores generales
                   Toast.show({
                     type: "error",
                     text1: "Error",
                     text2: "Algo salió mal. Por favor, intenta de nuevo.",
                   });
                 } finally {
-                  // Establecer isSubmitting en falso para permitir nuevos envíos
                   setSubmitting(false);
                 }
               }}
@@ -375,6 +377,30 @@ const SignInForm = () => {
                       </View>
                     )}
                   </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => {
+                      navigation.navigate("AdviseMessage")
+                    }}
+                  
+                    style={{
+                      backgroundColor: "#FFCD57",
+                      alignItems: "center",
+                      borderRadius: 9999,
+                      padding: 10,
+                    }}
+                  >
+                      <Text
+                        style={[
+                          styles.buttom,
+                          {
+                            color: '#000',
+                          },
+                        ]}
+                      >
+                        ¿Que es QuickCar?
+                      </Text>
+                  
+                  </TouchableOpacity>
                 </View>
               )}
             </Formik>
@@ -388,6 +414,7 @@ const SignInForm = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    minHeight: height
   },
 
   input: {
@@ -439,6 +466,7 @@ const styles = StyleSheet.create({
   },
   buttom: {
     fontFamily: "PlusJakartaSans-SemiBold",
+    textTransform:'uppercase',
     marginBottom: 3,
   },
   error: {

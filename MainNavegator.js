@@ -31,8 +31,8 @@ export default function MainNavigator() {
       <Stack.Screen name="ArticleScreen" component={ArticleScreen} />
       <Stack.Screen name="Contact" component={ContactScreen} /> 
       <Stack.Screen name="MessageScreen" component={MessageScreen} />
-      <Stack.Screen name="QuickCarDetailsScreen" component={QuickCarsSearchesDetails}
-      />
+      <Stack.Screen name="QuickCarDetailsScreen" component={QuickCarsSearchesDetails}/>
+      <Stack.Screen name="AdviseMessage" component={AdviseMessage}/>
     </Stack.Navigator>
   );
 }

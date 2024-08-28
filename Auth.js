@@ -15,6 +15,7 @@ import TravelScreen from "./screens/TravelScreen";
 import QuickCarsSearchesDetails from "./screens/QuickCarsSearchesDetails";
 
 
+
 const Stack = createNativeStackNavigator();
 
 export default function Auth() {
@@ -32,6 +33,7 @@ export default function Auth() {
       <Stack.Screen name="Contact" component={ContactScreen} />
       <Stack.Screen name="MessageScreen" component={MessageScreen} />
       <Stack.Screen name="QuickCarDetailsScreen" component={QuickCarsSearchesDetails}/>
+      <Stack.Screen name="AdviseMessage" component={AdviseMessage}/>
     </Stack.Navigator>
   );
 }

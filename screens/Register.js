@@ -9,25 +9,27 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
-  ActivityIndicator,
 } from "react-native";
-import { useNavigation, CommonActions } from "@react-navigation/native";
-import { LinearGradient } from "expo-linear-gradient";
+import { useNavigation } from "@react-navigation/native";
+import { useDispatch, useSelector } from "react-redux";
+import { selectDarkMode, selectTheme } from "../globalState/themeSlice";
+import { Formik } from "formik";
+import * as Yup from "yup";
+import * as Animatable from "react-native-animatable";
+import Toast from "react-native-toast-message";
 import Fontisto from "@expo/vector-icons/Fontisto";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Eyes from "../icons/Eyes";
 import UnEye from "../icons/UnEye";
-import useCustomFonts from "../fonts/useCustomFonts";
-import { useDispatch } from "react-redux";
-import { setUser } from "../globalState/userSlice";
-import { Formik } from "formik";
-import * as Yup from "yup";
-import Toast from "react-native-toast-message";
-import * as Animatable from "react-native-animatable";
-import Image_C from "../components/Image_C";
+import {
+  setData
+} from "../globalState/RegisterSlice";
 
+// Esquema de validación de Formik usando Yup
 const SignInSchema = Yup.object().shape({
+  firstName: Yup.string().required("El nombre es obligatorio"),
+  lastName: Yup.string().required("El apellido es obligatorio"),
   email: Yup.string()
     .email("Formato de correo electrónico no válido")
     .required("El correo electrónico es obligatorio"),
@@ -36,279 +38,326 @@ const SignInSchema = Yup.object().shape({
     .required("La contraseña es obligatoria"),
 });
 
-const statusBarHeight = StatusBar.currentHeight || 0;
-
 const Register = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [passwordVisible, setPasswordVisible] = React.useState(false);
-  const { fontsLoaded } = useCustomFonts();
-  const [buttonText, setButtonText] = React.useState(false);
-  const [inputColor, setInputColor] = React.useState([
-    "input",
-    "inputError",
-    "inputSuccess",
-  ]);
-  const [selectedImage, setSelectedImage] = React.useState(null);
+  const darkMode = useSelector(selectTheme);
 
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
   };
-
-  const handleImageSelected = (selectedImage) => {
-    setSelectedImage(selectedImage);
+  const handleSubmit = (values) => {
+    const { firstName, lastName, email, password } = values;
+    dispatch(setData({
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
+      password: password
+    }))
+    Toast.show({
+      type: "success",
+      text1: "Registro exitoso",
+    });
   };
 
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={{ flex: 1 }}
+      style={[
+        styles.container,
+        {
+          backgroundColor: darkMode.backgroundDark,
+        },
+      ]}
     >
-      <LinearGradient
-        colors={["#060097", "#8204ff", "#c10fff"]}
-        start={{ x: 0.2, y: 0.6 }}
-        end={{ x: 1.5, y: 0 }}
-        style={{ flex: 1, marginTop: statusBarHeight }}
-      >
-        <StatusBar backgroundColor="#fff" barStyle="dark-content" />
-        <View style={styles.container}>
-          <ScrollView>
-            <View className="min-h-[700px] items-center justify-center py-10 px-4">
-              <TouchableOpacity
-                className="mb-12"
-                onPress={() => navigation.navigate("Home")}
-              >
-                <View className="flex-col items-center">
-                  <Animatable.Image
-                    animation="rotate"
-                    easing="ease-out"
-                    iterationCount="infinite"
-                    iterationDelay={1000}
-                    source={{
-                      uri: "https://quickcaronline.obbaramarket.com/wp-content/uploads/2024/05/cropped-quickcar-1-127x79.png",
-                    }}
-                    className="w-24 h-24"
-                    resizeMode="contain"
-                  />
-                  <Animatable.Text
-                    animation="pulse"
-                    iterationDelay={1500}
-                    iterationCount="infinite"
-                    className="text-4xl text-[#3402BE]"
-                    style={{ fontFamily: "Eina01-BoldItalic" }}
-                  >
-                    Quickcar
-                  </Animatable.Text>
-                </View>
-              </TouchableOpacity>
-              <View style={{ width: "100%" }}>
-                <Animatable.Text
-                  animation="fadeInDown"
-                  iterationCount={1}
-                  iterationDelay={2000}
-                  style={styles.welcome}
-                >
-                  Registro de Usuario
-                </Animatable.Text>
-              </View>
-              <Formik
-                initialValues={{
-                  first_name: "",
-                  last_name: "",
-                  email: "",
-                  password: "",
-                }}
-                validationSchema={SignInSchema}
-                onSubmit={async (values, { setSubmitting, resetForm }) => {
-                  try {
-                    const formData = new FormData();
-                    formData.append("email", values.email);
-                    formData.append("password", values.password);
-                    formData.append("first_name", values.first_name);
-                    formData.append("last_name", values.last_name);
-                    if (selectedImage) {
-                      formData.append("profile_img_url", {
-                        uri: selectedImage.uri,
-                        type: "image/jpeg",
-                        name: "profile_img.jpg",
-                      });
-                    }
-        
-
-                    const response = await fetch(
-                      "https://obbaramarket-backend.onrender.com/api/ObbaraMarket/register",
-                      {
-                        method: "POST",
-                        body: formData,
-                      }
-                    );
-
-                    if (response.ok) {
-                      Toast.show({
-                        type: "success",
-                        text1: "Registro exitoso",
-                        text2: "Redirigiendo...",
-                      });
-                      setTimeout(() => {
-                        navigation.dispatch(
-                          CommonActions.reset({
-                            index: 0,
-                            routes: [{ name: "SignInForm" }],
-                          })
-                        );
-                      }, 1000);
-                      setButtonText(false);
-                      resetForm();
-                    } else {
-                      const errorData = await response.json();
-                      console.error("Error en el backend:", errorData);
-                      Toast.show({
-                        type: "error",
-                        text1: "Error al registrarse.",
-                        text2:
-                          errorData.message || "Por favor, intenta de nuevo.",
-                      });
-                      setButtonText(false);
-                    }
-                  } catch (error) {
-                    console.error("Error al enviar la solicitud:", error);
-                    Toast.show({
-                      type: "error",
-                      text1: "Error",
-                      text2: "Algo salió mal. Por favor, intenta de nuevo.",
-                    });
-                  } finally {
-                    setSubmitting(false);
-                  }
-                }}
-              >
-                {({
-                  handleChange,
-                  handleBlur,
-                  handleSubmit,
-                  values,
-                  errors,
-                  touched,
-                  isValid,
-                  isSubmitting,
-                }) => (
-                  <View className="flex w-full space-y-3">
-                    <View className="flex-row w-full space-x-3">
-                      <View style={styles.inputName}>
-                        <AntDesign name="user" size={24} color="black" />
-                        <TextInput
-                          placeholder="Nombre"
-                          onChangeText={handleChange("first_name")}
-                          onBlur={handleBlur("first_name")}
-                          value={values.first_name}
-                          style={styles.username}
+      <StatusBar
+        backgroundColor={Platform.OS === "android" ? "#000" : "#000000"}
+        barStyle={Platform.OS === "android" ? "light-content" : "light-content"}
+        translucent={false}
+      />
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <Animatable.View
+          animation="fadeInUp"
+          style={styles.content}
+          className="space-y-16"
+        >
+          <View style={styles.header}>
+            <Text
+              style={[
+                styles.title,
+                {
+                  color: darkMode.text,
+                },
+              ]}
+            >
+              Antes de comenzar, ingresa tu información
+            </Text>
+            <Text style={styles.subtitle}>
+              Completa los siguientes campos para continuar con el registro.
+            </Text>
+          </View>
+          <View>
+            <Formik
+              initialValues={{
+                firstName: "",
+                lastName: "",
+                email: "",
+                password: "",
+              }}
+              validationSchema={SignInSchema}
+              onSubmit={handleSubmit}
+            >
+              {({
+                handleChange,
+                handleBlur,
+                handleSubmit,
+                values,
+                errors,
+                touched,
+              }) => (
+                <View style={styles.form}>
+                  <View style={styles.row}>
+                    <View style={styles.inputContainer}>
+                      <Text
+                        style={[
+                          styles.label,
+                          {
+                            color: darkMode.text,
+                          },
+                        ]}
+                      >
+                        Nombre
+                      </Text>
+                      <View className=" flex-row relative">
+                        <View
+                          style={{ borderColor: darkMode.text }}
+                          className=" border-l-2 border-b-2 h-[40%] w-6 rounded-bl-lg"
                         />
+                        <View className="flex-1 flex-row items-center justify-center">
+                          <AntDesign name="user" size={24} color="#06BCEE" />
+                          <TextInput
+                            style={[
+                              styles.input,
+                              touched.firstName && errors.firstName
+                                ? styles.inputError
+                                : styles.inputSuccess,
+                              {
+                                backgroundColor: darkMode.singInInputBgColor,
+                                borderColor: darkMode.singInBorderColor,
+                                color: darkMode.text,
+                                fontFamily: "PlusJakartaSans-Bold",
+                              },
+                            ]}
+                            onChangeText={handleChange("firstName")}
+                            placeholder="Nombre"
+                            onBlur={handleBlur("firstName")}
+                            value={values.firstName}
+                            placeholderTextColor={darkMode.textOpacity}
+                          />
+                        </View>
                       </View>
-                      <View style={styles.inputName}>
-                        <AntDesign name="user" size={24} color="black" />
-                        <TextInput
-                          placeholder="Apellido"
-                          onChangeText={handleChange("last_name")}
-                          onBlur={handleBlur("last_name")}
-                          value={values.last_name}
-                          style={styles.username}
-                        />
-                      </View>
+                      {touched.firstName && errors.firstName && (
+                        <Text style={styles.errorText}>{errors.firstName}</Text>
+                      )}
                     </View>
-                    <View
-                      style={
-                        styles[
-                          inputColor.email ||
-                            (touched.email && errors.email
-                              ? "inputError"
-                              : "input")
-                        ]
-                      }
+                    <View style={styles.inputContainer}>
+                      <Text
+                        style={[
+                          styles.label,
+                          {
+                            color: darkMode.text,
+                          },
+                        ]}
+                      >
+                        Apellido
+                      </Text>
+                      <View className=" flex-row relative">
+                        <View
+                          style={{ borderColor: darkMode.text }}
+                          className=" border-l-2 border-b-2 h-[40%] w-6 rounded-bl-lg"
+                        />
+                        <View className="flex-1 flex-row items-center justify-center ">
+                          <AntDesign name="user" size={24} color="#06BCEE" />
+                          <TextInput
+                            style={[
+                              styles.input,
+                              touched.lastName && errors.lastName
+                                ? styles.inputError
+                                : styles.inputSuccess,
+                              {
+                                backgroundColor: darkMode.singInInputBgColor,
+                                borderColor: darkMode.singInBorderColor,
+                                color: darkMode.text,
+                                fontFamily: "PlusJakartaSans-Bold",
+                              },
+                            ]}
+                            placeholder="Apellido"
+                            onChangeText={handleChange("lastName")}
+                            onBlur={handleBlur("lastName")}
+                            value={values.lastName}
+                            placeholderTextColor={darkMode.textOpacity}
+                          />
+                        </View>
+                      </View>
+                      {touched.lastName && errors.lastName && (
+                        <Text style={styles.errorText}>{errors.lastName}</Text>
+                      )}
+                    </View>
+                  </View>
+                  <View style={styles.inputContainer}>
+                    <Text
+                      style={[
+                        styles.label,
+                        {
+                          color: darkMode.text,
+                        },
+                      ]}
                     >
-                      <Fontisto name="email" size={24} color="black" />
-                      <TextInput
-                        placeholder="Email"
-                        onChangeText={handleChange("email")}
-                        onBlur={handleBlur("email")}
-                        value={values.email}
-                        style={styles.username}
+                      Correo electrónico
+                    </Text>
+                    <View className=" flex-row relative">
+                      <View
+                        style={{ borderColor: darkMode.text }}
+                        className=" border-l-2 border-b-2 h-[40%] w-6 rounded-bl-lg"
                       />
+                      <View className="flex-1 flex-row items-center justify-center space-x-2">
+                        <View className="ml-2">
+                          <Fontisto name="email" size={24} color="#06BCEE" />
+                        </View>
+                        <TextInput
+                          style={[
+                            styles.input,
+                            touched.email && errors.email
+                              ? styles.inputError
+                              : styles.inputSuccess,
+                            {
+                              backgroundColor: darkMode.singInInputBgColor,
+                              borderColor: darkMode.singInBorderColor,
+                              color: darkMode.text,
+                              fontFamily: "PlusJakartaSans-Bold",
+                            },
+                          ]}
+                          placeholder="Ingresa tu correo"
+                          keyboardType="email-address"
+                          onChangeText={handleChange("email")}
+                          onBlur={handleBlur("email")}
+                          value={values.email}
+                          placeholderTextColor={darkMode.textOpacity}
+                        />
+                      </View>
                     </View>
-                    {errors.email && touched.email ? (
-                      <Text style={styles.error}>{errors.email}</Text>
-                    ) : null}
+                    {touched.email && errors.email && (
+                      <Text style={styles.errorText}>{errors.email}</Text>
+                    )}
+                  </View>
+                  <View style={styles.inputContainer}>
+                  <Text
+                    style={[
+                      styles.label,
+                      {
+                        color: darkMode.text,
+                      
+                      },
+                    ]}
+                  >
+                    Contraseña
+                  </Text>
+                  <View style={{ flexDirection: 'row', position: 'relative' }}>
                     <View
-                      style={
-                        styles[
-                          inputColor.password ||
-                            (touched.password && errors.password
-                              ? "inputError"
-                              : "input")
-                        ]
-                      }
-                    >
+                      style={{
+                        borderColor: darkMode.text,
+                        borderLeftWidth: 2,
+                        borderBottomWidth: 2,
+                        height: '40%',
+                        width: 24,
+                        borderBottomLeftRadius: 8
+                      }}
+                    />
+                    <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginLeft: 8 }}>
                       <Ionicons
                         name="lock-closed-outline"
                         size={24}
-                        color="black"
+                        color="#06BCEE"
                       />
-                      <TextInput
-                        placeholder="Contraseña"
-                        onChangeText={handleChange("password")}
-                        onBlur={handleBlur("password")}
-                        value={values.password}
-                        secureTextEntry={!passwordVisible}
-                        style={styles.username}
-                      />
-                      <TouchableOpacity onPress={togglePasswordVisibility}>
-                        {values.password ? (
-                          passwordVisible ? (
-                            <UnEye width={30} height={30} color="black" />
-                          ) : (
-                            <Eyes width={30} height={30} color="black" />
-                          )
-                        ) : null}
-                      </TouchableOpacity>
-                    </View>
-                    {errors.password && touched.password ? (
-                      <Text style={styles.error}>{errors.password}</Text>
-                    ) : null}
-
-                    <Image_C onImageSelected={handleImageSelected} />
-                    <TouchableOpacity
-                      onPress={() => {
-                        handleSubmit();
-                        setButtonText(true);
-                      }}
-                      disabled={
-                        !values.email || !values.password || isSubmitting
-                      }
-                    >
-                      <LinearGradient
-                        colors={["#060097", "#8204ff", "#c10fff"]}
-                        start={{ x: 0.2, y: 0.6 }}
-                        end={{ x: 1.5, y: 0 }}
-                        style={{ padding: 10, borderRadius: 5 }}
+                      <View
+                        style={[
+                          styles.input,
+                          {
+                            borderColor: darkMode.singInBorderColor,
+                            backgroundColor: darkMode.singInInputBgColor,
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            flex: 1,
+                            paddingHorizontal: 16,
+                          },
+                        ]}
                       >
-                        <View className="flex-row items-center justify-center">
-                          {!buttonText ? (
-                            <Text style={styles.buttom}>REGISTRAR</Text>
-                          ) : (
-                            <View className="flex-row items-center space-x-4">
-                              <Text style={styles.buttom}>REGISTRANDO ...</Text>
-                              <ActivityIndicator size="small" color="#FFF" />
-                            </View>
-                          )}
-                        </View>
-                      </LinearGradient>
+                        <TextInput
+                          style={[
+                            touched.password && errors.password
+                              ? styles.inputError
+                              : styles.inputSuccess,
+                            {
+                              color: darkMode.text,
+                              fontFamily: "PlusJakartaSans-Bold",
+                              flexGrow: 1,
+                              maxWidth: '100%',
+                            },
+                          ]}
+                          secureTextEntry={!passwordVisible}
+                          placeholder="Ingresa tu contraseña"
+                          onChangeText={handleChange("password")}
+                          onBlur={handleBlur("password")}
+                          value={values.password}
+                          placeholderTextColor={darkMode.textOpacity}
+                        />
+                        {values.password ? (
+                          <TouchableOpacity onPress={togglePasswordVisibility}>
+                            {passwordVisible ? (
+                              <UnEye width={24} height={24} color={darkMode.text} />
+                            ) : (
+                              <Eyes width={24} height={24} color={darkMode.text} />
+                            )}
+                          </TouchableOpacity>
+                        ) : null}
+                      </View>
+                    </View>
+                  </View>
+                  {touched.password && errors.password && (
+                    <Text style={styles.errorText}>{errors.password}</Text>
+                  )}
+                </View>
+                
+                  <View className=" mt-20  ">
+                    <TouchableOpacity
+                      onPress={handleSubmit}
+                      style={{
+                        backgroundColor: darkMode.buttonNext,
+                        alignItems: "center",
+                        borderRadius: 9999,
+                        padding: 10,
+                      }}
+                    >
+                      <Text
+                        style={[
+                          styles.button,
+                          {
+                            color: "#fff",
+                          },
+                        ]}
+                      >
+                        Siguiente
+                      </Text>
                     </TouchableOpacity>
                   </View>
-                )}
-              </Formik>
-            </View>
-          </ScrollView>
-        </View>
-      </LinearGradient>
+                </View>
+              )}
+            </Formik>
+          </View>
+        </Animatable.View>
+      </ScrollView>
     </KeyboardAvoidingView>
   );
 };
@@ -316,81 +365,69 @@ const Register = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginHorizontal: 20,
-    marginVertical: 20,
-    backgroundColor: "#fff",
-    borderRadius: 5,
   },
-  inputName: {
-    flex: 1,
-    fontFamily: "PlusJakartaSans-Regular",
-    borderWidth: 1,
-    borderColor: "#ccc",
-    paddingLeft: 10,
-    paddingRight: 10,
-    borderRadius: 5,
-    backgroundColor: "rgba(173, 216, 230, 0.09)",
-    flexDirection: "row",
+  scrollContainer: {
+    flexGrow: 1,
+    justifyContent: "center",
     alignItems: "center",
-    gap: 10,
+  },
+  content: {
+    width: "100%",
+    maxWidth: 400,
+    paddingHorizontal: 16,
+    justifyContent: "space-between",
+  },
+  header: {
+    alignItems: "center",
+  },
+  title: {
+    fontSize: 28,
+    fontFamily: "PlusJakartaSans-Bold",
+    textAlign: "center",
+    marginBottom: 16,
+  },
+  subtitle: {
+    color: "#888",
+    textAlign: "center",
+    fontFamily: "PlusJakartaSans-Bold",
+    fontSize: 16,
+  },
+  form: {},
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 16,
+  },
+  inputContainer: {
+    flex: 1,
+    marginRight: 8,
+  },
+  label: {
+    marginBottom: 8,
+    fontSize: 14,
+    fontFamily: "PlusJakartaSans-Bold",
   },
   input: {
-    fontFamily: "PlusJakartaSans-Regular",
-    width: "100%",
-    paddingLeft: 10,
-    paddingRight: 10,
     borderWidth: 1,
     borderColor: "#ccc",
-    borderRadius: 5,
-    backgroundColor: "rgba(173, 216, 230, 0.09)",
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
+    borderRadius: 99999,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    flexGrow: 1,
   },
   inputError: {
-    fontFamily: "PlusJakartaSans-Regular",
-    width: "100%",
-    paddingLeft: 10,
-    paddingRight: 10,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 5,
-    backgroundColor: "rgba(255, 0, 0, 0.02)",
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
+    borderColor: "#ff4d4f",
   },
-  username: {
-    fontFamily: "PlusJakartaSans-Bold",
-    fontSize: 14,
-    flex: 1,
-    paddingVertical: 10,
-  },
-  text: {
-    fontFamily: "PlusJakartaSans-Regular",
-    color: "blue",
-    fontSize: 16,
-  },
-  text_password: {
-    fontFamily: "PlusJakartaSans-Regular",
-    color: "blue",
-    fontSize: 16,
-  },
-  welcome: {
-    fontFamily: "PlusJakartaSans-Bold",
-    fontSize: 24,
-    marginBottom: 20,
-    textAlign: "center",
-  },
-  buttom: {
-    fontFamily: "PlusJakartaSans-SemiBold",
-    color: "#FFF",
-  },
-  error: {
-    fontFamily: "PlusJakartaSans-Regular",
-    color: "red",
+  errorText: {
+    color: "#ff4d4f",
     fontSize: 12,
-    marginLeft: 10,
+    marginTop: 8,
+    marginBottom: 8,
+  },
+  button: {
+    fontFamily: "PlusJakartaSans-SemiBold",
+    textTransform: "uppercase",
+    marginBottom: 3,
   },
 });
 
