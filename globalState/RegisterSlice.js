@@ -7,6 +7,8 @@ const registerSlice = createSlice({
     lastName: "",
     email: "",
     password: "",
+    description: "", 
+    role: ""
   },
   reducers: {
     setData(state, action) {
@@ -16,14 +18,24 @@ const registerSlice = createSlice({
       state.email = email || state.email;
       state.password = password || state.password;
     },
+
+    setDescriptionAndRoleAccount(state, action) {
+      const { description, role } = action.payload;
+      state.description = description;
+      state.role = role;
+    },
+
     setResetRegisterState(state) {
       state.firstName = "";
       state.lastName = "";
       state.email = "";
       state.password = "";
+      state.description = "";
+      state.role = "";
     },
   },
 });
 
-export const { setData, setResetRegisterState } = registerSlice.actions;
+export const { setData, setDescriptionAndRoleAccount, setResetRegisterState } = registerSlice.actions;
 export default registerSlice.reducer;
+
