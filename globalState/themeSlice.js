@@ -63,7 +63,7 @@ export const colors = {
     
   },
   dark: {
-    background: "#0D1117",
+    background: "#0C0C0C",
     text: "#fff",
     textOpacity:  'rgba(128, 128, 128, 0.9)',
     icon: "#f5f5f5",
@@ -75,7 +75,7 @@ export const colors = {
     iconBorderBottomActive: "#1E90FF",
     borderBox: "rgba(128, 128, 128, 0.9)",
     borderBoxCardList: "rgba(128, 128, 128, 1)",
-    backgroundDark: "#0C0C0C",
+    backgroundDark: "#000",
     backgroundList: "#1a5319",
     backgroundBlodCard: '#555555',
     backgroundCardList: 'rgba(128, 128, 128, 0.4)',

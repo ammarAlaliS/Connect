@@ -11,7 +11,7 @@ import {
   SafeAreaView,
 } from "react-native";
 import { Avatar } from "react-native-paper";
-import { useSelector } from "react-redux";
+import { useSelector , useDispatch} from "react-redux";
 import { Picker } from "@react-native-picker/picker";
 import * as ImagePicker from "expo-image-picker";
 import { selectTheme } from "../globalState/themeSlice";
@@ -20,7 +20,11 @@ import * as Animatable from "react-native-animatable";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import BottomSheet from "@gorhom/bottom-sheet";
 import VerifyEmailComponent from "../components/RegisterComponents/VerifyEmailComponent";
+import { setUser } from "../globalState/userSlice";
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import Toast from "react-native-toast-message";
+import { useNavigation, CommonActions } from "@react-navigation/native";
 
 const ProfileScreenPreview = () => {
   const userName = useSelector((state) => state.register.firstName);
@@ -30,6 +34,8 @@ const ProfileScreenPreview = () => {
 
   const [selectedRole, setSelectedRole] = useState("user");
   const [bioText, setBioText] = useState("");
+
+  const dispatch = useDispatch()
 
   const darkMode = useSelector(selectTheme);
   const numberOfCharacters = password.length;
@@ -41,68 +47,122 @@ const ProfileScreenPreview = () => {
   const [profileImagePresentationFile, setProfileImagePresentationFile] =
     useState(null);
 
-  const handleSubmitDataToCreateAnewAccount = async () => {
-    try {
-      
+  const navigation = useNavigation()
 
-      const formData = new FormData();
-      formData.append("first_name", userName);
-      formData.append("last_name", userLastName);
-      formData.append("email", email);
-      formData.append("password", password);
-      formData.append("role", selectedRole);
-      formData.append("user_description", bioText);
-
-      if (profileImageFile) {
-        formData.append("profile_img_url", {
-          uri: profileImageFile.uri,
-          type: "image/jpeg",
-          name: "profile_img.jpg",
-        });
-      }
-
-      if (profileImagePresentationFile) {
-        formData.append("presentation_img_url", {
-          uri: profileImagePresentationFile.uri,
-          type: "image/jpeg",
-          name: "presentation_img_url",
-        });
-      }
-      
-      console.log(formData)
-      const response = await fetch(
-        "https://obbaramarket-backend.onrender.com/api/ObbaraMarket/register",
-        {
-          method: "POST",
-          body: formData,
-        }
+    const handleLoginSuccess = () => {
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: "MainScreen" }],
+        })
       );
+    };
 
-      if (response.ok) {
-        const data = await response.json();
-        console.log("Cuenta creada exitosamente:", data);
-      } else {
-        const errorData = await response.json();
-        console.error(
-          "Error al crear la cuenta:",
-          response.statusText,
-          errorData
+    const handleSubmitDataToCreateAnewAccount = async () => {
+      try {
+        const formData = new FormData();
+        formData.append("first_name", userName);
+        formData.append("last_name", userLastName);
+        formData.append("email", email);
+        formData.append("password", password);
+        formData.append("role", selectedRole);
+        formData.append("user_description", bioText);
+    
+        if (profileImageFile) {
+          formData.append("profile_img_url", {
+            uri: profileImageFile.uri,
+            type: "image/jpeg",
+            name: "profile_img.jpg",
+          });
+        }
+    
+        if (profileImagePresentationFile) {
+          formData.append("presentation_img_url", {
+            uri: profileImagePresentationFile.uri,
+            type: "image/jpeg",
+            name: "presentation_img_url",
+          });
+        }
+        const registrationResponse = await fetch(
+          "https://obbaramarket-backend.onrender.com/api/ObbaraMarket/register",
+          {
+            method: "POST",
+            body: formData,
+          }
         );
-      }
-    } catch (error) {
-      console.error("Error al enviar los datos:", error);
-    }
-  };
+    
+        if (!registrationResponse.ok) {
+          const registrationError = await registrationResponse.json();
+          console.error("Error al crear la cuenta:", registrationResponse.statusText, registrationError);
+          Toast.show({
+            type: "error",
+            text1: "No se pudo crear la cuenta",
+            text2: `Error: ${registrationError.message || 'Por favor, revisa los datos e intenta de nuevo.'}`,
+          });
+          return;
+        }
 
+        const loginResponse = await fetch(
+          "https://obbaramarket-backend.onrender.com/api/ObbaraMarket/login",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email: email,
+              password: password,
+            }),
+          }
+        );
+    
+        if (!loginResponse.ok) {
+          const loginError = await loginResponse.json();
+          console.error("Error al iniciar sesión:", loginResponse.statusText, loginError);
+          Toast.show({
+            type: "error",
+            text1: "Error de inicio de sesión",
+            text2: `Error: ${loginError.message || 'Correo o contraseña incorrectos. Asegúrate de que la cuenta está activada y verifica los datos e intenta de nuevo.'}`,
+          });
+          return;
+        }
+  
+        const loginData = await loginResponse.json();
+    
+        await AsyncStorage.setItem("userData", JSON.stringify(loginData));
+        await AsyncStorage.setItem("token", loginData.token);
+    
+        dispatch(
+          setUser({
+            global_user: {
+              _id: loginData.id,
+              first_name: loginData.first_name,
+              last_name: loginData.last_name,
+              profile_img_url: loginData.profile_img_url,
+              token: loginData.token,
+            },
+            driver_information: loginData.QuickCar,
+          })
+        );
+    
+        handleLoginSuccess();
+      } catch (error) {
+        console.error("Error al enviar los datos:", error);
+        Toast.show({
+          type: "error",
+          text1: "Error en el proceso de registro",
+          text2: `Error: ${error.message || 'Hubo un problema al procesar tu solicitud. Por favor, intenta de nuevo más tarde.'}`,
+        });
+      }
+    };
+    
   const handleImageSelect = async () => {
-    // Solicitar permisos para acceder a la galería
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== "granted") {
       alert("Lo sentimos, necesitamos permisos para acceder a tu galería.");
       return;
     }
 
-    // Seleccionar una imagen
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
@@ -115,13 +175,11 @@ const ProfileScreenPreview = () => {
   };
 
   const handleImageSelected = async () => {
-     // Solicitar permisos para acceder a la galería
      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
      if (status !== "granted") {
        alert("Lo sentimos, necesitamos permisos para acceder a tu galería.");
        return;
      }
-     // Seleccionar una imagen
      const result = await ImagePicker.launchImageLibraryAsync({
        mediaTypes: ImagePicker.MediaTypeOptions.Images,
        allowsEditing: true,
