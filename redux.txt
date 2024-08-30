@@ -1,114 +1,289 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Platform, StyleSheet } from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import { Ionicons } from '@expo/vector-icons';
+    <View className="flex-row flex-wrap items-center justify-start space-y-[0px] ">
+          {blog_tag.map((tag, index) => (
+            <View
+              key={index}
+              style={{
+                // paddingHorizontal: 8,
+                // paddingBottom: 5,
+                // paddingTop:3,
+                marginRight: 4,
+                // borderRadius: 9999,
 
-export default function ChoiceTravelDayAndTime() {
-  const [date, setDate] = useState(new Date());
-  const [mode, setMode] = useState('date');
-  const [show, setShow] = useState(false);
+                height: 24,
+              }}
+            >
+              {detectHash(tag)}
+            </View>
+          ))}
+        </View>
+        <Text
+          style={{
+            fontSize: 16,
+            color: darkMode.text,
+          }}
+        >
+          {showMore ? blog_description : `${blog_description.slice(0, 120)}...`}
+        </Text>
 
-  const onChange = (event, selectedDate) => {
-    const currentDate = selectedDate || date;
-    setShow(Platform.OS === 'ios');
-    setDate(currentDate);
-  };
-
-  const showMode = (currentMode) => {
-    setShow(true);
-    setMode(currentMode);
-  };
-
-  const showDatepicker = () => {
-    showMode('date');
-  };
-
-  const showTimepicker = () => {
-    showMode('time');
-  };
-
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Selecciona el día y la hora de tu viaje</Text>
-
-      <View style={styles.infoContainer}>
-        <View style={styles.infoBox}>
-          <Ionicons name="calendar-outline" size={24} color="#4A90E2" />
-          <Text style={styles.infoText}>
-            {date.toLocaleDateString()}
-          </Text>
+        <View className=" flex-row justify-between items-center">
+          <TouchableOpacity onPress={toggleShowMore}>
+            <View>
+              <Text
+                style={{
+                  color: darkMode.showText,
+                  fontSize: 16,
+                }}
+                className=""
+              >
+                {showMore ? "Leer menos" : "Leer más"}
+              </Text>
+            </View>
+          </TouchableOpacity>
+          <View>
+            <Text
+              style={{
+                fontFamily: "PlusJakartaSans-Bold",
+                color: darkMode.text,
+              }}
+              className=" text-sm "
+            >
+              {author_name} {author_last_name}
+            </Text>
+            <Text
+              style={{
+                fontFamily: "PlusJakartaSans-Bold",
+                color: darkMode.text,
+              }}
+              className=" text-[12px]"
+            >
+              {time}
+            </Text>
+          </View>
+        </View>
+        <View className=" w-full flex-row justify-between py-2 items-center ">
+          <View className=" flex-row space-x-[4px]">
+            <View
+              style={[
+                likes === 0
+                  ? {
+                      backgroundColor: "rgba(128, 128, 128, 0.4)",
+                    }
+                  : {
+                      backgroundColor: "#FFCBCB",
+                    },
+              ]}
+              className="  h-[28px] w-[28px] items-center justify-center rounded-full"
+            >
+              <EvilIcons
+                name="like"
+                size={24}
+                style={[
+                  likes === 0
+                    ? {
+                        marginBottom: 5,
+                        color: "#fff",
+                      }
+                    : {
+                        marginBottom: 5,
+                        color: darkMode.textColorLikeButton,
+                      },
+                ]}
+              />
+            </View>
+            <Text
+              style={{
+                fontFamily: "PlusJakartaSans-Bold",
+                color: darkMode.text,
+              }}
+              className="mt-[3px] "
+            >
+              {likes}
+            </Text>
+          </View>
+          <View className="flex-row  space-x-[4px]">
+            <View className=" bg-[#1E90FF] h-[28px] w-[28px] items-center justify-center rounded-full">
+              <EvilIcons
+                name="comment"
+                size={24}
+                color="white"
+                style={styles.iconMessageContent}
+              />
+            </View>
+            <Text
+              style={{
+                fontFamily: "PlusJakartaSans-Bold",
+                color: darkMode.text,
+              }}
+              className=" mt-[3px]"
+            >
+              {totalComment}
+            </Text>
+          </View>
+          <View className="flex-row  space-x-[4px]">
+            <View className=" bg-[#1E90FF] h-[28px] w-[28px] items-center justify-center rounded-full">
+              <AntDesign name="save" size={18} color={darkMode.text} />
+            </View>
+            <Text
+              style={{
+                fontFamily: "PlusJakartaSans-Bold",
+                color: darkMode.text,
+              }}
+              className=" mt-[3px]"
+            >
+              0
+            </Text>
+          </View>
         </View>
 
-        <View style={styles.infoBox}>
-          <Ionicons name="time-outline" size={24} color="#4A90E2" />
-          <Text style={styles.infoText}>
-            {date.toLocaleTimeString()}
-          </Text>
+        <View
+          className="border-t-[1px] py-4  space-y-2  "
+          style={{ borderColor: darkMode.borderBox }}
+        >
+          <View className="flex-row space-x-[6px] justify-between ">
+            <TouchableOpacity
+              onPress={handleLikePost}
+              className="  rounded-full overflow-hidden"
+              style={{
+                borderWidth: 1,
+                borderColor: darkMode.borderBox,
+              }}
+            >
+              <View
+                className=" flex-row space-x-[2px] items-center justify-center py-2 px-4 "
+                style={[
+                  likeSubcribe
+                    ? {
+                        backgroundColor: darkMode.backgroundDark,
+                      }
+                    : {
+                        backgroundColor: darkMode.backgroundDark,
+                      },
+                ]}
+              >
+                <EvilIcons
+                  name="like"
+                  size={24}
+                  style={[
+                    likeSubcribe
+                      ? {
+                          color: darkMode.textColorLikeButton,
+                        }
+                      : {
+                          color: darkMode.text,
+                        },
+                  ]}
+                />
+                <Text
+                  style={[
+                    likeSubcribe
+                      ? {
+                          marginBottom: 3,
+                          fontFamily: "PlusJakartaSans-SemiBold",
+                          color: darkMode.textColorLikeButton,
+                        }
+                      : {
+                          marginBottom: 3,
+                          fontFamily: "PlusJakartaSans-Bold",
+                          color: darkMode.text,
+                        },
+                  ]}
+                  className=" text-[14px] text-white"
+                >
+                  Mola
+                </Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity
+              className=" py-2 px-2 rounded-full overflow-hidden  flex-1"
+              style={{
+                borderWidth: 1,
+                borderColor: darkMode.borderBox,
+                backgroundColor: darkMode.backgroundDark,
+              }}
+              onPress={() =>
+                navigation.navigate("comment", {
+                  blogId,
+                  token,
+                  darkMode,
+                })
+              }
+            >
+              <View className=" flex-row space-x-[2px] items-center justify-center">
+                <EvilIcons name="comment" size={24} color={darkMode.text} />
+                <Text
+                  style={{
+                    fontFamily: "PlusJakartaSans-SemiBold",
+                    color: darkMode.text,
+                  }}
+                  className=" text-[14px]"
+                >
+                  Comentar
+                </Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity
+              className=" py-2 px-4 rounded-full overflow-hidden "
+              style={{
+                borderWidth: 1,
+                borderColor: darkMode.borderBox,
+                backgroundColor: darkMode.backgroundDark,
+              }}
+            >
+              <View className=" flex-row space-x-[2px] items-center justify-center">
+                <AntDesign
+                  name="save"
+                  size={18}
+                  style={{ marginTop: 3 }}
+                  color={darkMode.text}
+                />
+                <Text
+                  style={{
+                    fontFamily: "PlusJakartaSans-SemiBold",
+                    color: darkMode.text,
+                  }}
+                  className=" text-[14px]"
+                >
+                  Guardar
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+          <View>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("ArticleScreen", {
+                  image_url,
+                  blog_title,
+                  blog_tag,
+                  blog_description,
+                  author_name,
+                  author_last_name,
+                  author_profile_img_url,
+                  time,
+                  blogId,
+                  sections,
+                  darkMode,
+                })
+              }
+            >
+              <View
+                className=" items-center py-2 rounded-full "
+                style={{
+                  borderWidth: 1,
+                  borderColor: darkMode.borderBox,
+                  backgroundColor: darkMode.backgroundDark,
+                }}
+              >
+                <Text
+                  style={{
+                    fontFamily: "PlusJakartaSans-Bold",
+                    color: darkMode.colorTextCardList,
+                  }}
+                  className="text-white text-base mb-[3px]"
+                >
+                  Leer articulo
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
-
-      <TouchableOpacity style={styles.button} onPress={showDatepicker}>
-        <Text style={styles.buttonText}>Seleccionar fecha</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.button} onPress={showTimepicker}>
-        <Text style={styles.buttonText}>Seleccionar hora</Text>
-      </TouchableOpacity>
-
-      {show && (
-        <DateTimePicker
-          testID="dateTimePicker"
-          value={date}
-          mode={mode}
-          is24Hour={true}
-          display="default"
-          onChange={onChange}
-        />
-      )}
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F4F4F6',
-    padding: 20,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 20,
-  },
-  infoContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: '100%',
-    marginBottom: 30,
-  },
-  infoBox: {
-    alignItems: 'center',
-  },
-  infoText: {
-    marginTop: 10,
-    fontSize: 16,
-    color: '#333',
-  },
-  button: {
-    backgroundColor: '#4A90E2',
-    paddingVertical: 12,
-    paddingHorizontal: 25,
-    borderRadius: 25,
-    marginBottom: 15,
-    width: '80%',
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-});

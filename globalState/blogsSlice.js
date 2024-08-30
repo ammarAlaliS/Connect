@@ -1,11 +1,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 const API_BASE_URL = "https://obbaramarket-backend.onrender.com";
-const CACHE_DURATION = 2 * 60 * 1000;
-
+export const CACHE_DURATION = 5000 * 1000; 
 export const fetchBlogsAndAuthors = createAsyncThunk(
   "blogs/fetchBlogsAndAuthors",
-  async (_, { getState, dispatch, rejectWithValue }) => {
+  async ({ ignoreCache = false } = {}, { getState, dispatch, rejectWithValue }) => {
     const {
       user: {
         global_user: { token },
@@ -18,20 +17,15 @@ export const fetchBlogsAndAuthors = createAsyncThunk(
     }
 
     const now = Date.now();
-    if (lastFetched && now - lastFetched < CACHE_DURATION) {
+    if (!ignoreCache && lastFetched && now - lastFetched < CACHE_DURATION) {
       return rejectWithValue("Datos ya están en caché");
     }
 
     try {
-      const response = await fetch(
-        `${API_BASE_URL}/api/ObbaraMarket/blogs`,
-        {}
-      );
-
+      const response = await fetch(`${API_BASE_URL}/api/ObbaraMarket/blogs`);
       if (!response.ok) {
         throw new Error("Failed to fetch blogs");
       }
-
       const data = await response.json();
 
       const blogsWithAuthors = await Promise.all(
@@ -40,20 +34,14 @@ export const fetchBlogsAndAuthors = createAsyncThunk(
             const authorId = blog.user;
             const authorResponse = await fetch(
               `${API_BASE_URL}/api/ObbaraMarket/user/${authorId}`,
-              {
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                },
-              }
+              { headers: { Authorization: `Bearer ${token}` } }
             );
-
             if (!authorResponse.ok) {
               throw new Error("Failed to fetch author data");
             }
-
             const authorData = await authorResponse.json();
             return { ...blog, author: authorData.global_user };
-          } catch (error) {
+          } catch {
             return { ...blog, author: null };
           }
         })
@@ -64,10 +52,11 @@ export const fetchBlogsAndAuthors = createAsyncThunk(
 
       return blogsWithAuthors;
     } catch (error) {
-      throw error;
+      return rejectWithValue(error.message);
     }
   }
 );
+
 
 const blogsSlice = createSlice({
   name: "blogs",

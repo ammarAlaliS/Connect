@@ -16,6 +16,7 @@ import api from "../api/api";
 import MessagerContainer from "../components/MessageComponets/MessagerContainer";
 import { useSelector } from "react-redux";
 import socket from "../socket";
+import NoMessageAvalable from "../components/MessageComponets/NoMessageAvalable";
 
 const statusBarHeight = StatusBar.currentHeight || 0;
 const ContactScreen = ({ darkMode }) => {
@@ -26,6 +27,7 @@ const ContactScreen = ({ darkMode }) => {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isMessage, setIsMessage] = useState(false)
 
   const globalUserId = useSelector((state) => state.user.global_user?._id);
   const token = useSelector((state) => state.user.global_user?.token);
@@ -41,20 +43,22 @@ const ContactScreen = ({ darkMode }) => {
               headers: { Authorization: `Bearer ${token}` },
             }
           );
-          setMessageUserData(response.data || { conversations: [] });
+  
+          const conversations = response.data.conversations || [];
+          setMessageUserData({ conversations });
+          setIsMessage(conversations.length > 0);
           setLoading(false);
         }
       } catch (error) {
         setLoading(false);
-        setError(
-          error.response?.data || { message: "Error al realizar la solicitud" }
-        );
+        setError(error.response?.data || { message: "Error al realizar la solicitud" });
+        setIsMessage(false);
       }
     };
-
+  
     fetchConversations();
   }, [globalUserId, token]);
-
+  
   useEffect(() => {
     if (globalUserId) {
       const handleNewMessage = (data) => {
@@ -223,7 +227,10 @@ const ContactScreen = ({ darkMode }) => {
             <ActivityIndicator size="large" color={darkMode.text} />
           </View>
         </View>
-      ) : (
+      ) : !isMessage ? (
+        <NoMessageAvalable/>
+      ):(
+        
         <View style={{ flex: 1, backgroundColor: darkMode.background }}>
           <View
             style={[
@@ -302,7 +309,9 @@ const ContactScreen = ({ darkMode }) => {
             />
           )}
         </View>
-      )}
+      )
+    
+    }
     </View>
   );
 };
