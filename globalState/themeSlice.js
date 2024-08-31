@@ -27,7 +27,7 @@ export const colors = {
     headerBorderIcon: '#fff ',
     textColorLikeButton: '#ff226e',
     textCommentButton: '#1E90FF',
-    backgroundComment : '#000',
+    backgroundComment : '#0c181c',
     // SingIn
 
     signInTextColor: '#06BCEE',

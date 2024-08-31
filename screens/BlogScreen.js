@@ -25,8 +25,6 @@ const BlogScreen = ({ darkMode }) => {
   const error = useSelector((state) => state.blogs.error);
   const globalUser = useSelector((state) => state.user.global_user);
 
-
-
   const { width } = useWindowDimensions();
 
   const listClassifications = [
@@ -36,11 +34,20 @@ const BlogScreen = ({ darkMode }) => {
     { id: 4, name: "Variados" },
     { id: 5, name: "Noticias" },
   ];
+
   useEffect(() => {
-    if (globalUser && globalUser.profile_img_url && status === "idle") {
+    console.log("useEffect triggered");
+    console.log("Global User: ", globalUser);
+    console.log("Profile Image URL: ", globalUser?.profile_img_url);
+    console.log("Status: ", status);
+  
+    if (globalUser && status === "idle") {
+      console.log("Fetching blogs...");
       dispatch(fetchBlogsAndAuthors());
     }
   }, [dispatch, globalUser, status]);
+  
+  
 
   const refreshData = async () => {
     setLoading(true);
@@ -51,7 +58,6 @@ const BlogScreen = ({ darkMode }) => {
     }
     setLoading(false);
   };
-  
 
   const renderItem = useCallback(
     ({ item }) => (
@@ -77,12 +83,6 @@ const BlogScreen = ({ darkMode }) => {
     ),
     [darkMode]
   );
-
-  const getItemLayout = (data, index) => ({
-    length: 100, // Ajusta a la altura de tus elementos
-    offset: 100 * index, // Ajusta a la altura de tus elementos
-    index,
-  });
 
   return (
     <View style={[styles.container, { backgroundColor: darkMode.background }]}>
@@ -123,24 +123,26 @@ const BlogScreen = ({ darkMode }) => {
                     style={
                       item.id === selectedClassification
                         ? {
-                            paddingHorizontal: 8,
+                            paddingHorizontal: 10,
                             paddingVertical: 5,
                             marginRight: 10,
-                            borderRadius: 2,
+                            borderRadius: 9999,
                             borderWidth: 1,
                             backgroundColor: darkMode.backgroundCardList,
-                            borderColor: darkMode.borderBoxCardList,
+                            borderColor: darkMode.borderBox,
                             color: darkMode.colorTextCardList,
+                            fontSize: 14,
                           }
                         : {
                             backgroundColor: darkMode.backgroundDark,
                             borderColor: darkMode.borderBox,
                             color: darkMode.text,
-                            paddingHorizontal: 8,
+                            paddingHorizontal: 10,
                             paddingVertical: 5,
                             marginRight: 10,
-                            borderRadius: 2,
+                            borderRadius: 9999,
                             borderWidth: 1,
+                            fontSize: 14,
                           }
                     }
                   >
@@ -148,23 +150,28 @@ const BlogScreen = ({ darkMode }) => {
                   </Text>
                 </TouchableOpacity>
               )}
-              contentContainerStyle={{ zIndex: 100 }}
+              contentContainerStyle={{ zIndex: 100, justifyContent: "center", marginHorizontal: 5 }}
             />
           </View>
 
           {status === "failed" && (
             <Text style={{ color: darkMode.text }}>Error: {error}</Text>
           )}
-          {status === "succeeded" && (
+
+          {status === "succeeded" && blogs.length === 0 && (
+            <View style={styles.noBlogsContainer}>
+              <Text style={{ color: darkMode.text }}>
+                No hay blogs disponibles en este momento.
+              </Text>
+            </View>
+          )}
+
+          {status === "succeeded" && blogs.length > 0 && (
             <FlatList
-              data={[...blogs].reverse()} 
+              data={[...blogs].reverse()}
               keyExtractor={(item) => item._id}
               renderItem={renderItem}
               contentContainerStyle={{ flexGrow: 1, paddingBottom: 20 }}
-              initialNumToRender={10}
-              maxToRenderPerBatch={10}
-              windowSize={10}
-              scrollEventThrottle={100}
               refreshing={loading}
               onRefresh={refreshData}
             />
@@ -183,7 +190,6 @@ const styles = StyleSheet.create({
     zIndex: 100,
     paddingVertical: 10,
     paddingHorizontal: 4,
-    borderBottomWidth: 1,
   },
   blogCardContainer: {
     marginBottom: 2,
@@ -203,6 +209,12 @@ const styles = StyleSheet.create({
   loaderImage: {
     width: 100,
     height: 100,
+  },
+  noBlogsContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 20,
   },
 });
 

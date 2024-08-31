@@ -185,22 +185,18 @@ const BlogCard = ({
 
   useEffect(() => {
     getTotalComment();
-  }, []);
+  }, [totalComment]);
 
   return (
     <View
       style={{
         backgroundColor: darkMode.background,
-        shadowColor: "#f1f1f1",
-        shadowOpacity: 0.1,
-        shadowRadius: 5,
-        elevation: 3,
         borderColor: darkMode.borderBox,
         marginHorizontal: 2,
         overflow: "hidden",
         position: "relative",
       }}
-      className="px-2 pt-3"
+      className="px-2"
     >
       <View style={{ width: "100%", height: 250 }}>
         {image_url.length > 1 && (
@@ -341,16 +337,16 @@ const BlogCard = ({
             className="  h-[28px] w-[28px] items-center justify-center rounded-full"
           >
             <EvilIcons
-              name="like"
+              name="heart"
               size={24}
               style={[
                 likes === 0
                   ? {
-                      marginBottom: 5,
+                      marginBottom: 4,
                       color: "#fff",
                     }
                   : {
-                      marginBottom: 5,
+                      marginBottom: 4,
                       color: darkMode.textColorLikeButton,
                     },
               ]}
@@ -386,8 +382,8 @@ const BlogCard = ({
           </Text>
         </View>
         <View className="flex-row  space-x-[4px]">
-          <View className=" bg-[#1E90FF] h-[28px] w-[28px] items-center justify-center rounded-full">
-            <AntDesign name="save" size={18} color={darkMode.text} />
+          <View className=" bg-[#1E90FF] h-[28px] w-[28px] items-center justify-center rounded-full pb-[2px]">
+            <AntDesign name="save" size={18} color='#fff' />
           </View>
           <Text
             style={{
@@ -412,22 +408,14 @@ const BlogCard = ({
             style={{
               borderWidth: 1,
               borderColor: darkMode.borderBox,
+              backgroundColor: darkMode.backgroundComment,
             }}
           >
             <View
-              className=" flex-row space-x-[2px] items-center justify-center py-2 px-4 "
-              style={[
-                likeSubcribe
-                  ? {
-                      backgroundColor: darkMode.backgroundDark,
-                    }
-                  : {
-                      backgroundColor: darkMode.backgroundDark,
-                    },
-              ]}
+              className=" flex-row space-x-[2px] items-center justify-center py-2 px-4  "
             >
               <EvilIcons
-                name="like"
+                name="heart"
                 size={24}
                 style={[
                   likeSubcribe
@@ -435,7 +423,7 @@ const BlogCard = ({
                         color: darkMode.textColorLikeButton,
                       }
                     : {
-                        color: darkMode.text,
+                        color: '#FFF',
                       },
                 ]}
               />
@@ -443,17 +431,16 @@ const BlogCard = ({
                 style={[
                   likeSubcribe
                     ? {
-                        marginBottom: 3,
                         fontFamily: "PlusJakartaSans-SemiBold",
                         color: darkMode.textColorLikeButton,
                       }
                     : {
-                        marginBottom: 3,
+                       
                         fontFamily: "PlusJakartaSans-Bold",
                         color: darkMode.text,
                       },
                 ]}
-                className=" text-[14px] text-white"
+                className=" text-[14px] text-white mt-[2px]"
               >
                 Mola
               </Text>
@@ -464,7 +451,7 @@ const BlogCard = ({
             style={{
               borderWidth: 1,
               borderColor: darkMode.borderBox,
-              backgroundColor: darkMode.backgroundDark,
+              backgroundColor: darkMode.backgroundComment,
             }}
             onPress={() =>
               navigation.navigate("comment", {
@@ -475,13 +462,13 @@ const BlogCard = ({
             }
           >
             <View className=" flex-row space-x-[2px] items-center justify-center">
-              <EvilIcons name="comment" size={24} color={darkMode.text} />
+              <EvilIcons name="comment" size={24} color='#FFF' />
               <Text
                 style={{
                   fontFamily: "PlusJakartaSans-SemiBold",
-                  color: darkMode.text,
+                  color: '#FFF',
                 }}
-                className=" text-[14px]"
+                className=" text-[14px] mt-[2px]"
               >
                 Comentar
               </Text>
@@ -492,20 +479,21 @@ const BlogCard = ({
             style={{
               borderWidth: 1,
               borderColor: darkMode.borderBox,
-              backgroundColor: darkMode.backgroundDark,
+              backgroundColor: darkMode.backgroundComment,
             }}
           >
             <View className=" flex-row space-x-[2px] items-center justify-center">
               <AntDesign
                 name="save"
                 size={18}
-                style={{ marginTop: 3 }}
-                color={darkMode.text}
+                style={{ marginTop: 3, paddingBottom:2 }}
+                color='#fff'
               />
               <Text
                 style={{
                   fontFamily: "PlusJakartaSans-SemiBold",
-                  color: darkMode.text,
+                  color: '#FFF',
+                  marginBottom: 3,
                 }}
                 className=" text-[14px]"
               >
@@ -537,7 +525,7 @@ const BlogCard = ({
               style={{
                 borderWidth: 1,
                 borderColor: darkMode.borderBox,
-                backgroundColor: darkMode.backgroundDark,
+                backgroundColor: darkMode.backgroundComment,
               }}
             >
               <Text
