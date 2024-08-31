@@ -132,6 +132,7 @@ const ArticleCard = ({
               e.stopPropagation();
               setIsDeletingProduct(true);
               setDeleteAlertModal(true);
+              dispatch(setSelectedProduct(item));
             }}
           >
             <TrashIcon width={25} height={30} color="#F6001B" />
