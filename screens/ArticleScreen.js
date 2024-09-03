@@ -92,9 +92,7 @@ const ArticleScreen = ({ route }) => {
     }
   };
 
-  function dividirFrasePorDosPuntos(
-    frase
-  ) {
+  function dividirFrasePorDosPuntos(frase) {
     const posicionDosPuntos = frase.indexOf(":");
 
     if (posicionDosPuntos !== -1) {
@@ -136,6 +134,37 @@ const ArticleScreen = ({ route }) => {
       ];
     }
   }
+
+  const HighlightKeywords = (text, keywords) => {
+    const keywordsWithoutHash = keywords.map((item) =>
+      item.substring(1).toLowerCase()
+    );
+    const palabras = text.split(" ");
+
+    const highlightedText = palabras.map((palabra, index) => {
+      const cleanWord = palabra.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
+      const isKeyword = keywordsWithoutHash.includes(cleanWord);
+
+      return (
+        <Text
+          key={index}
+          style={{
+            fontSize: 16,
+            color: isKeyword ? 'rgba(255, 200, 140, 0.9)': darkMode.textWhite,
+            fontFamily: isKeyword ? "PlusJakartaSans-Bold" :  "PlusJakartaSans-SemiBold" ,
+          }}
+        >
+          {palabra}{" "}
+        </Text>
+      );
+    });
+
+    return (
+      <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+        {highlightedText}
+      </View>
+    );
+  };
 
   return (
     <SafeAreaView
@@ -267,7 +296,7 @@ const ArticleScreen = ({ route }) => {
                   color: darkMode.yellow,
                   marginTop: 3,
                   fontFamily: "PlusJakartaSans-Bold",
-                  marginTop:10
+                  marginTop: 10,
                 }}
               >
                 {blog_description}
@@ -284,7 +313,6 @@ const ArticleScreen = ({ route }) => {
                         fontFamily: "PlusJakartaSans-Bold",
                         marginBottom: 5,
                         marginTop: 10,
-
                       }}
                     >
                       {section.title}
@@ -293,17 +321,14 @@ const ArticleScreen = ({ route }) => {
 
                   {Array.isArray(section.content) &&
                     section.content.map((paragraph, paragraphIndex) => (
-                      <Text
+                      <View
                         key={paragraphIndex}
                         style={{
-                          fontSize: 16,
-                          color: darkMode.text,
                           marginTop: 10,
-                          fontFamily: "PlusJakartaSans-SemiBold",
                         }}
                       >
-                        {paragraph}
-                      </Text>
+                        {HighlightKeywords(paragraph, blog_tag)}
+                      </View>
                     ))}
                   {Array.isArray(section.list) && section.list.length > 0 && (
                     <View>
@@ -315,7 +340,7 @@ const ArticleScreen = ({ route }) => {
                                 marginTop: 10,
                                 flexDirection: "row",
                                 alignItems: "start",
-                                paddingLeft: 10
+                                paddingLeft: 10,
                               }}
                             >
                               <View style={{ marginTop: 1 }}>
@@ -340,12 +365,10 @@ const ArticleScreen = ({ route }) => {
                               </View>
 
                               <View style={{ flex: 1 }}>
-                               
                                 <Text
                                   style={{
                                     fontSize: 16,
-                                    flexShrink: 1, 
-                               
+                                    flexShrink: 1,
                                   }}
                                 >
                                   {dividirFrasePorDosPuntos(item)}
