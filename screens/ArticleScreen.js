@@ -73,11 +73,11 @@ const ArticleScreen = ({ route }) => {
       return (
         <Text>
           {beforeHash}
-          <Text style={{ color: darkMode.signInTextColor }}>{hashSymbol} </Text>
+          <Text style={{ color: darkMode.yellow }}>{hashSymbol} </Text>
           <Text
             style={{
               color: darkMode.text,
-              fontFamily: "PlusJakartaSans-SemiBold",
+              fontFamily: "PlusJakartaSans-Bold",
               fontSize: 14,
               opacity: 0.5,
             }}
@@ -92,16 +92,76 @@ const ArticleScreen = ({ route }) => {
     }
   };
 
+  function dividirFrasePorDosPuntos(
+    frase
+  ) {
+    const posicionDosPuntos = frase.indexOf(":");
+
+    if (posicionDosPuntos !== -1) {
+      const antesDeDosPuntos = frase.substring(0, posicionDosPuntos + 1).trim();
+      const despuesDeDosPuntos = frase.substring(posicionDosPuntos + 1).trim();
+
+      return [
+        <Text
+          style={{
+            color: darkMode.yellow,
+            fontFamily: "PlusJakartaSans-Bold",
+            fontSize: 18,
+          }}
+        >
+          {antesDeDosPuntos}{" "}
+        </Text>,
+        <Text
+          style={{
+            color: darkMode.textGray,
+            fontFamily: "PlusJakartaSans-SemiBold",
+            fontSize: 16,
+          }}
+        >
+          {despuesDeDosPuntos}
+        </Text>,
+      ];
+    } else {
+      return [
+        <Text
+          style={{
+            color: darkMode.textGray,
+            fontFamily: "PlusJakartaSans-SemiBold",
+            fontSize: 16,
+          }}
+        >
+          {frase}
+        </Text>,
+        null,
+      ];
+    }
+  }
+
   return (
     <SafeAreaView
       style={{
         flex: 1,
         marginTop: statusBarHeight,
-        backgroundColor: darkMode.background,
+        backgroundColor: darkMode.backgroundDark,
       }}
     >
       <ScrollView>
-        <View style={styles.headerContainer}>
+        <View
+          style={[
+            styles.headerContainer,
+            {
+              borderBottomWidth: 1,
+              borderColor: darkMode.contentMessageBorderColor,
+              marginBottom: 10,
+              backgroundColor: darkMode.background,
+              shadowColor: "#FFF",
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.5,
+              shadowRadius: 6,
+              elevation: 5,
+            },
+          ]}
+        >
           <View style={styles.headerContent}>
             <View style={styles.headerTitle}>
               <Text
@@ -120,7 +180,10 @@ const ArticleScreen = ({ route }) => {
             </View>
           </View>
         </View>
-        <View className=" px-3 h-full space-y-2 ">
+        <View
+          className=" px-3 h-full space-y-2  "
+          style={{ color: darkMode.backgroundDark }}
+        >
           <View style={{ width: "100%", height: 250 }}>
             {image_url.length > 1 && (
               <>
@@ -200,25 +263,28 @@ const ArticleScreen = ({ route }) => {
             <View>
               <Text
                 style={{
-                  fontSize: 16,
-                  color: darkMode.signInTextColor,
+                  fontSize: 18,
+                  color: darkMode.yellow,
                   marginTop: 3,
+                  fontFamily: "PlusJakartaSans-Bold",
+                  marginTop:10
                 }}
               >
                 {blog_description}
               </Text>
             </View>
-            <View className="space-y-2" style={{ marginTop: 5 }}>
+            <View className="" style={{ marginTop: 5 }}>
               {sections.map((section, index) => (
                 <View key={index}>
                   {section?.title?.length > 0 && (
                     <Text
                       style={{
-                        fontSize: 20,
+                        fontSize: 22,
                         color: darkMode.text,
                         fontFamily: "PlusJakartaSans-Bold",
                         marginBottom: 5,
-                        marginTop: 5,
+                        marginTop: 10,
+
                       }}
                     >
                       {section.title}
@@ -233,6 +299,7 @@ const ArticleScreen = ({ route }) => {
                           fontSize: 16,
                           color: darkMode.text,
                           marginTop: 10,
+                          fontFamily: "PlusJakartaSans-SemiBold",
                         }}
                       >
                         {paragraph}
@@ -242,23 +309,23 @@ const ArticleScreen = ({ route }) => {
                     <View>
                       {section.list.map((item, itemIndex) =>
                         item ? (
-                          <View key={itemIndex} style={{ paddingLeft: 16 }}>
+                          <View key={itemIndex} style={{}}>
                             <View
                               style={{
-                                fontSize: 16,
-                                color: darkMode.text,
                                 marginTop: 10,
+                                flexDirection: "row",
+                                alignItems: "start",
+                                paddingLeft: 10
                               }}
-                              className="flex-row"
                             >
-                              <View style={{ marginTop: 4 }}>
+                              <View style={{ marginTop: 1 }}>
                                 <Svg
                                   xmlns="http://www.w3.org/2000/svg"
                                   width={18}
                                   height={18}
                                   viewBox="0 0 24 24"
-                                  fill={darkMode.text}
-                                  stroke={darkMode.text}
+                                  fill={darkMode.yellow}
+                                  stroke={darkMode.yellow}
                                   strokeWidth="2"
                                   strokeLinecap="round"
                                   strokeLinejoin="round"
@@ -272,15 +339,16 @@ const ArticleScreen = ({ route }) => {
                                 </Svg>
                               </View>
 
-                              <View>
+                              <View style={{ flex: 1 }}>
+                               
                                 <Text
                                   style={{
                                     fontSize: 16,
-                                    color: darkMode.text,
+                                    flexShrink: 1, 
+                               
                                   }}
                                 >
-                                  {" "}
-                                  {item}
+                                  {dividirFrasePorDosPuntos(item)}
                                 </Text>
                               </View>
                             </View>

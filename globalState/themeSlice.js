@@ -44,7 +44,7 @@ export const colors = {
 
       contentMessageBg : '#19191a',
       contentMessageBgTwo : '#8d9f58',
-      contentMessageBorderColor: 'rgba(128, 128, 128, 0.3)',
+      contentMessageBorderColor: 'rgba(128, 128, 128, 0.4)',
       contentReceiverText: '#fff',
       contentSenderText: '#fff',
       screenBg: '#F0F2F4',
@@ -58,7 +58,14 @@ export const colors = {
     
     // buttonFollow
 
-    buttonNext: '#18181b'
+    buttonNext: '#18181b',
+
+    // 
+
+    textWhite: '#f3f5f8',
+    textGray: '#e9edf1',
+    textGrayTwo: '#78909c'
+
 
     
   },
@@ -86,7 +93,7 @@ export const colors = {
     headerBorderIcon: '#0D1117',
     textColorLikeButton: '#ff226e',
     textCommentButton: '#1E90FF',
-    backgroundComment : '#000',
+    backgroundComment : '#0c181c',
     // SingIn
     signInTextColor: '#06BCEE',
     singInBgColor: '#000',
@@ -116,7 +123,12 @@ export const colors = {
 
     // buttonFollow
 
-    buttonNext: '#007AFF'
+    buttonNext: '#007AFF',
+
+    
+    textWhite: '#d0d7df',
+    textGray: '#ebeff2',
+    yellow: '#f3bc3d'
 
   },
 };
